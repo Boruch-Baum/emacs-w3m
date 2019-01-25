@@ -1202,8 +1202,8 @@ is inhibited in those cases even if `w3m-async-exec' is non-nil."
 	   ("application/rdf+xml" "\\.rdf\\'" nil "text/plain")
 	   ("application/rss+xml" "\\.rss\\'" nil "text/plain")
 	   ("application/xhtml+xml" nil nil "text/html")
-	   ("application/x-bzip2" "\\.bz2\\'" nil nil nil)
-	   ("application/x-gzip" "\\.gz\\'" nil nil nil)))
+	   ("application/x-bzip2" "\\.bz2\\'" nil nil)
+	   ("application/x-gzip" "\\.gz\\'" nil nil)))
 	(extensions (copy-sequence mailcap-mime-extensions))
 	elem ext type exts tem viewer rest)
     ;; items w/ file extensions
