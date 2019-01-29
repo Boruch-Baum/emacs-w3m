@@ -10947,22 +10947,52 @@ It does manage history position data as well."
   :type '(radio (const :tag "All entries are displayed in single page." nil)
 		(integer :format "%t: %v\n")))
 
+(defcustom w3m-history-in-new-buffer nil
+  "Whether to display URL histories in the current buffer."
+  :group 'w3m
+  :type 'boolean)
+
 (defun w3m-db-history (&optional start size)
-  "Display arrived URLs."
+  "Display arrived URLs.
+
+This is a flat (not hierarchial) chronological presentation of
+all URLs visited by ALL w3m buffers, and includes a timestamp for
+when the URL was visited."
   (interactive
    (list nil w3m-db-history-display-size))
+<<<<<<< HEAD
   (w3m-goto-url (concat
 		 (format "about://db-history/?start=%d" (or start 0))
 		 (if size (format "&size=%d" size) ""))
 		 nil nil nil nil nil nil nil t))
+=======
+   (let ((url (format "about://db-history/?start=%d&size=%d"
+                (or start 0) (or size 0))))
+    (if w3m-history-in-new-buffer
+      (w3m-goto-url-new-session url)
+     (w3m-goto-url url :save-pos t))))
+>>>>>>> 43166382... New option: display histories in new buffers
 
 (defun w3m-history (&optional arg)
-  "Display the history of all the links you have visited in the session.
-If it is called with the prefix argument, display the arrived URLs."
+  "Display the buffer's history tree.
+
+If called with the prefix argument, display the arrived URLs.
+
+The buffer's history tree is a hierarchal presentation of all
+URLs visited by the current bufferand its \"parents\", meaning
+that if the buffer was spawned using a command such as
+`w3m-goto-url-new-session', its history will include that of the
+prior w3m buffer.
+
+The display of arrived URLs is a flat (not hierarchial)
+chronological presentation of all URLs visited by ALL w3m
+buffers, and includes a timestamp for when the URL was visited. "
   (interactive "P")
-  (if (null arg)
-      (w3m-goto-url "about://history/" nil nil nil nil nil nil nil t)
-    (w3m-db-history nil w3m-db-history-display-size)))
+  (if arg
+    (w3m-db-history nil w3m-db-history-display-size)
+   (if w3m-history-in-new-buffer
+     (w3m-goto-url-new-session "about://history/")
+    (w3m-goto-url "about://history/" :save-pos t))))
 
 (defun w3m-w32-browser-with-fiber (url)
   (let ((proc (start-process "w3m-w32-browser-with-fiber"
