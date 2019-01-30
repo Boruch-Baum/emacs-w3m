@@ -10824,17 +10824,6 @@ A history page is invoked by the `w3m-about-history' command.")
 ; arguments because this function is one of several called by
 ; `w3m-about-retrieve' using a generic constructed `funcall'.
   (let ((start 0)
-<<<<<<< HEAD
-	(size nil)
-	(width (- (w3m-display-width) 18))
-	(now (current-time))
-	title time alist prev next page total)
-    (when (string-match "\\`about://db-history/\\?" url)
-      (dolist (s (split-string (substring url (match-end 0)) "&"))
-	(when (string-match "\\`\\(?:start\\|\\(size\\)\\)=" s)
-	  (set (if (match-beginning 1) 'size 'start)
-	       (string-to-number (substring s (match-end 0)))))))
-=======
         (size 0)
         (print-all t)
         (width (- (w3m-display-width) 18))
@@ -10847,7 +10836,6 @@ A history page is invoked by the `w3m-about-history' command.")
             (setq start (string-to-number (substring s (match-end 0))))
            (setq size (string-to-number (substring s (match-end 0))))
            (when (/= size 0) (setq print-all nil))))))
->>>>>>> 205762a0... Fix feature to display global history
     (when w3m-arrived-db
       (mapatoms
        (lambda (sym)
@@ -10875,27 +10863,6 @@ A history page is invoked by the `w3m-about-history' command.")
 	(setq total (+ (/ total size) (if (> (% total size) 0) 1 0)))
 	(setq page (1+ (/ start size)))))
     (insert "<html><head><title>URL history in DataBase</title>"
-<<<<<<< HEAD
-	    (if prev (format "<link rel=\"prev\" href=\"%s\">\n" prev) "")
-	    (if next (format "<link rel=\"next\" href=\"%s\">\n" next) "")
-	    (format
-	     "</head>\n<body>\n<h1>Arrived URL history in DataBase%s</h1>\n"
-	     (if (and page total)
-		 (format " (%d/%d)" page total) "")))
-    (setq prev
-	  (if (or prev next)
-	      (setq next
-		    (concat
-		     "<p align=\"left\">"
-		     (if prev
-			 (format "[<a href=\"%s\">Prev History</a>]" prev)
-		       "")
-		     (if next
-			 (format "[<a href=\"%s\">Next History</a>]" next)
-		       "")
-		     "</p>\n"))
-	    ""))
-=======
             (if prev (format "<link rel=\"prev\" href=\"%s\">\n" prev) "")
             (if next (format "<link rel=\"next\" href=\"%s\">\n" next) "")
             (format
@@ -10915,36 +10882,10 @@ A history page is invoked by the `w3m-about-history' command.")
                        "")
                      "</p>\n"))
             ""))
->>>>>>> 205762a0... Fix feature to display global history
     (if (null alist)
 	(insert "<em>Nothing in DataBase.</em>\n")
       (insert prev "<table cellpadding=0>
 <tr><td><h2> Title/URL </h2></td><td><h2>Time/Date</h2></td></tr>\n")
-<<<<<<< HEAD
-      (while (and alist
-		  (or (not size)
-		      (>= (decf size) 0)))
-	(setq url (car (car alist))
-	      time (cdr (car alist))
-	      alist (cdr alist)
-	      title (w3m-arrived-title url))
-	(if (or (null title)
-		(string= "<no-title>" title))
-	    (setq title (concat "<" (w3m-truncate-string url width) ">"))
-	  (when (>= (string-width title) width)
-	    (setq title (concat (w3m-truncate-string title width) "..."))))
-	(insert (format "<tr><td><a href=\"%s\">%s</a></td>"
-			url
-			(w3m-encode-specials-string title)))
-	(when time
-	  (insert "<td>"
-		  (if (<= (w3m-time-lapse-seconds time now)
-			  64800) ;; = (* 60 60 18) 18hours.
-		      (format-time-string "%H:%M:%S" time)
-		    (format-time-string "%Y-%m-%d" time))
-		  "</td>"))
-	(insert "</tr>\n"))
-=======
       (while (and alist (or (>= (decf size) 0) print-all))
         (setq url (car (car alist))
               time (cdr (car alist))
@@ -10966,7 +10907,6 @@ A history page is invoked by the `w3m-about-history' command.")
                     (format-time-string "%Y-%m-%d" time))
                   "</td>"))
         (insert "</tr>\n"))
->>>>>>> 205762a0... Fix feature to display global history
       (insert "</table>"
 	      (if next "\n<br>\n<hr>\n" "")
 	      prev))
