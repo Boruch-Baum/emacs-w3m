@@ -10734,6 +10734,9 @@ A history page is invoked by the `w3m-about-history' command.")
 
 (defun w3m-about-history (&rest args)
   "Show a tree-structured history."
+; ARGS is not used. It is necessary in order to >/dev/null unnecessary
+; arguments because this function is one of several called by
+; `w3m-about-retrieve' using a generic constructed `funcall'.
   (let (start history current)
     (with-current-buffer w3m-current-buffer
       (setq history w3m-history-flat
@@ -10817,7 +10820,11 @@ A history page is invoked by the `w3m-about-history' command.")
     "text/html"))
 
 (defun w3m-about-db-history (url &rest args)
+; ARGS is not used. It is necessary in order to >/dev/null unnecessary
+; arguments because this function is one of several called by
+; `w3m-about-retrieve' using a generic constructed `funcall'.
   (let ((start 0)
+<<<<<<< HEAD
 	(size nil)
 	(width (- (w3m-display-width) 18))
 	(now (current-time))
@@ -10827,6 +10834,20 @@ A history page is invoked by the `w3m-about-history' command.")
 	(when (string-match "\\`\\(?:start\\|\\(size\\)\\)=" s)
 	  (set (if (match-beginning 1) 'size 'start)
 	       (string-to-number (substring s (match-end 0)))))))
+=======
+        (size 0)
+        (print-all t)
+        (width (- (w3m-display-width) 18))
+        (now (current-time))
+        title time alist prev next page total)
+    (when (string-match "\\`about://db-history/\\?" url)
+      (dolist (s (split-string (substring url (match-end 0)) "&"))
+        (when (string-match "\\`\\(?:size\\|\\(start\\)\\)=" s)
+          (if (match-beginning 1)
+            (setq start (string-to-number (substring s (match-end 0))))
+           (setq size (string-to-number (substring s (match-end 0))))
+           (when (/= size 0) (setq print-all nil))))))
+>>>>>>> 205762a0... Fix feature to display global history
     (when w3m-arrived-db
       (mapatoms
        (lambda (sym)
@@ -10841,7 +10862,7 @@ A history page is invoked by the `w3m-about-history' command.")
 			  (w3m-time-newer-p (cdr a) (cdr b))))))
     (setq total (length alist))
     (setq alist (nthcdr start alist))
-    (when size
+    (when (/= size 0)
       (when (> start 0)
 	(setq prev
 	      (format "about://db-history/?start=%d&size=%d"
@@ -10854,6 +10875,7 @@ A history page is invoked by the `w3m-about-history' command.")
 	(setq total (+ (/ total size) (if (> (% total size) 0) 1 0)))
 	(setq page (1+ (/ start size)))))
     (insert "<html><head><title>URL history in DataBase</title>"
+<<<<<<< HEAD
 	    (if prev (format "<link rel=\"prev\" href=\"%s\">\n" prev) "")
 	    (if next (format "<link rel=\"next\" href=\"%s\">\n" next) "")
 	    (format
@@ -10873,10 +10895,32 @@ A history page is invoked by the `w3m-about-history' command.")
 		       "")
 		     "</p>\n"))
 	    ""))
+=======
+            (if prev (format "<link rel=\"prev\" href=\"%s\">\n" prev) "")
+            (if next (format "<link rel=\"next\" href=\"%s\">\n" next) "")
+            (format
+             "</head>\n<body>\n<h1>Global URL history for all w3m buffers%s</h1>\n"
+             (if (and page total)
+                 (format " (page %d/%d)" page total) "")))
+    (setq prev
+          (if (or prev next)
+              (setq next
+                    (concat
+                     "<p align=\"left\">"
+                     (if prev
+                         (format "[<a href=\"%s\">Prev Page</a>]" prev)
+                       "")
+                     (if next
+                         (format "[<a href=\"%s\">Next Page</a>]" next)
+                       "")
+                     "</p>\n"))
+            ""))
+>>>>>>> 205762a0... Fix feature to display global history
     (if (null alist)
 	(insert "<em>Nothing in DataBase.</em>\n")
       (insert prev "<table cellpadding=0>
 <tr><td><h2> Title/URL </h2></td><td><h2>Time/Date</h2></td></tr>\n")
+<<<<<<< HEAD
       (while (and alist
 		  (or (not size)
 		      (>= (decf size) 0)))
@@ -10900,6 +10944,29 @@ A history page is invoked by the `w3m-about-history' command.")
 		    (format-time-string "%Y-%m-%d" time))
 		  "</td>"))
 	(insert "</tr>\n"))
+=======
+      (while (and alist (or (>= (decf size) 0) print-all))
+        (setq url (car (car alist))
+              time (cdr (car alist))
+              alist (cdr alist)
+              title (w3m-arrived-title url))
+        (if (or (null title)
+                (string= "<no-title>" title))
+            (setq title (concat "<" (w3m-truncate-string url width) ">"))
+          (when (>= (string-width title) width)
+            (setq title (concat (w3m-truncate-string title width) "..."))))
+        (insert (format "<tr><td><a href=\"%s\">%s</a></td>"
+                        url
+                        (w3m-encode-specials-string title)))
+        (when time
+          (insert "<td>"
+                  (if (<= (w3m-time-lapse-seconds time now)
+                          64800) ;; = (* 60 60 18) 18hours.
+                      (format-time-string "%H:%M:%S" time)
+                    (format-time-string "%Y-%m-%d" time))
+                  "</td>"))
+        (insert "</tr>\n"))
+>>>>>>> 205762a0... Fix feature to display global history
       (insert "</table>"
 	      (if next "\n<br>\n<hr>\n" "")
 	      prev))
@@ -10955,11 +11022,26 @@ It does manage history position data as well."
 (defun w3m-db-history (&optional start size)
   "Display arrived URLs.
 
-This is a flat (not hierarchial) chronological presentation of
-all URLs visited by ALL w3m buffers, and includes a timestamp for
-when the URL was visited."
+This is a flat (not hierarchial) presentation of all URLs visited
+by ALL w3m buffers, and includes a timestamp for when the URL was
+visited. The list is presented in reverse-chronological order,
+ie. most recent URL first.
+
+START is a positive integer for the point in the history list at
+which to begin displaying, where 0 is the most recent entry.
+
+SIZE is the maximum number of arrived URLs which are displayed
+per page. Variable `w3m-db-history-display-size' sets the
+default. Use 0 to display the entire history on a single page."
   (interactive
    (list nil w3m-db-history-display-size))
+   (when (called-interactively-p 'interactive)
+
+(setq start (read-number "start: " (or w3m-db-history-display-size 0)))
+(setq size (read-number "size: " (or size 0)))
+
+)
+
    (let ((url (format "about://db-history/?start=%d&size=%d"
                 (or start 0) (or size 0))))
     (if w3m-history-in-new-buffer
