@@ -10960,18 +10960,11 @@ all URLs visited by ALL w3m buffers, and includes a timestamp for
 when the URL was visited."
   (interactive
    (list nil w3m-db-history-display-size))
-<<<<<<< HEAD
-  (w3m-goto-url (concat
-		 (format "about://db-history/?start=%d" (or start 0))
-		 (if size (format "&size=%d" size) ""))
-		 nil nil nil nil nil nil nil t))
-=======
    (let ((url (format "about://db-history/?start=%d&size=%d"
                 (or start 0) (or size 0))))
     (if w3m-history-in-new-buffer
       (w3m-goto-url-new-session url)
      (w3m-goto-url url :save-pos t))))
->>>>>>> 43166382... New option: display histories in new buffers
 
 (defun w3m-history (&optional arg)
   "Display the buffer's history tree.
