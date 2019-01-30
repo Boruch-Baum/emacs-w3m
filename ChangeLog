@@ -1,3 +1,13 @@
+2019-01-29  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el (w3m-db-history, w3m-about-db-history): New option: display
+	histories in new buffers. Add details to docstrings. Allow interactive
+	user to set function options. Properly handle START and SIZE arguments.
+	Modify html output for clarity, date display format, use of ellipsis,
+	maximum use of page width, center heading, align page navigation links
+	to page edges, remove extraneous ';' after url's, add ellipsis when
+	truncating url's.
+
 2018-06-08  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m.el (w3m-content-type-alist): Remove extraneous fields from two
