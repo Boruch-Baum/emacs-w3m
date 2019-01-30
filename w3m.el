@@ -10826,7 +10826,7 @@ A history page is invoked by the `w3m-about-history' command.")
   (let ((start 0)
         (size 0)
         (print-all t)
-        (width (- (w3m-display-width) 18))
+        (width (- (w3m-display-width) 23))
         (now (current-time))
         title time alist prev next page total)
     (when (string-match "\\`about://db-history/\\?" url)
@@ -10895,7 +10895,7 @@ A history page is invoked by the `w3m-about-history' command.")
                 (string= "<no-title>" title))
             (setq title (concat "<" (w3m-truncate-string url width) ">"))
           (when (>= (string-width title) width)
-            (setq title (concat (w3m-truncate-string title width) "..."))))
+            (setq title (concat (w3m-truncate-string title width) "…"))))
         (insert (format "<tr><td><a href=\"%s\">%s</a></td>"
                         url
                         (w3m-encode-specials-string title)))
@@ -10903,8 +10903,8 @@ A history page is invoked by the `w3m-about-history' command.")
           (insert "<td>"
                   (if (<= (w3m-time-lapse-seconds time now)
                           64800) ;; = (* 60 60 18) 18hours.
-                      (format-time-string "%H:%M:%S" time)
-                    (format-time-string "%Y-%m-%d" time))
+                      (format-time-string "%H:%M:%S Today" time)
+                    (format-time-string "%H:%M:%S %Y-%m-%d" time))
                   "</td>"))
         (insert "</tr>\n"))
       (insert "</table>"
