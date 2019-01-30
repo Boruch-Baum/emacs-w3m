@@ -10866,39 +10866,48 @@ A history page is invoked by the `w3m-about-history' command.")
             (if prev (format "<link rel=\"prev\" href=\"%s\">\n" prev) "")
             (if next (format "<link rel=\"next\" href=\"%s\">\n" next) "")
             (format
-             "</head>\n<body>\n<h1>Global URL history for all w3m buffers%s</h1>\n"
+             "</head><body><center><h1>Global URL history for all w3m buffers%s</h1></center>\n"
              (if (and page total)
                  (format " (page %d/%d)" page total) "")))
     (setq prev
           (if (or prev next)
               (setq next
                     (concat
-                     "<p align=\"left\">"
+                     "<table width=100%><tr>"
                      (if prev
-                         (format "[<a href=\"%s\">Prev Page</a>]" prev)
-                       "")
+                         (format "<td width=50%% align=\"left\">[<a href=\"%s\">Prev Page</a>]</td>" prev)
+                       "<td width=50%%></td>")
                      (if next
-                         (format "[<a href=\"%s\">Next Page</a>]" next)
-                       "")
-                     "</p>\n"))
+                         (format "<td width=50%% align=\"right\">[<a href=\"%s\">Next Page</a>]</td>" next)
+                       "<td width=50%%></td>")
+                     "</tr></table>\n"))
             ""))
     (if (null alist)
-	(insert "<em>Nothing in DataBase.</em>\n")
-      (insert prev "<table cellpadding=0>
+        (insert "<em>Nothing in DataBase.</em>\n")
+      (insert prev "<table width=100% cellpadding=0>
 <tr><td><h2> Title/URL </h2></td><td><h2>Time/Date</h2></td></tr>\n")
       (while (and alist (or (>= (decf size) 0) print-all))
         (setq url (car (car alist))
               time (cdr (car alist))
               alist (cdr alist)
               title (w3m-arrived-title url))
-        (if (or (null title)
-                (string= "<no-title>" title))
-            (setq title (concat "<" (w3m-truncate-string url width) ">"))
-          (when (>= (string-width title) width)
-            (setq title (concat (w3m-truncate-string title width) "…"))))
+        (cond
+         ((or (null title) (string= "<no-title>" title))
+          (setq title
+            (concat
+              "&lt;"
+              (if (>= (string-width url) width)
+                (concat (w3m-truncate-string url (1- width)) "…")
+               url)
+              "&gt")))
+         (t
+          (setq title
+            (w3m-encode-specials-string
+              (if (>= (string-width title) width)
+                (concat (w3m-truncate-string title width) "…")
+               title)))))
         (insert (format "<tr><td><a href=\"%s\">%s</a></td>"
-                        url
-                        (w3m-encode-specials-string title)))
+                        url title))
         (when time
           (insert "<td>"
                   (if (<= (w3m-time-lapse-seconds time now)
