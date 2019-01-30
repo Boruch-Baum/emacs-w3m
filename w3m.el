@@ -218,12 +218,10 @@ filters before being rendered."
   (defvar w3m-session-menu-items-pre)
   (defvar w3m-session-menu-items))
 
+;; The version is decided by the final revision 1.1717 which was
+;; hosted by the CVS repository.
 (defconst emacs-w3m-version
-  (eval-when-compile
-    (let ((rev "$Revision$"))
-      (and (string-match "\\.\\([0-9]+\\) \\$\\'" rev)
-	   (setq rev (- (string-to-number (match-string 1 rev)) 1136))
-	   (format "1.4.%d" (+ rev 50)))))
+  "1.4.632"
   "Version number of this package.")
 
 (defgroup w3m nil
@@ -1202,8 +1200,8 @@ is inhibited in those cases even if `w3m-async-exec' is non-nil."
 	   ("application/rdf+xml" "\\.rdf\\'" nil "text/plain")
 	   ("application/rss+xml" "\\.rss\\'" nil "text/plain")
 	   ("application/xhtml+xml" nil nil "text/html")
-	   ("application/x-bzip2" "\\.bz2\\'" nil nil)
-	   ("application/x-gzip" "\\.gz\\'" nil nil)))
+	   ("application/x-bzip2" "\\.bz2\\'" nil nil nil)
+	   ("application/x-gzip" "\\.gz\\'" nil nil nil)))
 	(extensions (copy-sequence mailcap-mime-extensions))
 	elem ext type exts tem viewer rest)
     ;; items w/ file extensions
