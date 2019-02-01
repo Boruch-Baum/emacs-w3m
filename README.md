@@ -4,12 +4,12 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
 
 ## Unique branches here
 
-* `bb_history-scrub`
+* `bb_history-scrub`<sub>[_pr #2_](https://github.com/emacs-w3m/emacs-w3m/pull/2)</sub>
   * New feature `w3m-history-scrub` (keybinding `S-C-delete`) to
     delete web browsing resources (history, cookies, cache, temporary
     files, form data).
 
-* `bb_history-display`
+* `bb_history-display`<sub>[_pr #4_](https://github.com/emacs-w3m/emacs-w3m/pull/4)</sub>
   * New option `w3m-history-in-new-buffer`.
   * BUGFIXES: The global history display now properly handles page
     size control, ie. you can select where in the history to begin
