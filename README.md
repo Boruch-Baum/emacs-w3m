@@ -16,3 +16,7 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
     displaying and how many entries to display per page.
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
+
+* `bb_filters`
+  * New filter: github main page for each repository
+  * New filter: xkcd
