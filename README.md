@@ -17,6 +17,6 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
 
-* `bb_filters`<sub>[_pr #7_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
+* `bb_filters` <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * New filter: github main page for each repository
   * New filter: xkcd
