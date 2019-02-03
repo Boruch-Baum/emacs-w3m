@@ -21,15 +21,15 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
   * New filter: github main page for each repository
   * New filter: xkcd
 
-*  `bb_quibbles`<sub>[_pr #8_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
+* `bb_quibbles`<sub>[_pr #8_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
   * This isn't supposed to be a feature branch, or a bug-fixing
     branch; it's for issues of programming style, efficiency,
     and documentation, but occassionally some substantive stuff may
     creep in by accident ...
   * BUGFIX: w3m-cleanup-temp-files: The regexp wasn't including
-    tmp/cache files.
+   tmp/cache files.
 
-*  `bb_utf`
+* `bb_utf`
   * This branch is for converting the codebase to be fully UTF-8. The
     project is over 20 years old, and has a lot pre-unicode artifacts.
     I originally did this in September 2018 before the project moved
