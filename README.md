@@ -17,7 +17,7 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
 
-* `bb_filters` <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
+* `bb_filters`<sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * New filter: github main page for each repository
   * New filter: xkcd
 
@@ -29,7 +29,7 @@ This is a fork of the [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git re
   * BUGFIX: w3m-cleanup-temp-files: The regexp wasn't including
    tmp/cache files.
 
-* `bb_utf`
+* `bb_utf`<sub>[_pr #9_](https://github.com/emacs-w3m/emacs-w3m/pull/9)</sub>
   * This branch is for converting the codebase to be fully UTF-8. The
     project is over 20 years old, and has a lot pre-unicode artifacts.
     I originally did this in September 2018 before the project moved
