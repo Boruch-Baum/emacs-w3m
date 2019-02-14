@@ -7685,7 +7685,6 @@ Also, put it into the `kill-ring' and the OS clipboard."
           (url (w3m-url-encode-string-2 w3m-current-url)))
       (kill-new url)
       (w3m--send-to-gui-clipboard url)
-      (w3m-message "%s" (w3m-url-readable-string w3m-current-url)))))
       (w3m--message t t "%s" (w3m-url-readable-string w3m-current-url)))))
 
 (defvar message-truncate-lines)
@@ -11193,6 +11192,10 @@ splitting windows vertically."
 	   ;; Show pages as if there is no buffers selection window.
 	   (frame-width)
 	 (window-width))
+       ; BUG: This next 'or' statement makes no sense, because
+       ; w3m-fill-column is an integer, and if for some reason it had
+       ; been set nil, then the '<' test above would have crashed the
+       ; function. Maybe the intent was 'min'?
        (or w3m-fill-column -1))))
 
 (defun w3m--setup-popup-window (toggle buffer-name nomsg)
