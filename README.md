@@ -62,7 +62,7 @@ pending pull requests.
 
 * `bb_messaging` <sub>[_pr #14_](https://github.com/emacs-w3m/emacs-w3m/pull/14)</sub>
   * Adds timeouts and colorization to w3m messages in the echo area. Also standardizes
-    use of the w3m messageI function (use `w3m==message`) and the method of clearing
+    use of the w3m message function (use `w3m--message`) and the method of clearing
     the echo area (use (`w3m-message nil)`).
   * This is a large and hasn't been exhaustively tested, but the refactor was pretty
     straightforward, it seems to work, and if there is a mistake hiding in there, it
