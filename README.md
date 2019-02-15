@@ -34,12 +34,14 @@ pending pull requests.
   * New filter: github main page for each repository
   * New filter: xkcd
 
-* `bb_quibbles`<sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
+* `bb_quibbles`
   * This isn't supposed to be a feature branch, or a bug-fixing
     branch; it's for issues of programming style, efficiency,
     and documentation, but occassionally some substantive stuff may
     creep in by accident ...
-  * BUGFIX: w3m-cleanup-temp-files: The regexp wasn't including
+    * <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
+    * <sub>[_~~pr #13~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/13)</sub>
+  * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including
     tmp/cache files.
 
 * `bb_utf`<sub>[_~~pr #9~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/9)</sub>
@@ -58,13 +60,13 @@ pending pull requests.
 * `bb_small_bug_fixes
   * w3m-dtree shouldn't abort on subdir permission restriction `<sub>[_~~pr #10~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/10)</sub>
 
-* `bb_messaging`
-  * Adds timeouts and colorization to w3m messages in the echo area. I
-    haven't yet made a pull request for this, because it was a large
-    refactor and I haven't tested it fully, but the refactor was
-    pretty straightforward, it seems to work, and if there is a
-    mistake hiding in there, it shouldn't have earth-shattering
-    consequences, so its ready for this master branch.
+* `bb_messaging` <sub>[_pr #14_](https://github.com/emacs-w3m/emacs-w3m/pull/14)</sub>
+  * Adds timeouts and colorization to w3m messages in the echo area. Also standardizes
+    use of the w3m messageI function (use `w3m==message`) and the method of clearing
+    the echo area (use (`w3m-message nil)`).
+  * This is a large and hasn't been exhaustively tested, but the refactor was pretty
+    straightforward, it seems to work, and if there is a mistake hiding in there, it
+    shouldn't have earth-shatteringconsequences, so its ready for this master branch.
 
 * `bb_clipboard`<sub>[_pr #12_](https://github.com/emacs-w3m/emacs-w3m/pull/12)</sub>
   * Functions that copy urls to the emacs kill-ring also copy them to
