@@ -3123,7 +3123,7 @@ is specified by `w3m-arrived-file'."
 	  (setq w3m-arrived-db nil)
 	  (run-hooks 'w3m-arrived-shutdown-functions))
       (error
-       (message "Error while running w3m-arrived-shutdown: %s"
+       (w3m--message t 'w3m-error "Error while running w3m-arrived-shutdown: %s"
 		(error-message-string err))))))
 
 (add-hook 'kill-emacs-hook 'w3m-arrived-shutdown)
@@ -3379,7 +3379,7 @@ function neither displays nor logs the message."
        nil
        (lambda (msg)
          (when (equal msg (current-message))
-            (message "")))
+            (message nil)))
          msg))))  ; ARG 1 to lambda
 
 (defun w3m-time-parse-string (string)
@@ -3433,7 +3433,7 @@ CODING-SYSTEM is used to read FILE which defaults to the value of
 		       (or coding-system w3m-file-coding-system-for-read)))
 		  (insert-file-contents file))
 	      (error
-	       (message "Error while loading %s" file)
+	       (w3m--message t 'w3m-error "Error while loading %s" file)
 	       nil))
 	;; point is not always moved to the beginning of the buffer
 	;; after `insert-file-contents' is done.
@@ -3441,7 +3441,7 @@ CODING-SYSTEM is used to read FILE which defaults to the value of
 	(condition-case err
 	    (read (current-buffer))
 	  (error
-	   (message "Error while reading %s; %s"
+	   (w3m--message t 'w3m-error "Error while reading %s; %s"
 		    file (error-message-string err))
 	   nil))))))
 
@@ -4019,6 +4019,7 @@ If URL is specified, only the image with URL is toggled."
 	(inhibit-read-only t)
 	(end (or begin-pos (point-min)))
 	(allow-non-secure-images (not w3m-confirm-leaving-secure-page))
+        (confirm-msg "You are retrieving non-secure image(s).  Continue? ")
 	start iurl image size)
     (unless end-pos (setq end-pos (point-max)))
     (save-excursion
@@ -4065,10 +4066,9 @@ If URL is specified, only the image with URL is toggled."
 			       (string-match "\\`\\(?:ht\\|f\\)tps://" iurl)
 			       allow-non-secure-images
 			       (and (prog1
-					(y-or-n-p "\
-You are retrieving non-secure image(s).  Continue? ")
-				      (message nil))
-				    (setq allow-non-secure-images t))))
+                                      (y-or-n-p confirm-msg)
+                                      (message nil))
+                                    (setq allow-non-secure-images t))))
 		  (if (or w3m-image-no-idle-timer
 			  (and (null (and size w3m-resize-images))
 			       (or (string-match "\\`\\(?:cid\\|data\\):" iurl)
@@ -4282,6 +4282,7 @@ resizing an image."
 	 (size (get-text-property start 'w3m-image-size))
 	 (iscale (or (get-text-property start 'w3m-image-scale) '100))
 	 (allow-non-secure-images (not w3m-confirm-leaving-secure-page))
+         (confirm-msg "You are retrieving non-secure image(s).  Continue? ")
 	 scale image)
     (w3m-add-text-properties start end '(w3m-image-status on))
     (setq scale (* iscale rate 0.01))
@@ -4303,9 +4304,8 @@ resizing an image."
 		     (string-match "\\`\\(?:ht\\|f\\)tps://" iurl)
 		     allow-non-secure-images
 		     (and (prog1
-			      (y-or-n-p "\
-You are retrieving non-secure image(s).  Continue? ")
-			    (message nil))
+                            (y-or-n-p confirm-msg)
+                            (message nil))
 			  (setq allow-non-secure-images t))))
 	(w3m-process-with-null-handler
 	  (lexical-let ((start (set-marker (make-marker) start))
@@ -4343,49 +4343,36 @@ You are retrieving non-secure image(s).  Continue? ")
   "Interactively resize IMAGE.
 If RATE is not given, use `w3m-resize-image-scale'.
 CHANGED-RATE is currently changed rate / 100."
-  (let ((char (w3m-static-if (featurep 'xemacs)
-		  (progn
-		    (message
-		     "Resize: [+ =] enlarge [-] shrink [0] original [q] quit")
-		    (read-char-exclusive))
-		(read-char-exclusive
-		 (propertize
-		  "Resize: [+ =] enlarge [-] shrink [0] original [q] quit"
-		  'face 'w3m-lnum-minibuffer-prompt))))
-	(changed-rate (or changed-rate 1)))
-    (w3m-static-if (featurep 'xemacs)
-	(setq char (char-octet char)))
-    (while (memq char '(?+ ?- ?= ?0))
-      (cond ((memq char '(?+ ?=))
-	     (let ((percent (+ 100 (or rate
-				       w3m-resize-image-scale))))
-	       (w3m-resize-inline-image-internal image percent)
-	       (setq changed-rate (* changed-rate
-				     (/ percent 100.0)))))
-	    ((eq char ?-)
-	     (let ((percent (/ 10000.0 (+ 100 (if rate
-						  (if (> rate 99) 99
-						    rate)
-						w3m-resize-image-scale)))))
-	       (w3m-resize-inline-image-internal image percent)
-	       (setq changed-rate (* changed-rate
-				     (/ percent 100.0)))))
-	    ((eq char ?0)
-	     (w3m-resize-inline-image-internal image
-					       (/ 100.0 changed-rate))
-	     (setq changed-rate 1)))
-      (setq char
-	    (w3m-static-if (featurep 'xemacs)
-		(progn
-		  (message
-		   "Resize: [+ =] enlarge [-] shrink [0] original [q] quit")
-		  (read-char-exclusive))
-	      (read-char-exclusive
-	       (propertize
-		"Resize: [+ =] enlarge [-] shrink [0] original [q] quit"
-		'face 'w3m-lnum-minibuffer-prompt))))
-      (w3m-static-if (featurep 'xemacs)
-	  (setq char (char-octet char))))))
+  (let* ((msg-prompt "Resize: [+ =] enlarge [-] shrink [0] original [q] quit")
+         (changed-rate (or changed-rate 1))
+         (rate (or (and rate (min rate 99)) w3m-resize-image-scale))
+         char)
+    (while
+      (cond
+       ((memq
+          (setq char
+            (w3m-static-if (featurep 'xemacs)
+              (progn
+                 (w3m--message nil t msg-prompt)
+                 (char-octet (read-char-exclusive)))
+             (read-char-exclusive
+               (propertize msg-prompt 'face 'w3m-lnum-minibuffer-prompt))))
+          '(?+ ?=))
+        (let ((percent (+ 100 rate)))
+          (w3m-resize-inline-image-internal image percent)
+          (setq changed-rate (* changed-rate
+                                (/ percent 100.0)))))
+       ((eq char ?-)
+        (let ((percent (/ 10000.0 (+ 100 rate))))
+          (w3m-resize-inline-image-internal image percent)
+          (setq changed-rate (* changed-rate
+                                (/ percent 100.0)))))
+       ((eq char ?0)
+        (w3m-resize-inline-image-internal image
+                                          (/ 100.0 changed-rate))
+        (setq changed-rate 1))
+       (t nil)))))
+
 
 (defun w3m-zoom-in-image (&optional rate)
   "Zoom in an image on the point.
@@ -6148,7 +6135,7 @@ specifies not using the cached data."
 				    (or (w3m-active-region-or-url-at-point) "")
 				    nil nil 'no-initial))
 			 "")
-      (message "A url is required")
+      (w3m--message t 'w3m-error "A url is required")
       (sit-for 1)))
   (unless filename
     (let ((basename (file-name-nondirectory (w3m-url-strip-query url))))
@@ -6184,7 +6171,7 @@ specifies not using the cached data."
 		t))
 	  (ding)
 	  (with-current-buffer page-buffer
-	    (message "Cannot retrieve URL: %s%s" url
+	    (w3m--message t 'w3m-error "Cannot retrieve URL: %s%s" url
 		     (cond ((and w3m-process-exit-status
 				 (not (equal w3m-process-exit-status 0)))
 			    (format " (exit status: %s)"
@@ -7032,7 +7019,7 @@ when the URL of the retrieved page matches the REGEXP."
 	(if oname
 	    (progn
 	      (unless quiet
-		(message "No such anchor: %s" oname))
+		(w3m--message t 'w3m-error "No such anchor: %s" oname))
 	      (throw 'found nil))
 	  (setq pos (point-min)
 		oname name
@@ -7157,7 +7144,7 @@ COUNT is treated as 1 by default if it is omitted."
 	  (if (and (equal w3m-current-url "about://cookie/")
 		   (> (length (w3m-list-buffers t)) 1))
 	      (w3m-delete-buffer)
-	    (message "There's no more history")))))))
+	    (w3m--message t 'w3m-error "There's no more history")))))))
 
 (defun w3m-view-next-page (&optional count)
   "Move forward COUNT pages in history.
@@ -7551,7 +7538,7 @@ No method to view `%s' is registered. Use `w3m-edit-this-url'"
 				    (delete-file file))
 				  (when (buffer-name buffer)
 				    (kill-buffer buffer))
-				  (message ""))
+				  (message nil))
 				file buffer))))))
 	(and (stringp file)
 	     (file-exists-p file)
@@ -7615,7 +7602,7 @@ of the url currently displayed.  The browser is defined in
 					w3m-current-url)
 				    nil nil 'no-initial)))
   (when (w3m-url-valid url)
-    (message "Browsing <%s>..." url)
+    (w3m--message nil t "Browsing <%s>..." url)
     (w3m-external-view url)))
 
 (defun w3m-view-url-with-browse-url (url)
@@ -8992,7 +8979,7 @@ or a list which consists of the following elements:
 		(when (w3m-unseen-buffer-p buf)
 		  (throw 'unseen buf)))))
       (if (not unseen)
-	  (message "No unseen buffer.")
+	  (w3m--message t 'w3m-error "No unseen buffer.")
 	(switch-to-buffer unseen)
 	(run-hooks 'w3m-select-buffer-hook)
 	(w3m-select-buffer-update)))))
@@ -9623,7 +9610,7 @@ this function will prompt user for it."
 			   t))
 		  (error "Permission denied, %s" filename)))
 	(copy-file ftp filename)
-	(message "Wrote %s" filename)))))
+	(w3m--message t t "Wrote %s" filename)))))
 
 (unless w3m-doc-view-map
   (setq w3m-doc-view-map (make-sparse-keymap))
@@ -10182,7 +10169,7 @@ See `w3m-default-directory'."
   "Open `w3m-new-session-url' in a new session."
   (interactive "P")
   (if (not (eq major-mode 'w3m-mode))
-      (message "This command can be used in w3m mode only")
+      (w3m--message t 'w3m-error "This command can be used in w3m mode only")
     (w3m-view-this-url-1 w3m-new-session-url reload 'new-session)))
 
 ;;;###autoload
