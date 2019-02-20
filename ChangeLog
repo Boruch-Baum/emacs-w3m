@@ -1,3 +1,8 @@
+2019-02-20  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el (w3m-print-this-url): BUGFIX: should not time-out current url
+	message.
+
 2019-02-18  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m.el (w3m-decode-entities-string): Simplify function.
@@ -151,6 +156,14 @@
 
 	* w3m-weather.el (w3m-about-weather): Use the new function and its
 	features.
+<<<<<<< HEAD
+=======
+
+2019-02-12  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-dtree.el (w3m-dtree-create-sub): BUGFIX: don't abort if a subdir
+	denies permission to read.
+>>>>>>> bb_messaging
 
 2019-02-03  Boruch Baum  <boruch_baum@gmx.com>
 

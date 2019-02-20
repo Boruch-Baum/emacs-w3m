@@ -7682,7 +7682,7 @@ Also, put it into the `kill-ring' and the OS clipboard."
       (and url interactive-p (kill-new (w3m-url-encode-string-2 url)))
       (cond
        ((setq url (w3m-url-readable-string url))
-         (w3m--message t t "%s"
+         (w3m--message nil t "%s"
            (cond
 	    ((> (length alt) 0)
 	     (concat alt ": " url))
