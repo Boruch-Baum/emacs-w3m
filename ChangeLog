@@ -1,3 +1,7 @@
+2019-02-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* aclocal.m4 (AC_EMACS_LISP): Use a file to pass ELisp program to Emacs.
+
 2019-02-20  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m.el (w3m-print-this-url): BUGFIX: should not time-out current url
@@ -7,6 +11,10 @@
 
 	* .travis.yaml: Add support for multiple emacs versions
 	and multiple operating systems.
+2019-02-19  Boruch Baum  <boruch_baum@gmx.com>
+
+	* .travis.yaml: Add support for multiple emacs versions and
+	multiple operating systems.
 
 	* READMME.md: Add the file as a stub, with example "badge"
 	picture for travis building and GPL licensing.
