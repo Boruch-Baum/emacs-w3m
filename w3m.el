@@ -6714,7 +6714,10 @@ If so return \"text/html\", otherwise \"text/plain\"."
 	(goto-char (point-min))
 	(w3m-copy-local-variables result-buffer)
 	(set-buffer-file-coding-system w3m-current-coding-system)
-	(when (string= "text/html" type) (w3m-fontify))
+	(when (string= "text/html" type)
+	  (w3m-fontify)
+	  (when (string-match "\\`about://db-history/" url)
+	    (w3m-db-history-fix-indentation)))
 	'text-page))))
 
 (defsubst w3m-image-page-displayed-p ()
@@ -11017,6 +11020,24 @@ It does manage history position data as well."
   "Whether to display URL histories in the current buffer."
   :group 'w3m
   :type 'boolean)
+
+(defun w3m-db-history-fix-indentation ()
+  "Fix wrong indentation that `w3m -halfdump' may produce in db history."
+  (let ((min-column 9999)
+	(regexp "[012][0-9]:[0-5][0-9]:[0-5][0-9] \
+\\(?:20[1-9][0-9]-[01][0-9]-[0-3][0-9]\\|Today\\) *$")
+	(inhibit-read-only t))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+	(goto-char (match-beginning 0))
+	(setq min-column (min min-column (current-column)))
+	(forward-line 1))
+      (goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+	(goto-char (match-beginning 0))
+	(delete-char (min 0 (- min-column (current-column))))
+	(forward-line 1)))))
 
 (defun w3m-db-history (&optional start size)
   "Display a flat chronological list of all buffers' browsing history.

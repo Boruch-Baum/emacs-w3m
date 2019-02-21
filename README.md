@@ -1,5 +1,15 @@
 # emacs-w3m
 
+[![Emacs logo]("https://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)]
+
+[//]: # License badges: https://gist.github.com/lukas-h/2a5d00690736b4c3a7ba
+[![License: GPL
+v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
+[![Build Status](https://travis-ci.com/Boruch-Baum/emacs-w3m.svg?branch=bb_travis)](https://travis-ci.com/boruch-baum/emacs-w3m)
+
+
+
 This is a fork of the
 [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git repository.
 The `master` branch here provides my tested modifications to the
@@ -41,6 +51,7 @@ pending pull requests.
     creep in by accident ...
     * <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
     * <sub>[_~~pr #13~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/13)</sub>
+    * <sub>[_pr #15_](https://github.com/emacs-w3m/emacs-w3m/pull/15)</sub>
   * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including
     tmp/cache files.
 
@@ -78,3 +89,8 @@ pending pull requests.
     text into its clipboard. At this point, do *NOT* use `M-x
     customize-variable` to modify the variable; the defcustom for the
     variable has a known bug. Other than that, it all seems to work great.
+
+* `bb_travis`<sub>[_pr #16_](https://github.com/emacs-w3m/emacs-w3m/pull/16)</sub>
+  * Adds multiple combinations of operating systems and emacs versions
+    to .travis.yml
+  * Demonstrates how to use travis 'badges' to embed images in README.md
