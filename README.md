@@ -90,7 +90,7 @@ pending pull requests.
     customize-variable` to modify the variable; the defcustom for the
     variable has a known bug. Other than that, it all seems to work great.
 
-* `bb_travis`<sub>[_pr #16_](https://github.com/emacs-w3m/emacs-w3m/pull/16)</sub>
+* `bb_travis`<sub>[_~~pr #16~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/16)</sub>
   * Adds multiple combinations of operating systems and emacs versions
     to .travis.yml
   * Demonstrates how to use travis 'badges' to embed images in README.md
