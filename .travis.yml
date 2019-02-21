@@ -1,5 +1,10 @@
 # .travis.yml for emacs-w3m (http://github.com/emacs-w3m/emacs-w3m/)
 
+branches:
+  only:
+   - master
+   - bb_travis
+
 ## cache could be a time-saver for
 ## + manually built xemacs21 on osx
 ## + apel/flim for all emacsen
