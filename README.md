@@ -1,4 +1,7 @@
 # emacs-w3m
+[![License GPL 3][badge-license]][copying]
+[![MELPA][melpa-badge]][melpa-package]
+[![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
 
 [![Emacs logo](https://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)]
 [![License: GPL
