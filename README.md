@@ -1,11 +1,8 @@
 # emacs-w3m
-
-[![Emacs logo]("https://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)]
-
-[//]: # License badges: https://gist.github.com/lukas-h/2a5d00690736b4c3a7ba
+[![Emacs logo](https://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)]
 [![License: GPL
 v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-
+[![MELPA](http://melpa.org/packages/w3m-badge.svg)](http://melpa.org/#/w3m)
 [![Build Status](https://travis-ci.com/Boruch-Baum/emacs-w3m.svg?branch=bb_travis)](https://travis-ci.com/boruch-baum/emacs-w3m)
 
 
@@ -13,7 +10,7 @@ v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org
 This is a fork of the
 [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git repository.
 The `master` branch here provides my tested modifications to the
-original, while the `bb_upstream`branch here _should_ track the
+original, while the `bb-upstream`branch here _should_ track the
 official repository's `master` branch. Additionally, this fork will
 have unique branches for development experiments, projects, and
 pending pull requests.
@@ -51,7 +48,7 @@ pending pull requests.
     creep in by accident ...
     * <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
     * <sub>[_~~pr #13~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/13)</sub>
-    * <sub>[_pr #15_](https://github.com/emacs-w3m/emacs-w3m/pull/15)</sub>
+    * <sub>[~~_pr #15~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/15)</sub>
   * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including
     tmp/cache files.
 
@@ -70,6 +67,7 @@ pending pull requests.
 
 * `bb_small_bug_fixes
   * w3m-dtree shouldn't abort on subdir permission restriction `<sub>[_~~pr #10~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/10)</sub>
+  * w3m-favicon-convert needed basic bounds checking  `<sub>[_~~pr #21~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/21)</sub>
 
 * `bb_messaging` <sub>[_pr #14_](https://github.com/emacs-w3m/emacs-w3m/pull/14)</sub>
   * Adds timeouts and colorization to w3m messages in the echo area. Also standardizes
