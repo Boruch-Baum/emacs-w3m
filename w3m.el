@@ -11427,8 +11427,9 @@ was called to terminate the emacs-w3m session.  In this case, the
 optional prefix argument FORCE can be set non-nil to exit the session
 without prompting for confirmation."
   (interactive "P")
-  (let ((pos (point))
-	(buffer (w3m-select-buffer-show-this-line)))
+  (let* ((pos (point))
+	 (buffer (w3m-select-buffer-current-buffer))
+         (show-next (eq (window-buffer w3m-select-buffer-window) buffer)))
     (if (= 1 (count-lines (point-min) (point-max)))
 	(w3m-quit force)
       (w3m-process-stop buffer)
@@ -11438,10 +11439,11 @@ without prompting for confirmation."
 	(w3m-form-kill-buffer buffer))
       (run-hooks 'w3m-delete-buffer-hook)
       (w3m-select-buffer-generate-contents
-       (w3m-select-buffer-current-buffer))
-      (w3m-select-buffer-show-this-line)
+        (w3m-select-buffer-current-buffer))
       (goto-char (min pos (point-max)))
-      (beginning-of-line))))
+      (beginning-of-line)
+      (when show-next
+        (w3m-select-buffer-show-this-line)))))
 
 (defun w3m-select-buffer-delete-other-buffers ()
   "Delete emacs-w3m buffers except for the buffer on the current menu."
@@ -11452,16 +11454,19 @@ without prompting for confirmation."
 (defun w3m-select-buffer-quit ()
   "Quit the buffers selection."
   (interactive)
-  (if (one-window-p t)
-      (set-window-buffer (selected-window)
-			 (or (w3m-select-buffer-current-buffer)
-			     (w3m-alive-p)))
-    (let ((buf (or (w3m-select-buffer-current-buffer)
-		   (w3m-alive-p)))
-	  pop-up-frames)
-      (pop-to-buffer buf)
-      (and (get-buffer-window w3m-select-buffer-name)
-	   (delete-windows-on w3m-select-buffer-name)))))
+  (delete-windows-on w3m-select-buffer-name))
+;  (if (one-window-p t)
+;      (set-window-buffer (selected-window)
+;			 (or (w3m-select-buffer-current-buffer)
+;			     (w3m-alive-p)))
+;    (let ((buf (or (w3m-select-buffer-current-buffer)
+;		   (w3m-alive-p)))
+;	  pop-up-frames)
+;      (pop-to-buffer buf)
+;      (and (get-buffer-window w3m-select-buffer-name)
+;	   (delete-windows-on w3m-select-buffer-name)))))
+
+
 
 (defun w3m-select-buffer-show-this-line-and-switch ()
   "Show the buffer on the menu and switch to the buffer."
