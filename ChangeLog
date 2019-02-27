@@ -6,6 +6,14 @@
 	displayed buffer when deleting other ones. This was a contribution by
 	Eugene Sharygin to the github repository PR#26, commit 390c4622eae.
 
+2019-02-26  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-proc.el (w3m-process-new): BUGFIX: gihub issue #20 (reverts part
+	of commit 99db1df).
+
+	* w3m-hist.el (w3m-history-slimmed-history-flat): BUGFIX: gihub issue
+	#20 (reverts part of commit 99db1df).
+
 2019-02-25  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-favicon.el (w3m-favicon-convert): bugfix: check string bounds
