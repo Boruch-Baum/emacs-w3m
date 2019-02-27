@@ -49,8 +49,11 @@ pending pull requests.
     * <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>
     * <sub>[_~~pr #13~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/13)</sub>
     * <sub>[~~_pr #15~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/15)</sub>
-  * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including
-    tmp/cache files.
+      Commit 99db1df of this turned out to be a small disaster, and ought
+      to be reverted until it can be fixed. The worst of it was
+      reverted in [_pr #23 ](https://github.com/emacs-w3m/emacs-w3m/pull/23)</sub>
+
+  * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including tmp/cache files.
 
 * `bb_utf`<sub>[_~~pr #9~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/9)</sub>
   * This branch is for converting the codebase to be fully UTF-8. The
@@ -92,3 +95,16 @@ pending pull requests.
   * Adds multiple combinations of operating systems and emacs versions
     to .travis.yml
   * Demonstrates how to use travis 'badges' to embed images in README.md
+
+  * Small bug fix to perform bounds checking.
+
+* `bb_documentation`<sub>[_pr #22_](https://github.com/emacs-w3m/emacs-w3m/pull/22)</sub>
+  * Suggested improvements to all documentation files.
+
+* `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
+
+* `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
+  * Change the way the session pop-up window behaves when deleting
+    buffers and when exiting the pop-up, so that the currently
+    displayed buffer is the one that remains 'on top'. This is mainly
+    the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
