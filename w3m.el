@@ -98,6 +98,7 @@
 (unless (or (featurep 'xemacs) (< emacs-major-version 23))
   (require 'bookmark-w3m))
 
+(require 'w3m-download)
 (require 'w3m-fb)
 (require 'w3m-hist)
 (require 'timezone)
@@ -7422,7 +7423,7 @@ command instead."
 		  (error "\
 No method to view `%s' is registered. Use `w3m-edit-this-url'"
 			 (file-name-nondirectory (w3m-url-to-file-name url)))
-		(w3m-download url nil no-cache handler)))
+		(w3m-download-using-w3m url nil no-cache handler)))
 	     ((functionp method)
 	      (funcall method url))
 	     ((consp method)
@@ -7442,13 +7443,13 @@ No method to view `%s' is registered. Use `w3m-edit-this-url'"
 		 ((and command (memq 'file arguments))
 		  (let ((w3m-current-buffer (current-buffer)))
 		    (w3m-process-do
-			(success (w3m-download url file no-cache handler))
+			(success (w3m-download-using-w3m url file no-cache handler))
 		      (when success
 			(w3m-external-view-file command file url arguments)))))
 		 (command
 		  (w3m-external-view-file command nil url arguments))
 		 (t
-		  (w3m-download url nil no-cache handler))))))))))))
+		  (w3m-download-using-w3m url nil no-cache handler))))))))))))
 
 (defun w3m-external-view-file (command file url arguments)
   ;; The 3rd argument `url' is necessary to handle the constant `url'
