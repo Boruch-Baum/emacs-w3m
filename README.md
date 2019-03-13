@@ -17,6 +17,18 @@ pending pull requests.
 
 ## Unique branches here
 
+* `bb_download` <sub>[_pr #27_](https://github.com/emacs-w3m/emacs-w3m/pull/27)</sub>
+  * New feature: Use `wget` when available for downloads.
+  * New feature: Allow resumption of aborted downloads.
+  * New feature: Detailed individual progress buffers for each
+    download.
+  * New feature: Ability to abort a download just by killing its
+    progress buffer.
+  * New feature: Option to save an image's caption as metadata (this
+    requires external programs `exif` for png files and `exiv2` for
+    jpg files).
+  * New file `w3m-download.el` collects most downloaded-related functions.
+
 * `bb_history-scrub`<sub>[_pr #2_](https://github.com/emacs-w3m/emacs-w3m/pull/2)</sub>
   * New feature `w3m-history-scrub` (keybinding `S-C-delete`) to
     delete web browsing resources (history, cookies, cache, temporary
