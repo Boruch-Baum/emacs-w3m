@@ -196,7 +196,6 @@ the operation is perfomed directly by
 
 (defun w3m--download-check-and-use-cache (url save-path metadata)
   (let* (beg end
-        (buffer (current-buffer))
         (ident (intern (w3m-w3m-canonicalize-url url) w3m-cache-hashtb)))
     (with-current-buffer w3m-cache-buffer
       (cond
@@ -264,8 +263,7 @@ Reference `set-process-sentinel'."
   "Download buffers should handle 'carriage return' characters.
 `wget' sends a \r at the beginning of every progress message in
 order to over-write its prior message. "
-  (let ((proc-buf (process-buffer proc))
-        proc-mark point-moved-by-user)
+  (let ((proc-buf (process-buffer proc)))
    (when (buffer-live-p proc-buf)
      (with-current-buffer proc-buf
        (let ((inhibit-read-only t))
@@ -283,8 +281,7 @@ order to over-write its prior message. "
 (defun w3m--download-using-wget (url save-path resume no-cache metadata)
   (when (not (when (not no-cache)
                (w3m--download-check-and-use-cache url save-path metadata)))
-    (let* (proc
-          (buf (generate-new-buffer "*w3m-download*")))
+    (let ((buf (generate-new-buffer "*w3m-download*")))
      (with-current-buffer buf
        (insert (format "emacs-w3m download log\n
     Killing this buffer will abort the download!\n
@@ -327,8 +324,8 @@ order to over-write its prior message. "
   (let ((url (or (w3m-anchor) (w3m-image))) act)
     (cond
      ((w3m-url-valid url)
-      (lexical-let ((pos (point-marker))
-                    (curl w3m-current-url))
+      (let ((pos (point-marker))
+            (curl w3m-current-url))
         (w3m-process-with-null-handler
           (w3m-process-do
               (success (w3m-download url nil nil handler))
@@ -350,8 +347,8 @@ order to over-write its prior message. "
   (let ((url (w3m-image)) act)
     (cond
      ((w3m-url-valid url)
-      (lexical-let ((pos (point-marker))
-                    (curl w3m-current-url))
+      (let ((pos (point-marker))
+            (curl w3m-current-url))
         (w3m-process-with-null-handler
           (w3m-process-do
               (success (w3m-download url nil nil handler))
@@ -390,7 +387,7 @@ Additionally, for certain downloads, if variable
 `w3m-download-save-metadata' is non-nil, then certain metadata
 will be attached to the file."
   (interactive (list (w3m-active-region-or-url-at-point) nil nil t))
-  (let* (basename resume extension metadata caption
+  (let* (basename extension metadata caption
         (num-in-progress (length w3m--download-processes-list))
         (others-in-progress-prompt
           (if (zerop num-in-progress) ""
@@ -473,9 +470,7 @@ specifies not using the cached data."
                                 w3m-default-save-directory basename))))
   (if (and w3m-use-ange-ftp (string-match "\\`ftp://" url))
       (w3m-goto-ftp-url url filename)
-    (lexical-let ((url url)
-                  (filename filename)
-                  (page-buffer (current-buffer)))
+    (let ((page-buffer (current-buffer)))
       (w3m-process-do-with-temp-buffer
           (type (progn
                   (w3m-clear-local-variables)
