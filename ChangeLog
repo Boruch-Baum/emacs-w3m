@@ -1,3 +1,10 @@
+2019-03-14  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el: Begin removing xemacs support, remove require for w3m-xmas,
+	and tweak version support message.
+
+	* w3m-xmas.el: delete file.
+
 2019-03-13  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el: New file with new features for better downloads,

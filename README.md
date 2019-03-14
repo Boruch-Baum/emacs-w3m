@@ -120,3 +120,11 @@ pending pull requests.
     buffers and when exiting the pop-up, so that the currently
     displayed buffer is the one that remains 'on top'. This is mainly
     the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
+
+* `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
+  * Remove support for xemacs. The upstream has not been in
+    development for years, there doesn't seem to be a user-base, and I
+    understand from the mailing list that it doesn't work anyway, so
+    this will remove the cruft from the code-base.
+  * This will probably be a slow process of incremental commits, just
+    to sure there are no side-effects.
