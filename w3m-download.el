@@ -209,7 +209,6 @@ the operation is perfomed directly by
 
 (defun w3m--download-check-and-use-cache (url save-path metadata)
   (let* (beg end
-        (buffer (current-buffer))
         (ident (intern (w3m-w3m-canonicalize-url url) w3m-cache-hashtb)))
     (with-current-buffer w3m-cache-buffer
       (cond
@@ -277,8 +276,7 @@ Reference `set-process-sentinel'."
   "Download buffers should handle 'carriage return' characters.
 `wget' sends a \r at the beginning of every progress message in
 order to over-write its prior message. "
-  (let ((proc-buf (process-buffer proc))
-        proc-mark point-moved-by-user)
+  (let ((proc-buf (process-buffer proc)))
    (when (buffer-live-p proc-buf)
      (with-current-buffer proc-buf
        (let ((inhibit-read-only t))
@@ -296,8 +294,7 @@ order to over-write its prior message. "
 (defun w3m--download-using-wget (url save-path resume no-cache metadata)
   (when (not (when (not no-cache)
                (w3m--download-check-and-use-cache url save-path metadata)))
-    (let* (proc
-          (buf (generate-new-buffer "*w3m-download*")))
+    (let ((buf (generate-new-buffer "*w3m-download*")))
      (with-current-buffer buf
        (insert (format "emacs-w3m download log\n
     Killing this buffer will abort the download!\n
@@ -403,7 +400,7 @@ Additionally, for certain downloads, if variable
 `w3m-download-save-metadata' is non-nil, then certain metadata
 will be attached to the file."
   (interactive (list (w3m-active-region-or-url-at-point) nil nil t))
-  (let* (basename resume extension metadata caption
+  (let* (basename extension metadata caption
         (num-in-progress (length w3m--download-processes-list))
         (others-in-progress-prompt
           (if (zerop num-in-progress) ""
