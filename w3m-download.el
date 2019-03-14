@@ -337,8 +337,8 @@ order to over-write its prior message. "
   (let ((url (or (w3m-anchor) (w3m-image))) act)
     (cond
      ((w3m-url-valid url)
-      (lexical-let ((pos (point-marker))
-                    (curl w3m-current-url))
+      (let ((pos (point-marker))
+            (curl w3m-current-url))
         (w3m-process-with-null-handler
           (w3m-process-do
               (success (w3m-download url nil nil handler))
@@ -360,8 +360,8 @@ order to over-write its prior message. "
   (let ((url (w3m-image)) act)
     (cond
      ((w3m-url-valid url)
-      (lexical-let ((pos (point-marker))
-                    (curl w3m-current-url))
+      (let ((pos (point-marker))
+            (curl w3m-current-url))
         (w3m-process-with-null-handler
           (w3m-process-do
               (success (w3m-download url nil nil handler))
@@ -483,9 +483,7 @@ specifies not using the cached data."
                                 w3m-default-save-directory basename))))
   (if (and w3m-use-ange-ftp (string-match "\\`ftp://" url))
       (w3m-goto-ftp-url url filename)
-    (lexical-let ((url url)
-                  (filename filename)
-                  (page-buffer (current-buffer)))
+    (let ((page-buffer (current-buffer)))
       (w3m-process-do-with-temp-buffer
           (type (progn
                   (w3m-clear-local-variables)
