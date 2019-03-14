@@ -188,11 +188,11 @@ would be in the download buffer's buffer-local variable
 When a file is saved from the cache, this function is not called;
 the operation is perfomed directly by
 `w3m--download-check-and-use-cache'."
-  (when w3m--download-metadata-operation)
+  (when w3m--download-metadata-operation
     (goto-char (point-max))
     (insert (format "\nAdding meta-data to file... \n  %s\n"
                     w3m--download-metadata-operation))
-    (shell-command w3m--download-metadata-operation t))
+    (shell-command w3m--download-metadata-operation t)))
 
 (defun w3m--download-check-and-use-cache (url save-path metadata)
   (let* (beg end
@@ -212,7 +212,7 @@ the operation is perfomed directly by
           (write-region beg end save-path))
         (when metadata
           (shell-command metadata))
-        (message "Saved from cache %s to %s"
+        (w3m--message t t "Saved from cache %s to %s"
           (if metadata "(with metadata)" "")
           save-path)
         t)))))
@@ -460,7 +460,7 @@ specifies not using the cached data."
                                     (or (w3m-active-region-or-url-at-point) "")
                                     nil nil 'no-initial))
                          "")
-      (message "A url is required")
+      (w3m--message t 'w3m-error "A url is required")
       (sit-for 1)))
   (unless filename
     (let ((basename (file-name-nondirectory (w3m-url-strip-query url))))
@@ -496,7 +496,7 @@ specifies not using the cached data."
                 t))
           (ding)
           (with-current-buffer page-buffer
-            (message "Cannot retrieve URL: %s%s" url
+            (w3m--message t 'w3m-error "Cannot retrieve URL: %s%s" url
                      (cond ((and w3m-process-exit-status
                                  (not (equal w3m-process-exit-status 0)))
                             (format " (exit status: %s)"
