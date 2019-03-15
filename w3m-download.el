@@ -386,6 +386,27 @@ The default name will be the original name of the image."
         (w3m-download url)
       (w3m-message "No image at point"))))
 
+(defun w3m-download-delete-all-download-buffers ()
+  "Delete all `w3m-download' buffers.
+
+Be careful when using this function. It will kill any active `wget'
+downloads in progress."
+  (interactive)
+  (let ((bufs (buffer-list))
+         buf)
+    (while (setq buf (pop bufs))
+      (when (string-match "^\\*w3m-download" (buffer-name buf))
+        (kill-buffer buf)))))
+
+(defalias 'w3m-download-kill-all-wget-processes
+  'w3m-download-delete-all-download-buffers
+  "Aborts all current downloads using `wget'.
+
+This is an alias for `w3m-download-delete-all-download-buffers',
+so expect the buffers to be deleted also.")
+
+
+
 ;;;###autoload
 (defun w3m-download-using-wget (url &optional save-path no-cache interactive)
   "Download URL to `w3m-default-save-directory'.
