@@ -352,7 +352,7 @@ order to over-write its prior message. "
       (let ((w3m-form-download t))
         (eval act)))
      (t
-      (w3m-message "No URL at point")))))
+      (w3m--message t 'w3m-error "No URL at point")))))
 
 (defun w3m-download-this-image ()
   "Download the image under point."
@@ -375,7 +375,7 @@ order to over-write its prior message. "
       (let ((w3m-form-download t))
         (eval act)))
      (t
-      (w3m-message "No image at point")))))
+      (w3m-message t 'w3m-error "No image at point")))))
 
 (defun w3m-save-image ()
   "Save the image under point to a file.
@@ -384,7 +384,7 @@ The default name will be the original name of the image."
   (let ((url (w3m-url-valid (w3m-image))))
     (if url
         (w3m-download url)
-      (w3m-message "No image at point"))))
+      (w3m-message t 'w3m-error "No image at point"))))
 
 (defun w3m-download-delete-all-download-buffers ()
   "Delete all `w3m-download' buffers.
