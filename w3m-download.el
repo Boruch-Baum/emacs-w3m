@@ -193,26 +193,27 @@ the operation is perfomed directly by
     (shell-command w3m--download-metadata-operation t)))
 
 (defun w3m--download-check-and-use-cache (url save-path metadata)
-  (let* (beg end
-        (ident (intern (w3m-w3m-canonicalize-url url) w3m-cache-hashtb)))
-    (with-current-buffer w3m-cache-buffer
-      (cond
-       ((not (setq beg (text-property-any
-                         (point-min) (point-max) 'w3m-cache ident)))
-        ;; It wasn't in the cache after all.
-        (setq w3m-cache-articles (delq ident w3m-cache-articles))
-        nil)
-       (t
-        ;; Find the end (i.e., the beginning of the next article).
-        (when (setq end (next-single-property-change
-                   (1+ beg) 'w3m-cache w3m-cache-buffer (point-max)))
-          (write-region beg end save-path))
-        (when metadata
-          (shell-command metadata))
-        (w3m--message t t "Saved from cache %s to %s"
-          (if metadata "(with metadata)" "")
-          save-path)
-        t)))))
+  (when (bufferp w3m-cache-buffer)
+    (let* (beg end
+          (ident (intern (w3m-w3m-canonicalize-url url) w3m-cache-hashtb)))
+      (with-current-buffer w3m-cache-buffer
+        (cond
+         ((not (setq beg (text-property-any
+                           (point-min) (point-max) 'w3m-cache ident)))
+          ;; It wasn't in the cache after all.
+          (setq w3m-cache-articles (delq ident w3m-cache-articles))
+          nil)
+         (t
+          ;; Find the end (i.e., the beginning of the next article).
+          (when (setq end (next-single-property-change
+                     (1+ beg) 'w3m-cache w3m-cache-buffer (point-max)))
+            (write-region beg end save-path))
+          (when metadata
+            (shell-command metadata))
+          (w3m--message t t "Saved from cache %s to %s"
+            (if metadata "(with metadata)" "")
+            save-path)
+          t))))))
 
 (defun w3m--download-kill-associated-process ()
   "Hook function for `Kill-buffer-hook' for w3m download buffers.
