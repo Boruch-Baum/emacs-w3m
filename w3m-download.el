@@ -94,6 +94,25 @@
 
 ;;; Code
 
+;;  Dependencies
+(require 'w3m-util)
+(require 'w3m)
+
+
+
+;;; Temporary compatability operation(s)
+
+;; My development git fork has a different messaging standard, based
+;; upon a pending pull request from my branch `bb_messaging', so
+;; support this git branch being merged into a branch lacking that
+;; other merge.
+(eval-when-compile
+  (when (not (fboundp 'w3m--message))
+    (defun w3m--message (timeout face &rest args)
+      (w3m-message args))))
+
+
+
 ;;; Global variables
 
 ;;Global list of all running `w3m-download' processes.
