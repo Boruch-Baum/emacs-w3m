@@ -24,9 +24,16 @@ pending pull requests.
     download.
   * New feature: Ability to abort a download just by killing its
     progress buffer.
+  * New feature: The number of simultaneous downloads may be
+    controlled, and can be dynamically changed.
+  * Downloads are queued, and the queue can be examined and
+    re-arranged from a special buffer.
   * New feature: Option to save an image's caption as metadata (this
     requires external programs `exif` for png files and `exiv2` for
     jpg files).
+  * New feature: For file-systems that support extended attributes, it
+    is possible to have `wget` save URL and HTTP header information as
+    metadata.
   * New file `w3m-download.el` collects most downloaded-related functions.
 
 * `bb_history-scrub`<sub>[_pr #2_](https://github.com/emacs-w3m/emacs-w3m/pull/2)</sub>
