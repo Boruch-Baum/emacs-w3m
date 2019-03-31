@@ -841,7 +841,7 @@ for the initial buffer creation, and by
         (goto-char (point-max))
         (setq result nil))))
   (goto-char (point-max))
-  (delete-backward-char 2)
+; (delete-backward-char 1)
   (w3m--download-update-statistics))
 
 (defun w3m--download-restore-point-sensibly (from cur-col)
@@ -947,6 +947,48 @@ Others?"
          (when (eq to 'w3m--download-queued)
            (w3m--download-from-queue)))
        t))))
+
+(defun w3m--download-queue-adjust (direction)
+  "Change the current entry's position in the w3m-download queue.
+DIRECTION is either 'raise or 'drop. This function is called by
+the interactive functions `w3m-download-queue-raise' and
+`w3m-download-queue-raise'."
+  (if (not (eq major-mode 'w3m-download-queue-mode))
+    (w3m--message t 'w3m-error
+      "This command is available only in w3m-download-queue buffers.")
+   (let ((inhibit-read-only t)
+         (current-column (current-column))
+         (url (buffer-substring-no-properties
+                (+ 2 (line-beginning-position))
+                (1- (line-beginning-position 2))))
+         queue elem prior result)
+    ; modify the queue
+    (with-mutex w3m--download-mutex
+      (setq queue w3m--download-queue)
+      (cond
+       ((eq direction 'raise)
+             (while queue
+               (cond
+                ((equal url (car (setq elem (pop queue))))
+                 (push elem result))
+                (t
+                 (push prior result)
+                 (setq prior elem)))))
+       ((eq direction 'drop)
+             (while queue
+               (cond
+                ((equal url (car (setq elem (pop queue))))
+                 (push prior result)
+                 (setq prior elem))
+                (t
+                 (push elem result)
+                 (when prior
+                   (push prior result)
+                   (setq prior nil)))))))
+      (push prior result)
+      (setq w3m--download-queue (reverse (delq nil result))))
+    ; redisplay the queue elements
+    (w3m--download-display-queue-list url current-column nil))))
 
 (defun w3m--download-check-and-use-cache (url save-path metadata)
   "If URL exists in the cache, use that copy.
