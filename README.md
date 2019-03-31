@@ -18,22 +18,25 @@ pending pull requests.
 ## Unique branches here
 
 * `bb_download` <sub>[_pr #27_](https://github.com/emacs-w3m/emacs-w3m/pull/27)</sub>
-  * New feature: Use `wget` when available for downloads.
+  * New feature: Use `wget` for downloads, when available.
   * New feature: Allow resumption of aborted downloads.
+  * Downloads are queued, and the queue can be examined and
+    re-arranged from a special buffer.
   * New feature: Detailed individual progress buffers for each
     download.
+  * New feature: Download status display buffer to view, resequence,
+    pause, resume, or kill any download.
   * New feature: Ability to abort a download just by killing its
     progress buffer.
   * New feature: The number of simultaneous downloads may be
     controlled, and can be dynamically changed.
-  * Downloads are queued, and the queue can be examined and
-    re-arranged from a special buffer.
   * New feature: Option to save an image's caption as metadata (this
     requires external programs `exif` for png files and `exiv2` for
     jpg files).
   * New feature: For file-systems that support extended attributes, it
     is possible to have `wget` save URL and HTTP header information as
     metadata.
+  * New feature: Use `youtube-dl` when available, for downloading videos.
   * New file `w3m-download.el` collects most downloaded-related functions.
 
 * `bb_history-scrub`<sub>[_pr #2_](https://github.com/emacs-w3m/emacs-w3m/pull/2)</sub>
