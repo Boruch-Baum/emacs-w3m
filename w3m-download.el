@@ -1408,7 +1408,7 @@ or failed, restart or continue it."
           (when (and timestamp (string-match "\n" timestamp))
             (setq timestamp (substring timestamp 0 (match-beginning 0))))
           (setq txt (nth 6 elem))
-          (setq elem `(,@(butlast elem 4) ,timestamp ,txt))
+          (setq elem `(,@(butlast elem 2) ,timestamp ,txt))
           (add-to-list 'w3m--download-queued elem t)
           (w3m--download-from-queue))
          (t
@@ -1436,6 +1436,7 @@ function `w3m-download-set-refresh-interval'."
      (w3m--download-refresh-buffer)
     (w3m-download-set-refresh-interval arg)))
 
+;;;###autoload
 (defun w3m-download-view-queue ()
   "View the `w3m-download' queue and allow editing it."
   (interactive)

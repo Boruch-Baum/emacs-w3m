@@ -93,7 +93,6 @@
 		      (nbutlast (split-string emacs-version "\\."))
 		      ".")))))
 
-(require 'bookmark-w3m)
 (require 'w3m-fb)
 (require 'w3m-hist)
 (require 'timezone)
