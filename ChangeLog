@@ -1,3 +1,7 @@
+2019-04-03  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-filter.el (w3m-filter-rt): Update for new site footers.
+
 2019-03-29  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el: Major feature and documentation additions: downloads
