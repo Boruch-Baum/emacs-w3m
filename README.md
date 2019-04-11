@@ -59,9 +59,11 @@ pending pull requests.
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
 
-* `bb_filters`<sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
-  * New filter: github main page for each repository
-  * New filter: xkcd
+* `bb_filters`
+  * New filter: github main page for each repository <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
+  * New filter: xkcd <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
+  * fix-filter: rt <sub>[_~~pr #30~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/30)</sub>
+  * fix filter: stackexchange <sub>[_pr #31_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
 
 * `bb_quibbles`
   * This isn't supposed to be a feature branch, or a bug-fixing
