@@ -63,7 +63,22 @@ pending pull requests.
   * New filter: github main page for each repository <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * New filter: xkcd <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * fix-filter: rt <sub>[_~~pr #30~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/30)</sub>
-  * fix filter: stackexchange <sub>[_pr #31_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
+  * fix filter: stackexchange <sub>[_~~pr #31~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
+
+* `bb_background_tab`<sub>[_pr #32_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
+  * BUGFIX: allow new tabs to be loaded in background
+  * New options: Functions `w3m-goto-url-new-session` and
+    `w3m-copy-buffer` accept `C-u` to invert your default setting for
+    background / foreground of new tabs.
+
+* `bb_move_tabs`<sub>[_pr #33_](https://github.com/emacs-w3m/emacs-w3m/pull/33)</sub>
+  * New feature: Change the order of tabs from within the buffer
+    listing (ie. w3m-select-buffer). The new functions are
+    `w3m-tab-move-next`, `w3m-tab-move-prior`, aliased to
+    `w3m-tab-move-right`, `w3m-tab-move-left`.
+  * The docstring for `w3m-select-mode` was updated and improved.
+  * Console-friendly keybindings were added for functions
+    `w3m-tab-move-left` (`C-c <`) and `w3m-tab-move-right` (`C-c >`).
 
 * `bb_quibbles`
   * This isn't supposed to be a feature branch, or a bug-fixing
