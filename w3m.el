@@ -9949,7 +9949,7 @@ invoked in other than a w3m-mode buffer."
        ((not (string= file-part ""))
 	(w3m-goto-url (w3m-expand-url (substring url (match-beginning 4))
 				      (concat "file://" default-directory))
-		      reload charset post-data referer handler element))
+		      reload charset post-data referer handler element no-popup))
        (t (w3m--message t 'w3m-error "No URL at point")))))
    ((w3m-url-valid url)
     (w3m--goto-url--valid-url url reload charset post-data referer handler
@@ -10075,8 +10075,8 @@ buffer will start afresh."
       (w3m-history-store-position)
       (setq buffer
         (w3m-copy-buffer
-          nil "*w3m*" w3m-new-session-in-background 'empty t))
-      (when (not w3m-new-session-in-background)
+          nil "*w3m*" no-popup 'empty t))
+      (when (not no-popup)
         (switch-to-buffer buffer))
       (set-buffer buffer)
       (w3m-display-progress-message url)
