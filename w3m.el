@@ -9947,10 +9947,11 @@ invoked in other than a w3m-mode buffer."
        ((and (string= file-part "") fragment-part)
 	(w3m-search-name-anchor fragment-part))
        ((not (string= file-part ""))
-	(w3m-goto-url (w3m-expand-url (substring url (match-beginning 4))
-				      (concat "file://" default-directory))
-		      reload charset post-data referer handler element no-popup))
-       (t (w3m--message t 'w3m-error "No URL at point")))))
+	(w3m-goto-url
+	 (w3m-expand-url (substring url (match-beginning 4))
+			 (concat "file://" default-directory))
+	 reload charset post-data referer handler element no-popup))
+       (t (w3m-message "No URL at point")))))
    ((w3m-url-valid url)
     (w3m--goto-url--valid-url url reload charset post-data referer handler
 			      element no-popup save-pos))
@@ -10067,10 +10068,10 @@ buffer will start afresh."
           w3m-new-session-in-background)))
   (let (buffer)
     (if (not
-         (or (eq 'w3m-mode major-mode)
-             (and (setq buffer (w3m-alive-p))
-                  (prog1 t (w3m-popup-buffer buffer)))))
-        (w3m-goto-url url nil charset post-data)
+	 (or (eq 'w3m-mode major-mode)
+	     (and (setq buffer (w3m-alive-p))
+		  (prog1 t (w3m-popup-buffer buffer)))))
+	(w3m-goto-url url nil charset post-data)
       ;; Store the current position in the history structure.
       (w3m-history-store-position)
       (setq buffer
