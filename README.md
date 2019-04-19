@@ -65,13 +65,13 @@ pending pull requests.
   * fix-filter: rt <sub>[_~~pr #30~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/30)</sub>
   * fix filter: stackexchange <sub>[_~~pr #31~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
 
-* `bb_background_tab`<sub>[_pr #32_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
+* `bb_background_tab`<sub>[_~~pr #32~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
   * BUGFIX: allow new tabs to be loaded in background
   * New options: Functions `w3m-goto-url-new-session` and
     `w3m-copy-buffer` accept `C-u` to invert your default setting for
     background / foreground of new tabs.
 
-* `bb_move_tabs`<sub>[_pr #33_](https://github.com/emacs-w3m/emacs-w3m/pull/33)</sub>
+* `bb_move_tabs`<sub>[_~~pr #33~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/33)</sub>
   * New feature: Change the order of tabs from within the buffer
     listing (ie. w3m-select-buffer). The new functions are
     `w3m-tab-move-next`, `w3m-tab-move-prior`, aliased to
