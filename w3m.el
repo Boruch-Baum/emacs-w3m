@@ -3352,9 +3352,7 @@ function neither displays nor logs the message."
                 'face (if (facep face) face 'w3m-message)))))
    ;; Clear previous message in order to shrink
    ;; the window height of the echo area.
-   (unless (or (featurep 'xemacs)
-               (< emacs-major-version 22)
-               (< (string-width (or (current-message) "")) (window-width)))
+   (unless (< (string-width (or (current-message) "")) (window-width))
      (message nil))
    ;; Produce the message
    (unless w3m--message-silent
@@ -3365,12 +3363,8 @@ function neither displays nor logs the message."
                  (when (current-message)
                    (not (equal (current-message) w3m--current-message)))))
            (apply (function format) (list msg))
-         (w3m-static-if (featurep 'xemacs)
-             (progn
-               (setq w3m--current-message msg)
-               (display-message 'no-log w3m--current-message))
-           (let (message-log-max)
-             (setq w3m--current-message (apply 'message (list msg))))))))
+         (let (message-log-max)
+           (setq w3m--current-message msg)))))
    ;; Deal with the TIMEOUT options
    (when (and w3m-message-timeout timeout)
      (run-at-time

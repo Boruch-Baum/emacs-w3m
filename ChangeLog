@@ -1,5 +1,8 @@
 2019-05-03  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m--message): BUGFIX: was occassionally silently crashing in
+	a process handler, requiring the buffer process to be manually stopped.
+
 	* w3m.el, w3m-download.el: bugfix: resolve recursive load error due to
 	placement of call to w3m--download-init, and symbol error due to use of
 	variable w3m-profile-directory.
