@@ -17,6 +17,12 @@ pending pull requests.
 
 ## Unique branches here
 
+* `bb_magnet` <sub>[_pr #37_](https://github.com/emacs-w3m/emacs-w3m/pull/37)</sub>
+  * New feature: Download torrents and magnet links. This feature
+    requires three external command-line utilities from the
+    `transmission` project (`transmission-daemon`, `transmission-cli`,
+    and `transmission-remote-cli`).
+
 * `bb_download` <sub>[_pr #27_](https://github.com/emacs-w3m/emacs-w3m/pull/27)</sub>
   * New feature: Use `wget` for downloads, when available.
   * New feature: Allow resumption of aborted downloads.
