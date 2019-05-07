@@ -18,7 +18,8 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
-* `bb_magnet` <sub>[_pr #37_](https://github.com/emacs-w3m/emacs-w3m/pull/37)</sub>
+* `bb_magnet` <sub>[_~~pr #37~~
+  merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/37), [_pr #38_](https://github.com/emacs-w3m/emacs-w3m/pull/38)</sub>
   * New feature: Download torrents and magnet links. This feature
     requires three external command-line utilities from the
     `transmission` project (`transmission-daemon`, `transmission-cli`,
