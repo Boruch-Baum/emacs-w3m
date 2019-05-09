@@ -62,18 +62,18 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 * `bb_history-display`<sub>[_pr #4_](https://github.com/emacs-w3m/emacs-w3m/pull/4)</sub>
   * New option `w3m-history-in-new-buffer`.
-  * BUGFIXES: The global history display now properly handles page
+  * Bugfixes: The global history display now properly handles page
     size control, ie. you can select where in the history to begin
     displaying and how many entries to display per page.
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
 
 * `bb_bookmarks` <sub>[_pr #40_](https://github.com/emacs-w3m/emacs-w3m/pull/40)</sub>
-  * IMPROVEMENTS: w3m-bookmark-add-all prompts only once for a section
+  * Improvements: w3m-bookmark-add-all prompts only once for a section
     name, using a sane timestamp-based default, doesn't add bookmark
     buffers to the bookmark file, auto-refreshes bookmark buffers, and
     improve error handling.
-  * BUGFIXES: Operate in all display modes, correct coding errors for
+  * Bugfixes: Operate in all display modes, correct coding errors for
     functions string-match and switch-to-buffer.
 
 * `bb_filters`
