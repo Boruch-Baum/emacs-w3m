@@ -68,6 +68,14 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
 
+* `bb_bookmarks` <sub>[_pr #40_](https://github.com/emacs-w3m/emacs-w3m/pull/40)</sub>
+  * IMPROVEMENTS: w3m-bookmark-add-all prompts only once for a section
+    name, using a sane timestamp-based default, doesn't add bookmark
+    buffers to the bookmark file, auto-refreshes bookmark buffers, and
+    improve error handling.
+  * BUGFIXES: Operate in all display modes, correct coding errors for
+    functions string-match and switch-to-buffer.
+
 * `bb_filters`
   * New filter: github main page for each repository <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * New filter: xkcd <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
