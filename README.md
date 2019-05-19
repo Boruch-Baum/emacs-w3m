@@ -18,6 +18,9 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_sessions_merge`<sub>[_pr #43_](https://github.com/emacs-w3m/emacs-w3m/pull/43)</sub>
+  * New feature: copy session element(s) into another session.
+  * Default keybinding 'm', 'M'.
 * `bb_sessions_2`<sub>[_pr #42_](https://github.com/emacs-w3m/emacs-w3m/pull/42)</sub>
   * Bugfix: Don't quit the session buffer after opening a session.
   * Bugfix: Retain session buffer in its window (it was being replaced
