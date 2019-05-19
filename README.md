@@ -18,6 +18,18 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_sessions_2`<sub>[_pr #42_](https://github.com/emacs-w3m/emacs-w3m/pull/42)</sub>
+  * Bugfix: Don't quit the session buffer after opening a session.
+  * Bugfix: Retain session buffer in its window (it was being replaced
+    with the created buffer(s)).
+  * Bugfix: Don't create duplicate buffers.
+
+* `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
+  * Change the way the session pop-up window behaves when deleting
+    buffers and when exiting the pop-up, so that the currently
+    displayed buffer is the one that remains 'on top'. This is mainly
+    the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
+
 * `bb_magnet` <sub>[_~~pr #37~~
   merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/37), [_~~pr
   #38~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/38)</sub>
@@ -158,12 +170,6 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * Suggested improvements to all documentation files.
 
 * `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
-
-* `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
-  * Change the way the session pop-up window behaves when deleting
-    buffers and when exiting the pop-up, so that the currently
-    displayed buffer is the one that remains 'on top'. This is mainly
-    the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
 
 * `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
   * Remove support for xemacs. The upstream has not been in
