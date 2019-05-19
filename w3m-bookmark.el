@@ -334,12 +334,12 @@ With prefix, ask for a new url instead of the present one."
   "Add urls of all pages being visited to the bookmark."
   (interactive)
   (let* ((buffers (w3m-list-buffers))
-         (len     (length buffers))
-         (default-section (format-time-string
-                            "Saved bookmarks: %Y-%m-%d %H:%M:%S"
-                            (current-time)))
-         (error-count 0)
-         section title bookmark-buffers)
+	 (len     (length buffers))
+	 (default-section (format-time-string
+			   "Saved bookmarks: %Y-%m-%d %H:%M:%S"
+			   (current-time)))
+	 (error-count 0)
+	 section title bookmark-buffers)
     (cond
      ((zerop len)
       (w3m--message t 'w3m-error
@@ -351,13 +351,13 @@ With prefix, ask for a new url instead of the present one."
       ;; `w3m-bookmark-add', so when making changes here, also
       ;; consider that function.
       (setq section (completing-read
-                      (format "Section (default %s): " default-section)
-                      (append (list (list default-section))
-                              (w3m-bookmark-sections))
-                      nil nil nil
-                      'w3m-bookmark-section-history))
+		     (format "Section (default %s): " default-section)
+		     (append (list (list default-section))
+			     (w3m-bookmark-sections))
+		     nil nil nil
+		     'w3m-bookmark-section-history))
       (when (or (not section) (not (stringp section)) (string= section ""))
-           (setq section default-section))
+	(setq section default-section))
       (if (string-match "^[\t ]*$" section)
         (w3m--message t 'w3m-error
           "You must specify a bookmark section name")
