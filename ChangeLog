@@ -1,5 +1,9 @@
 2019-05-19  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m--message): BUGFIX: Handling of sub-string "%29".
+
+2019-05-19  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-session.el (w3m-session-select-merge): New feature, allows moving
 	data between sessions.
 	(w3m-session-select-mode-map): Bind new feature to 'm' and 'M'.
