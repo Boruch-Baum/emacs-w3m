@@ -1,3 +1,8 @@
+2019-05-27  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el (w3m-copy-buffer): Bug fix for [emacs-w3m:13417], by
+	duplicating internal code of function clone-buffer.
+
 2019-04-15  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m.el bugfixes to allow loading new tabs in background.

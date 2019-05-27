@@ -8056,9 +8056,22 @@ buffer."
       new ; return value for this function
       ))
    (t ; ie. (not empty)
-    (let (new)
+    (let ((lvars (buffer-local-variables))
+           new)
       (with-current-buffer buffer
         (setq new (clone-buffer new-name)))
+      (set-buffer new)
+      ; BEGIN: copied from function `clone-buffer'
+      ; Solves bugs [emacs-w3m:13417] by performing variable
+      ; assignments a second time. Ugly, but for some reason it works.
+      (mapc (lambda (v)
+	      (condition-case ()	;in case var is read-only
+          (if (symbolp v)
+            (makunbound v)
+           (set (make-local-variable (car v)) (cdr v)))
+          (error nil)))
+        lvars)
+      ; END: copied from function `clone-buffer'
       (if (not background)
         (switch-to-buffer new))
       new ; return value for this function
