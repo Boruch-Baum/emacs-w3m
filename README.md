@@ -21,6 +21,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
 * `bb_sessions_merge`<sub>[_~~pr #43~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/43)</sub>
   * New feature: copy session element(s) into another session.
   * Default keybinding 'm', 'M'.
+
 * `bb_sessions_2`<sub>[_~~pr #42~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/42)</sub>
   * Bugfix: Don't quit the session buffer after opening a session.
   * Bugfix: Retain session buffer in its window (it was being replaced
@@ -102,6 +103,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * New options: Functions `w3m-goto-url-new-session` and
     `w3m-copy-buffer` accept `C-u` to invert your default setting for
     background / foreground of new tabs.
+  * Use clone-buffer to copy tabs in order to improve performance.
 
 * `bb_move_tabs`<sub>[_~~pr #33~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/33)</sub>
   * New feature: Change the order of tabs from within the buffer
@@ -123,8 +125,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
       Commit 99db1df of this turned out to be a small disaster, and ought
       to be reverted until it can be fixed. The worst of it was
       reverted in [_pr #23 ](https://github.com/emacs-w3m/emacs-w3m/pull/23)</sub>
-
-  * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including tmp/cache files.
+    * BUGFIX <sub>[_~~pr #8~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/8)</sub>: w3m-cleanup-temp-files: The regexp wasn't including tmp/cache files.
 
 * `bb_utf`<sub>[_~~pr #9~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/9)</sub>
   * This branch is for converting the codebase to be fully UTF-8. The
@@ -169,6 +170,10 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
   * Small bug fix to perform bounds checking.
 
+* `bb_view_url` <sub>[~~_pr #44~~_](https://github.com/emacs-w3m/emacs-w3m/pull/44)</sub>
+  * remove duplicate code by replacing use of `w3m-view-this-url-1'
+    with calls to w3m-goto-url{,-new-session}.
+
 * `bb_documentation`<sub>[_pr #22_](https://github.com/emacs-w3m/emacs-w3m/pull/22)</sub>
   * Suggested improvements to all documentation files.
 
@@ -180,7 +185,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
     understand from the mailing list that it doesn't work anyway, so
     this will remove the cruft from the code-base.
   * This will probably be a slow process of incremental commits, just
-    to sure there are no side-effects.
+    to be sure there are no side-effects.
 
 ## Project README documentation
 
