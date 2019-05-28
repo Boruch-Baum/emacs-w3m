@@ -1,4 +1,4 @@
-;; w3m.el --- an Emacs interface to w3m -*- coding: utf-8; -*-
+;;; w3m.el --- an Emacs interface to w3m -*- coding: utf-8; -*-
 
 ;; Copyright (C) 2000-2019 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
@@ -1686,13 +1686,7 @@ command `w3m'."
   :group 'w3m
   :type 'boolean)
 
-(defcustom w3m-view-this-url-new-session-in-background nil
-  "*Obsolete."
-  :group 'w3m
-  :type 'boolean)
-
-(defcustom w3m-new-session-in-background
-  w3m-view-this-url-new-session-in-background
+(defcustom w3m-new-session-in-background nil
   "Don't switch to newly created buffers / tabs.
 This setting can be temporarily over-ridden by opening a new
 session with a prefix argument, ie C-u M-x
