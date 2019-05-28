@@ -1,3 +1,8 @@
+2019-05-27  Tatsuya Kinoshita  <tats@debian.org>
+
+	* w3m-bookmark.el (w3m-bookmark-file-modtime): Chase links
+	([emacs-w3m:13427]).
+
 2019-05-27  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m.el (w3m-copy-buffer): Bug fix for [emacs-w3m:13417], by
@@ -18,6 +23,8 @@
 
 	* w3m.el (w3m-new-session-in-background, w3m-goto-url-new-session):
 	update documentation for clarity and for use of prefix arguemnt.
+
+2019-05-19  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-session.el (w3m-session-select-select): Don't quit after each
 	individual session action.
