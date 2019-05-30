@@ -6932,45 +6932,60 @@ when the URL of the retrieved page matches the REGEXP."
 			     url))))
 
 (defun w3m-search-name-anchor (name &optional quiet no-record)
+  "Go to the HTML anchor NAME on the current page/buffer.
+If QUIET is non-nil, don't report failure to the echo area. If
+NO-RECORD is non-nil, don't record the movement of point in the
+history."
   (interactive "sName: ")
   (let ((pos (point-min))
-	(cur-pos (point))
-	oname found)
+        (cur-pos (point))
+        oname found)
     (catch 'found
+      ;; the buffer is scanned up to four times: for the literal NAME
+      ;; given and for NAME's `w3m-url-decode-string' value, against
+      ;; text properties `w3m-name-anchor' and `w3m-name-anchor2'.
       (while (not found)
-	(while (setq pos (next-single-property-change pos 'w3m-name-anchor))
-	  (when (member name (get-text-property pos 'w3m-name-anchor))
-	    (goto-char pos)
-	    (when (eolp) (forward-line))
-	    (w3m-horizontal-on-screen)
-	    (throw 'found (setq found t))))
-	(setq pos (point-min))
-	(while (setq pos (next-single-property-change pos 'w3m-name-anchor2))
-	  (when (member name (get-text-property pos 'w3m-name-anchor2))
-	    (goto-char pos)
-	    (when (eolp) (forward-line))
-	    (w3m-horizontal-on-screen)
-	    (throw 'found (setq found t))))
-	(if oname
-	    (progn
-	      (unless quiet
-		(w3m--message t 'w3m-error "No such anchor: %s" oname))
-	      (throw 'found nil))
-	  (setq pos (point-min)
-		oname name
-		name (w3m-url-decode-string name)))))
-
-    (when (and found
-	       (not no-record)
-	       (/= (point) cur-pos))
-      (setq w3m-name-anchor-from-hist
-	    (append (list 1 nil (point) cur-pos)
-		    (and (integerp (car w3m-name-anchor-from-hist))
-			 (nthcdr (1+ (car w3m-name-anchor-from-hist))
-				 w3m-name-anchor-from-hist)))))
+        (while (setq pos (next-single-property-change pos 'w3m-name-anchor))
+          (when (member name (get-text-property pos 'w3m-name-anchor))
+            (throw 'found (setq found t))))
+        (setq pos (point-min))
+        (while (setq pos (next-single-property-change pos 'w3m-name-anchor2))
+          (when (member name (get-text-property pos 'w3m-name-anchor2))
+            (throw 'found (setq found t))))
+        (if oname
+            (progn
+              (unless quiet
+                (w3m--message t 'w3m-error "No such anchor: %s" oname))
+              (throw 'found nil))
+          (setq pos (point-min)
+                oname name
+                name (w3m-url-decode-string name)))))
     (when found
-      (w3m-recenter))
-    found))
+      (w3m-labels
+        ((position-point
+          (pos cur-pos no-record)
+          (goto-char pos)
+          (when (eolp) (forward-line))
+          (or no-record (= (point) cur-pos)
+              (setq w3m-name-anchor-from-hist
+                (append (list 1 nil (point) cur-pos)
+                        (and (integerp (car w3m-name-anchor-from-hist))
+                             (nthcdr (1+ (car w3m-name-anchor-from-hist))
+                                     w3m-name-anchor-from-hist)))))
+
+	    (w3m-horizontal-on-screen)
+	    (w3m-recenter)))
+	(if (get-buffer-window (current-buffer) (selected-frame))
+	    (position-point pos cur-pos no-record)
+	  ;; Make the window positions sure to be set
+	  ;; even when it runs in the background.
+	  (save-window-excursion
+	    (set-window-buffer (selected-window) (current-buffer))
+	    (position-point pos cur-pos no-record)
+	    ;; `w3m-history-restore-position' will run
+	    ;; when the buffer is selected thereafter.
+	    (w3m-history-store-position))))
+      t)))
 
 (defun w3m-parent-page-available-p ()
   (if (null w3m-current-url)
