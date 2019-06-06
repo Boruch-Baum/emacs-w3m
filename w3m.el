@@ -1689,8 +1689,8 @@ command `w3m'."
 (defcustom w3m-new-session-in-background nil
   "Don't switch to newly created buffers / tabs.
 This setting can be temporarily over-ridden by opening a new
-session with a prefix argument, ie C-u M-x
-w3m-goto-url-new-session, or `C-u G'."
+session with a prefix argument, ie C-u M-x w3m-goto-url-new-session,
+or `C-u G'."
   :group 'w3m
   :type 'boolean)
 
@@ -4338,19 +4338,15 @@ resizing an image."
 If RATE is not given, use `w3m-resize-image-scale'.
 CHANGED-RATE is currently changed rate / 100."
   (let* ((msg-prompt "Resize: [+ =] enlarge [-] shrink [0] original [q] quit")
-         (changed-rate (or changed-rate 1))
-         (rate (or (and rate (min rate 99)) w3m-resize-image-scale))
-         char)
+	 (changed-rate (or changed-rate 1))
+	 (rate (or (and rate (min rate 99)) w3m-resize-image-scale))
+	 char)
     (while
       (cond
        ((memq
           (setq char
-            (w3m-static-if (featurep 'xemacs)
-              (progn
-                 (w3m--message nil t msg-prompt)
-                 (char-octet (read-char-exclusive)))
              (read-char-exclusive
-               (propertize msg-prompt 'face 'w3m-lnum-minibuffer-prompt))))
+               (propertize msg-prompt 'face 'w3m-lnum-minibuffer-prompt)))
           '(?+ ?=))
         (let ((percent (+ 100 rate)))
           (w3m-resize-inline-image-internal image percent)
@@ -6972,7 +6968,6 @@ history."
                         (and (integerp (car w3m-name-anchor-from-hist))
                              (nthcdr (1+ (car w3m-name-anchor-from-hist))
                                      w3m-name-anchor-from-hist)))))
-
 	    (w3m-horizontal-on-screen)
 	    (w3m-recenter)))
 	(if (get-buffer-window (current-buffer) (selected-frame))
@@ -7261,9 +7256,9 @@ Reading " (w3m-url-readable-string (w3m-url-strip-authinfo url)) " ...\n\n"
 		pos buffer)
     (if new-session
 	(let ((empty
- 	       ;; If a new url has the #name portion (ie. a URI
- 	       ;; "fragment"), we simply copy the buffer's contents to
- 	       ;; the new session, otherwise creating an empty buffer.
+	       ;; If a new url has the #name portion (ie. a URI
+	       ;; "fragment"), we simply copy the buffer's contents to
+	       ;; the new session, otherwise creating an empty buffer.
 	       (not (and (progn
 			   (w3m-string-match-url-components url)
 			   (match-beginning 8))
@@ -7988,72 +7983,50 @@ Return t if highlighting is successful."
 (defun w3m-copy-buffer (&optional buffer new-name background empty last)
   "Copy an emacs-w3m BUFFER, and return the new buffer.
 
-If BUFFER is nil, the current buffer is assumed. If NEW-NAME is
-nil, a name is created based upon the name of the current buffer.
+If BUFFER is nil, the current buffer is assumed.
 
-If BACKGROUND is non-nil, do not switch to the new buffer copy.
-When (and only when) this function is called interactively, this
-value is determined by `w3m-new-session-in-background', but can
-be inverted by calling this function with a prefix argument.
+If NEW-NAME is nil, a name is created based on the name of the current
+buffer.  If BACKGROUND is non-nil, do not switch to the new buffer.
 
-If EMPTY is non-nil, an empty buffer is created, but with the
-current buffer's history and settings.
+When called interactively, you will be prompted for NEW-NAME if and
+only if a prefix argument is given, and BACKGROUND inherits the value
+of `w3m-new-session-in-background'.
 
-If LAST is non-nil, the new buffer will be buried as the final
-w3m buffer; otherwise, it will be sequenced next to the current
-buffer."
-  (interactive
-    (list nil nil (if current-prefix-arg
-                    (not w3m-new-session-in-background)
-                   w3m-new-session-in-background)))
+If EMPTY is non-nil, an empty buffer is created, but with the current
+buffer's history and settings.
+
+If LAST is non-nil, the new buffer will be buried as the final w3m
+buffer; otherwise, it will be sequenced next to the current buffer."
+  (interactive (list nil
+		     (if current-prefix-arg (read-string "Name: "))
+		     w3m-new-session-in-background))
   (unless buffer
     (setq buffer (current-buffer)))
   (unless new-name
     (setq new-name (buffer-name buffer)))
   (when (string-match "<[0-9]+>\\'" new-name)
     (setq new-name (substring new-name 0 (match-beginning 0))))
-  (cond
-   (empty
-    (let ((coding w3m-current-coding-system)
-          (images w3m-display-inline-images)
-          (init-frames (when (w3m-popup-frame-p)
-                         (copy-sequence w3m-initial-frames)))
-          (new (w3m-generate-new-buffer new-name (not last))))
-      (w3m-history-store-position)
-      (with-current-buffer new
-        (w3m-history-copy buffer)
-        (setq w3m-current-coding-system coding
-              w3m-initial-frames init-frames
-              w3m-display-inline-images
-                (if w3m-toggle-inline-images-permanently
-                  images
-                 w3m-default-display-inline-images)))
-      (when (not background)
-        (w3m-popup-buffer new))
-      new ; return value for this function
-      ))
-   (t ; ie. (not empty)
-    (let ((lvars (buffer-local-variables))
-           new)
-      (with-current-buffer buffer
-        (setq new (clone-buffer new-name)))
-      (set-buffer new)
-      ; BEGIN: copied from function `clone-buffer'
-      ; Solves bugs [emacs-w3m:13417] by performing variable
-      ; assignments a second time. Ugly, but for some reason it works.
-      (mapc (lambda (v)
-	      (condition-case ()	;in case var is read-only
-          (if (symbolp v)
-            (makunbound v)
-           (set (make-local-variable (car v)) (cdr v)))
-          (error nil)))
-        lvars)
-      ; END: copied from function `clone-buffer'
-      (if (not background)
-        (switch-to-buffer new))
-      new ; return value for this function
-      ))))
 
+  (let ((lvars (buffer-local-variables))
+         new)
+    (with-current-buffer buffer
+      (setq new (clone-buffer new-name)))
+    (set-buffer new)
+    ; BEGIN: copied from function `clone-buffer'
+    ; Solves bugs [emacs-w3m:13417] by performing variable
+    ; assignments a second time. Ugly, but for some reason it works.
+    (mapc (lambda (v)
+            (condition-case ()	;in case var is read-only
+        (if (symbolp v)
+          (makunbound v)
+         (set (make-local-variable (car v)) (cdr v)))
+        (error nil)))
+      lvars)
+    ; END: copied from function `clone-buffer'
+    (if (not background)
+      (switch-to-buffer new))
+    new ; return value for this function
+    ))
 
 (defvar w3m-previous-session-buffer nil
   "A buffer of the session having selected just before this session.
@@ -9981,7 +9954,7 @@ invoked in other than a w3m-mode buffer."
     (w3m-goto-mailto-url url post-data))
    ;; process torrents and their magnets
    ((or (string-match "\\`magnet:" url)
-        (string-match "\\.torrent$" url))
+	(string-match "\\.torrent$" url))
     (w3m--goto-torrent-url url))
    ;; process ftp: protocol
    ((and w3m-use-ange-ftp
@@ -10118,7 +10091,7 @@ See `w3m-default-directory'."
 
 ;;;###autoload
 (defun w3m-goto-url-new-session (url &optional reload charset post-data
-                                     referer no-popup)
+				     referer no-popup)
   "Visit World Wide Web pages in a new buffer.
 
 If called interactively from an existing `emacs-w3m' buffer, the
@@ -10130,17 +10103,17 @@ default setting for `w3m-new-session-in-background'."
   ;; Elsewhere it seems to be referred to as BACKGROUND.
   (interactive
    (list (w3m-input-url "Open URL in new buffer" nil
-                        (or (w3m-active-region-or-url-at-point)
-                            w3m-new-session-url)
-                        nil 'feeling-searchy 'no-initial)
-         nil ;; reload
-         (w3m-static-if (fboundp 'universal-coding-system-argument)
-             coding-system-for-read)
-         nil ;; post-data
-         nil ;; referer
-         (if current-prefix-arg ;; no-popup
-           (not w3m-new-session-in-background)
-          w3m-new-session-in-background)))
+			(or (w3m-active-region-or-url-at-point)
+			    w3m-new-session-url)
+			nil 'feeling-searchy 'no-initial)
+	 nil ;; reload
+	 (w3m-static-if (fboundp 'universal-coding-system-argument)
+	     coding-system-for-read)
+	 nil ;; post-data
+	 nil ;; referer
+	 (if current-prefix-arg ;; no-popup
+	     (not w3m-new-session-in-background)
+	   w3m-new-session-in-background)))
   (let (buffer)
     (if (not
 	 (or (eq 'w3m-mode major-mode)
@@ -10155,17 +10128,17 @@ default setting for `w3m-new-session-in-background'."
       (set-buffer buffer)
       (w3m-display-progress-message url)
       (w3m-goto-url
-        url
-        (or reload
-            ;; When new URL has `name' portion, (ir. a URI
-            ;; "fragment"), we have to goto the base url
-            ;; because generated buffer has no content at
-            ;; this moment.
-            (and
-             (w3m-string-match-url-components url)
-             (match-beginning 8)
-             'redisplay))
-        charset post-data referer nil nil no-popup)
+       url
+       (or reload
+	   ;; When new URL has `name' portion, (ir. a URI
+	   ;; "fragment"), we have to goto the base url
+	   ;; because generated buffer has no content at
+	   ;; this moment.
+	   (and
+	    (w3m-string-match-url-components url)
+	    (match-beginning 8)
+	    'redisplay))
+       charset post-data referer nil nil no-popup)
       ;; Delete useless newly created buffer if it is empty.
       (w3m-delete-buffer-if-empty buffer))))
 
@@ -11444,7 +11417,7 @@ The following command keys are available:
 Use the prefix argument to move N positions.
 EVENT is an internal arg for mouse control."
   (interactive (list (prefix-numeric-value current-prefix-arg)
-                     last-command-event))
+		     last-command-event))
   (with-current-buffer (w3m-select-buffer-current-buffer)
     (w3m-tab-move-right n event)))
 
@@ -11453,7 +11426,7 @@ EVENT is an internal arg for mouse control."
 Use the prefix argument to move N positions.
 EVENT is an internal arg for mouse control."
   (interactive (list (prefix-numeric-value current-prefix-arg)
-                     last-command-event))
+		     last-command-event))
   (with-current-buffer (w3m-select-buffer-current-buffer)
     (w3m-tab-move-right (- n) event)))
 
@@ -11875,8 +11848,9 @@ Refer to variable `w3m-display-mode' for details."
 
 (defun w3m-cleanup-temp-files ()
   (when w3m-do-cleanup-temp-files
-    (dolist (f (directory-files w3m-profile-directory t "^w3m\\(cache\\|el\\|src\\|tmp\\)" t))
-        (delete-file f))))
+    (dolist (f (directory-files w3m-profile-directory t
+				"^w3m\\(cache\\|el\\|src\\|tmp\\)" t))
+      (delete-file f))))
 
 (defun w3m-show-form-hint ()
   "Show sending form hint when the cursor is in a form."
