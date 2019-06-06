@@ -8014,7 +8014,6 @@ buffer; otherwise, it will be sequenced next to the current buffer."
     (setq new-name (buffer-name buffer)))
   (when (string-match "<[0-9]+>\\'" new-name)
     (setq new-name (substring new-name 0 (match-beginning 0))))
-
   (let ((lvars (buffer-local-variables))
          new)
     (with-current-buffer buffer
@@ -8031,6 +8030,7 @@ buffer; otherwise, it will be sequenced next to the current buffer."
         (error nil)))
       lvars)
     ; END: copied from function `clone-buffer'
+    (setq w3m-current-process nil)
     (if (not background)
       (switch-to-buffer new))
     new ; return value for this function
@@ -10125,12 +10125,13 @@ default setting for `w3m-new-session-in-background'."
   (let (buffer)
     (if (not
 	 (or (eq 'w3m-mode major-mode)
-	     (and (setq buffer (w3m-alive-p))
+       	     (and (setq buffer (w3m-alive-p))
 		  (prog1 t (w3m-popup-buffer buffer)))))
 	(w3m-goto-url url nil charset post-data)
       ;; Store the current position in the history structure.
       (w3m-history-store-position)
-      (setq buffer (w3m-copy-buffer nil "*w3m*" no-popup 'empty w3m-new-session-last))
+      (setq buffer
+        (w3m-copy-buffer nil "*w3m*" no-popup 'empty w3m-new-session-last))
       (when (not no-popup)
         (switch-to-buffer buffer))
       (set-buffer buffer)

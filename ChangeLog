@@ -1,5 +1,7 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m-copy-buffer): Bugfix: should not be copying all local variables.
+
 	(w3m--setup-popup-window): Bugfix for toggling horizontal or vertical display.
 
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
