@@ -1,5 +1,9 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	(w3m--setup-popup-window): Bugfix for toggling horizontal or vertical display.
+
+2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-util.el (w3m-generate-new-buffer): Bugfixes in positioning of new buffers.
 
 	* w3m.el (w3m-new-session-last): New defcustom to control position of new tabs
