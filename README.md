@@ -18,6 +18,11 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_page_anchors`<sub>[_pr #46_](https://github.com/emacs-w3m/emacs-w3m/pull/46)</sub>
+  * Make old interactive feature usable: `w3m-search-name-anchor` to
+    jump to an HTML anchor on the current page.
+  * Default keybinding 'C-c j'.
+
 * `bb_sessions_merge`<sub>[_~~pr #43~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/43)</sub>
   * New feature: copy session element(s) into another session.
   * Default keybinding 'm', 'M'.
