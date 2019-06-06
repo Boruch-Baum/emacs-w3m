@@ -1,5 +1,10 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	(w3m-select-buffer-horizontal-window): Change default to nil, ie.
+	vertical window, for better viewing
+
+2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m.el (w3m--get-page-anchors): New funcion.
 	(w3m-search-name-anchor): Prompt user interactively with list of
 	available anchors, excluding those from w3m half-dump. Provide this

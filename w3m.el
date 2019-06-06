@@ -11207,7 +11207,7 @@ the link to a page is preferred unless the prefix argument is given."
 	(t (error "Can't pipe page source"))))
 
 ;;; Interactive select buffer.
-(defcustom w3m-select-buffer-horizontal-window t
+(defcustom w3m-select-buffer-horizontal-window nil
   "*Non-nil means split windows horizontally to open selection pop-up windows."
   :group 'w3m
   :type 'boolean)
