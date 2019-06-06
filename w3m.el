@@ -11285,6 +11285,8 @@ The following command keys are available:
     (substitute-key-definition
      'w3m-select-buffer 'w3m-select-buffer-toggle-style map w3m-mode-map)
     (define-key map " " 'w3m-select-buffer-show-this-line)
+    (define-key map [down] 'w3m-select-next-line)
+    (define-key map [up] 'w3m-select-previous-line)
     (define-key map "g" 'w3m-select-buffer-recheck)
     (define-key map "j" 'w3m-select-buffer-next-line)
     (define-key map "k" 'w3m-select-buffer-previous-line)
@@ -11366,12 +11368,13 @@ The following command keys are available:
 (defun w3m-select-buffer-show-this-line (&optional interactive-p)
   "Show the buffer on the current menu line or scroll it up."
   (interactive (list t))
-  (forward-line 0)
   (let ((obuffer (and (window-live-p w3m-select-buffer-window)
 		      (window-buffer w3m-select-buffer-window)))
-	(buffer (w3m-select-buffer-current-buffer)))
+	(buffer (w3m-select-buffer-current-buffer))
+        (col (current-column)))
     (unless buffer
       (error "No buffer at point"))
+    (forward-line 0)
     (cond
      ((get-buffer-window buffer)
       (setq w3m-select-buffer-window (get-buffer-window buffer)))
@@ -11391,6 +11394,7 @@ The following command keys are available:
 	(w3m-scroll-up-or-next-url nil)))
     (w3m-force-window-update w3m-select-buffer-window)
     (w3m--message t t w3m-select-buffer-message)
+    (forward-char col)
     buffer))
 
 (defun w3m-select-buffer-show-this-line-and-down ()
@@ -11404,16 +11408,25 @@ The following command keys are available:
 	(pop-to-buffer buffer)
 	(w3m-scroll-down-or-previous-url nil)))))
 
+(defun w3m-select-next-line (&optional n)
+  "Move cursor vertically down N lines, maintaining column position."
+  (interactive "p")
+  (let ((col-1 (current-column)))
+    (line-move (or n 1))
+    (when (eobp)
+      (forward-line 0)
+      (forward-char col-1))))
+
+(defun w3m-select-previous-line (&optional n)
+  "Move cursor vertically up N lines, maintaining column position."
+  (interactive "p")
+  (w3m-select-next-line (- n)))
+
 (defun w3m-select-buffer-next-line (&optional n)
   "Move cursor vertically down N lines and show the buffer on the menu."
   (interactive "p")
-  (forward-line n)
-  (prog1
-      (w3m-select-buffer-show-this-line)
-    (w3m-static-when (featurep 'xemacs)
-      (save-window-excursion
-	;; Update gutter tabs.
-	(select-window w3m-select-buffer-window)))))
+  (w3m-select-next-line n)
+  (w3m-select-buffer-show-this-line))
 
 (defun w3m-select-buffer-previous-line (&optional n)
   "Move cursor vertically up N lines and show the buffer on the menu."
@@ -11495,8 +11508,6 @@ without prompting for confirmation."
 ;      (pop-to-buffer buf)
 ;      (and (get-buffer-window w3m-select-buffer-name)
 ;	   (delete-windows-on w3m-select-buffer-name)))))
-
-
 
 (defun w3m-select-buffer-show-this-line-and-switch ()
   "Show the buffer on the menu and switch to the buffer."

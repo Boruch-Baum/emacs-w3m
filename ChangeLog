@@ -1,3 +1,12 @@
+2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el (w3m-select-next-line, w3m-select-previous-line): New
+	functions, to maintain column position when navigation buffer-selection
+	pop-up.
+	(w3m-select-buffer-mode-map, w3m-select-buffer-next-line): Use the new functions.
+	(w3m-select-buffer-show-this-line): maintain column position.
+	(w3m-select-buffer-next-line): Remove Xemacs support
+
 2019-05-27  Tatsuya Kinoshita  <tats@debian.org>
 
 	* w3m-bookmark.el (w3m-bookmark-file-modtime): Chase links
