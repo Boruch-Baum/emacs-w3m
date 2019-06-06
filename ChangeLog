@@ -1,8 +1,11 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-util.el (w3m-generate-new-buffer): Bugfixes in positioning of new buffers.
+
 	* w3m.el (w3m-new-session-last): New defcustom to control position of new tabs
 	in list of tabs.
 	(w3m-goto-url-new-session): Use the new variable.
+	(w3m-use-title-buffer-name): Improve docstring.
 
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 

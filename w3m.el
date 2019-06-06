@@ -1524,7 +1524,9 @@ See the balloon-help.el file for more information."
   :type 'boolean)
 
 (defcustom w3m-use-title-buffer-name nil
-  "Non-nil means use name of buffer included current title."
+  "Include a URL's title as part of a buffer name.
+When non-nil, w3m buffer names take the form \"title *w3m*<n>\",
+instead of just \"*w3m*<n>\"."
   :group 'w3m
   :type 'boolean)
 

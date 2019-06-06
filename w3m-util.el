@@ -448,20 +448,17 @@ An argument of nil means kill the current buffer."
 (defun w3m-generate-new-buffer (name &optional next)
   "Create and return a buffer with a name based on NAME.
 Make the new buffer the next of the current buffer if NEXT is non-nil."
-  (when w3m-use-title-buffer-name
+  (when next
     (let* ((tailbufs (let ((w3m-fb-mode nil))
 		       (let ((all-w3m-buffers (w3m-list-buffers)))
-			 (if next
-			     (memq (current-buffer) all-w3m-buffers)
-			   (last all-w3m-buffers)))))
+			     (memq (current-buffer) all-w3m-buffers))))
 	   (new-buffer-number (w3m-buffer-number (car tailbufs))))
       (when (string-match "\\*w3m\\*\\(<\\([0-9]+\\)>\\)?\\'" name)
 	(setq name "*w3m*"))
       (when (and tailbufs new-buffer-number)
-	(let ((n (1+ new-buffer-number)))
-	  (dolist (buf (cdr tailbufs))
-	    (w3m-buffer-set-number buf (setq n (1+ n))))
-	  (setq name (format "%s<%d>" name (1+ new-buffer-number)))))))
+	(dolist (buf (reverse (cdr tailbufs)))
+	  (w3m-buffer-set-number buf (1+ (w3m-buffer-number buf))))
+	(setq name (format "%s<%d>" name (1+ new-buffer-number))))))
   (let ((prev (and (eq major-mode 'w3m-mode) (current-buffer)))
 	(new (generate-new-buffer name)))
     (with-current-buffer new
