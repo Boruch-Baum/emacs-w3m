@@ -8014,27 +8014,96 @@ buffer; otherwise, it will be sequenced next to the current buffer."
     (setq new-name (buffer-name buffer)))
   (when (string-match "<[0-9]+>\\'" new-name)
     (setq new-name (substring new-name 0 (match-beginning 0))))
-  (let ((lvars (buffer-local-variables))
-         new)
-    (with-current-buffer buffer
-      (setq new (clone-buffer new-name)))
-    (set-buffer new)
-    ; BEGIN: copied from function `clone-buffer'
-    ; Solves bugs [emacs-w3m:13417] by performing variable
-    ; assignments a second time. Ugly, but for some reason it works.
-    (mapc (lambda (v)
-            (condition-case ()	;in case var is read-only
-        (if (symbolp v)
-          (makunbound v)
-         (set (make-local-variable (car v)) (cdr v)))
-        (error nil)))
-      lvars)
-    ; END: copied from function `clone-buffer'
-    (setq w3m-current-process nil)
-    (if (not background)
-      (switch-to-buffer new))
-    new ; return value for this function
-    ))
+  (let (url coding images init-frames new)
+    (save-current-buffer
+      (set-buffer buffer)
+      (setq url (or w3m-current-url
+		    (car (w3m-history-element (cadar w3m-history))))
+	    coding w3m-current-coding-system
+	    images w3m-display-inline-images
+	    init-frames (when (w3m-popup-frame-p)
+			  (copy-sequence w3m-initial-frames)))
+      (unless url
+	(setq empty t))
+      ;;
+      (w3m-history-store-position)
+      (set-buffer (setq new (w3m-generate-new-buffer new-name (not last))))
+      ;; Make copies of `w3m-history' and `w3m-history-flat'.
+      (w3m-history-copy buffer)
+      (setq w3m-current-coding-system coding
+	    w3m-initial-frames init-frames
+	    w3m-display-inline-images
+	    (if w3m-toggle-inline-images-permanently
+		images
+	      w3m-default-display-inline-images)))
+    (cond
+     (empty) ;; Don't leave from the current buffer.
+     (t ;; Switch to the `new' buffer in which `w3m-goto-url' runs.
+      (set-buffer new)
+      ;; Render a page.
+      (let ((positions (copy-sequence (car w3m-history)))
+	    (w3m-history-reuse-history-elements t)
+	    (w3m-prefer-cache t)
+	    (w3m-clear-display-while-reading
+	     ;; Don't show the progress message for the background run.
+	     (unless (and background (w3m-interactive-p))
+	       w3m-clear-display-while-reading)))
+	(w3m-process-with-wait-handler
+	  (w3m-goto-url url 'redisplay nil nil nil handler
+			;; Pass the properties of the history elements,
+			;; although it is currently always nil.
+			(w3m-history-element (cadr positions))))
+	(setcar w3m-history positions))
+      (when (and background (not (get-buffer-window buffer)))
+	(set-window-buffer (selected-window) buffer))))
+    new))
+;; (defun w3m-copy-buffer (&optional buffer new-name background empty last)
+;;   "Copy an emacs-w3m BUFFER, and return the new buffer.
+;;
+;; If BUFFER is nil, the current buffer is assumed.
+;;
+;; If NEW-NAME is nil, a name is created based on the name of the current
+;; buffer.  If BACKGROUND is non-nil, do not switch to the new buffer.
+;;
+;; When called interactively, you will be prompted for NEW-NAME if and
+;; only if a prefix argument is given, and BACKGROUND inherits the value
+;; of `w3m-new-session-in-background'.
+;;
+;; If EMPTY is non-nil, an empty buffer is created, but with the current
+;; buffer's history and settings.
+;;
+;; If LAST is non-nil, the new buffer will be buried as the final w3m
+;; buffer; otherwise, it will be sequenced next to the current buffer."
+;;   (interactive (list nil
+;; 		     (if current-prefix-arg (read-string "Name: "))
+;; 		     w3m-new-session-in-background))
+;;   (unless buffer
+;;     (setq buffer (current-buffer)))
+;;   (unless new-name
+;;     (setq new-name (buffer-name buffer)))
+;;   (when (string-match "<[0-9]+>\\'" new-name)
+;;     (setq new-name (substring new-name 0 (match-beginning 0))))
+;;   (let ((lvars (buffer-local-variables))
+;;          new)
+;;     (with-current-buffer buffer
+;;       (setq new (clone-buffer new-name)))
+;;     (set-buffer new)
+;;     ; BEGIN: copied from function `clone-buffer'
+;;     ; Solves bugs [emacs-w3m:13417] by performing variable
+;;     ; assignments a second time. Ugly, but for some reason it works.
+;;     (mapc (lambda (v)
+;;             (condition-case ()	;in case var is read-only
+;;         (if (symbolp v)
+;;           (makunbound v)
+;;          (set (make-local-variable (car v)) (cdr v)))
+;;         (error nil)))
+;;       lvars)
+;;     ; END: copied from function `clone-buffer'
+;;     (setq w3m-current-process nil)
+;;     (if (not background)
+;;       (switch-to-buffer new))
+;;     new ; return value for this function
+;;     ))
 
 (defvar w3m-previous-session-buffer nil
   "A buffer of the session having selected just before this session.
