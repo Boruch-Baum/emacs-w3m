@@ -1,5 +1,11 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m-new-session-last): New defcustom to control position of new tabs
+	in list of tabs.
+	(w3m-goto-url-new-session): Use the new variable.
+
+2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m.el (w3m-view-this-url-new-session)
 	(w3m--goto-url--handler-function, w3m-goto-url-new-session)
 	(w3m-view-this-url-1): Partial merge of bb-upstream 6c42578b

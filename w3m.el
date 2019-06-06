@@ -244,6 +244,12 @@ all the emacs-w3m programs safely after loading the w3m.elc module."
   :type '(radio (const :format "Not specified " nil)
 		(string :format "Command: %v\n")))
 
+(defcustom w3m-new-session-last nil
+  "Should new tabs be positioned at end of the list.
+When NIL, new tabs will be positioned after the current one."
+  :group 'w3m
+  :type  'boolean)
+
 (defcustom w3m-display-ins-del 'auto
   "*Value of `display_ins_del' option."
   :group 'w3m
@@ -10122,10 +10128,11 @@ default setting for `w3m-new-session-in-background'."
 	(w3m-goto-url url nil charset post-data)
       ;; Store the current position in the history structure.
       (w3m-history-store-position)
-      (setq buffer (w3m-copy-buffer nil "*w3m*" no-popup 'empty t))
+      (setq buffer (w3m-copy-buffer nil "*w3m*" no-popup 'empty w3m-new-session-last))
       (when (not no-popup)
         (switch-to-buffer buffer))
       (set-buffer buffer)
+      (setq buffer-read-only nil)
       (w3m-display-progress-message url)
       (w3m-goto-url
        url
