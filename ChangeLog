@@ -1,5 +1,11 @@
 2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m-view-this-url-new-session)
+	(w3m--goto-url--handler-function, w3m-goto-url-new-session)
+	(w3m-view-this-url-1): Partial merge of bb-upstream 6c42578b
+
+2019-06-06  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m.el (w3m-select-next-line, w3m-select-previous-line): New
 	functions, to maintain column position when navigation buffer-selection
 	pop-up.

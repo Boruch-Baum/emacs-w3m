@@ -7273,8 +7273,7 @@ Reading " (w3m-url-readable-string (w3m-url-strip-authinfo url)) " ...\n\n"
 	  (setq pos (point-marker)
 		buffer (w3m-copy-buffer
 			nil nil w3m-new-session-in-background empty t))
-	  (when w3m-new-session-in-background
-	    (set-buffer buffer))
+          (set-buffer buffer)
 	  (when empty
 	    (w3m-display-progress-message url)))
       (setq buffer (current-buffer)))
@@ -7384,9 +7383,13 @@ If Transient Mark mode, deactivate the mark."
 If the region is active, use the `w3m-open-all-links-in-new-session'
 command instead."
   (interactive)
+  (let ((w3m-clear-display-while-reading
+	  ;; Don't show the progress message for the background run.
+          (unless w3m-new-session-in-background
+	    w3m-clear-display-while-reading)))
   (if (w3m-region-active-p)
       (call-interactively 'w3m-open-all-links-in-new-session)
-    (w3m-view-this-url nil t)))
+    (w3m-view-this-url nil t))))
 
 (defun w3m-mouse-view-this-url-new-session (event)
   "Follow the link under the mouse pointer in a new session."
@@ -9736,13 +9739,18 @@ helpful message is presented and the operation is aborted."
       (and (match-beginning 8)
 	   (setq name (match-string 9 w3m-current-url)))
       (when (and name
-		 (progn
-		   ;; Redisplay to search an anchor sure.
-		   (sit-for 0)
-		   (w3m-search-name-anchor name nil
-					   (not (eq action 'cursor-moved)))))
+                 (w3m-search-name-anchor name
+                   nil (not (eq action 'cursor-moved))))
 	(setf (w3m-arrived-time (w3m-url-strip-authinfo orig))
-	      (w3m-arrived-time url)))
+	      (w3m-arrived-time url))
+;	(unless (or w3m-message-silent
+;		    (not (eq this-command 'w3m-view-this-url-new-session))
+;		    (get-buffer-window w3m-current-buffer (selected-frame)))
+;	  (when (string-match "\\*w3m\\*<[0-9]+>\\'"
+;			      (setq name (buffer-name w3m-current-buffer)))
+;	    (setq name (match-string 0 name)))
+;	  (w3m--message t t "The content (%s) has been retrieved in %s" url name))
+        )
       (unless (eq action 'cursor-moved)
 	(if (equal referer "about://history/")
 	    ;; Don't sprout a new branch for
@@ -9810,7 +9818,7 @@ helpful message is presented and the operation is aborted."
   (w3m-process-stop (current-buffer))	; Stop all processes retrieving images.
   (w3m-idle-images-show-unqueue (current-buffer))
   ;; Store the current position in the history structure if SAVE-POS
-  ;; is set or this command is called interactively.
+  ;; is set or `w3m-goto-url' is called interactively.
   (when (or save-pos (w3m-interactive-p))
     (w3m-history-store-position))
   ;; Access url group
@@ -10141,9 +10149,7 @@ default setting for `w3m-new-session-in-background'."
 	(w3m-goto-url url nil charset post-data)
       ;; Store the current position in the history structure.
       (w3m-history-store-position)
-      (setq buffer
-        (w3m-copy-buffer
-          nil "*w3m*" no-popup 'empty t))
+      (setq buffer (w3m-copy-buffer nil "*w3m*" no-popup 'empty t))
       (when (not no-popup)
         (switch-to-buffer buffer))
       (set-buffer buffer)
