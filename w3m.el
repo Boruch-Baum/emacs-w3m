@@ -10005,7 +10005,7 @@ invoked in other than a w3m-mode buffer."
 	 (w3m-expand-url (substring url (match-beginning 4))
 			 (concat "file://" default-directory))
 	 reload charset post-data referer handler element no-popup))
-       (t (w3m-message "No URL at point")))))
+       (t (w3m--message t 'w3m-error "No URL at point")))))
    ((w3m-url-valid url)
     (w3m--goto-url--valid-url url reload charset post-data referer handler
 			      element no-popup save-pos))
