@@ -462,6 +462,26 @@ Make the new buffer the next of the current buffer if NEXT is non-nil."
   (let ((prev (and (eq major-mode 'w3m-mode) (current-buffer)))
 	(new (generate-new-buffer name)))
     (with-current-buffer new
+;;======= Buggy commit 50051242efa5c08d16c4b
+;;  (when (string-match "\\*w3m\\*\\(<\\([0-9]+\\)>\\)\\'" name)
+;;    (setq name (substring name 0 (match-beginning 1))))
+;;  (let ((tailbufs (let* ((w3m-fb-mode nil)
+;;			 (all (w3m-list-buffers)))
+;;		    (if next
+;;			(memq (current-buffer) all)
+;;		      (last all))))
+;;	new num prev)
+;;    (when tailbufs
+;;      (setq new (1+ (or (w3m-buffer-number (car tailbufs)) 1))
+;;	    num new
+;;	    prev (current-buffer))
+;;      (dolist (buf (cdr tailbufs))
+;;	(w3m-buffer-set-number buf (setq num (1+ num)))))
+;;    (with-current-buffer
+;;	(setq new (generate-new-buffer (if new
+;;					   (format "%s<%d>" name new)
+;;					 name)))
+;;>>>>>>> bb-upstream
       (w3m-mode)
       (setq w3m-previous-session-buffer prev))
     new))
