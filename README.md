@@ -18,6 +18,10 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_query_trackers`<sub>[_pr #47_](https://github.com/emacs-w3m/emacs-w3m/pull/47)</sub>
+  * Allow users to remove trackers embedded in URLs.
+  * See `defcustom` `w3m-strip-queries-alist`.
+
 * `bb_page_anchors`<sub>[_pr #46_](https://github.com/emacs-w3m/emacs-w3m/pull/46)</sub>
   * Make old interactive feature usable: `w3m-search-name-anchor` to
     jump to an HTML anchor on the current page.
