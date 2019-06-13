@@ -1,3 +1,9 @@
+2019-06-12  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-util.el (w3m-generate-new-buffer): Remove commented code of buggy
+	commit 50051242efa5c08d16c4b, Add sanity checks for buffer name, Use
+	buggy commit idea to reduce nested let's.
+
 2019-06-07  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* w3m-util.el (w3m-generate-new-buffer):
