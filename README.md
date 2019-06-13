@@ -18,6 +18,13 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_local_files`<sub>[_pr #48_](https://github.com/emacs-w3m/emacs-w3m/pull/48)</sub>
+  * Expands environment variables (eg. $HOME, $TEMPDIR, ~)
+  * Respects documentation for w3m-local-find-file-regexps, in terms
+    of what the included and excluded regexes do.
+  * Doesn't hide a new find-file buffer when creating it using
+    function w3m-goto-url-new-session.
+
 * `bb_query_trackers`<sub>[_pr #47_](https://github.com/emacs-w3m/emacs-w3m/pull/47)</sub>
   * Allow users to remove trackers embedded in URLs.
   * See `defcustom` `w3m-strip-queries-alist`.
