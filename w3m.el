@@ -3350,6 +3350,7 @@ matter what `message-log-max' is).
 
 If `w3m--message-silent' is temporarily bound to non-nil, this
 function neither displays nor logs the message."
+  (when (not (car args)) (setq args (list "")))
   (let ((msg
           (replace-regexp-in-string "%28" "("
             (replace-regexp-in-string "%29" ")"
@@ -6457,7 +6458,8 @@ to fold them).  Things in textarea won't be modified."
 		      page-buffer)
 		(w3m-force-window-update-later page-buffer 1e-9)
 		(unless (get-buffer-window page-buffer)
-		  (w3m--message t t "The content (%s) has been retrieved in %s"
+;                 (w3m--message t t "The content (%s) has been retrieved in %s"
+		  (w3m--message t t "The content %s has been retrieved in %s"
 			       url (buffer-name page-buffer))))))
 	(when (and w3m-clear-display-while-reading
 		   (string-match "\\`file:" url))
