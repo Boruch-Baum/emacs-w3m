@@ -3,10 +3,14 @@
 	* w3m.el (w3m--retrieve-and-render--handler-function): Test if parens
 	in format string is messing up occassional w3m--message calls.
 	(w3m--message): Ensure args is of type list.
+	(w3m--goto-url--valid-url): Use new feature w3m--url-strip-queries.
 
 	* w3m-util.el (w3m-generate-new-buffer): Remove commented code of buggy
 	commit 50051242efa5c08d16c4b, Add sanity checks for buffer name, Use
 	buggy commit idea to reduce nested let's.
+	(w3m--url-strip-queries): New feature: Strip unwanted trackers from
+	urls.
+	(w3m-strip-queries-alist): Defcustom in support of the new feature.
 
 2019-06-07  Katsumi Yamaoka  <yamaoka@jpl.org>
 
