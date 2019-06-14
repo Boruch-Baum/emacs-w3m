@@ -1263,6 +1263,8 @@ Details are set by `w3m-strip-queries-alist'."
   '(("^https?://.*" "&?utm_source=[^&]+")
     ("^https?://.*" "&?utm_medium=[^&]+")
     ("^https?://.*" "&?utm_campaign=[^&]+")
+    ("^https?://.*" "&?email_source=[^&]+")
+    ("^https?://.*" "&?email_token=[^&]+")
     )
   "Alist of url regexes and query regexes to strip from them.
 This is meant to remove unwanted trackers or other data that
