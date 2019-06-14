@@ -18,6 +18,11 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_sessions_copy`<sub>[_pr #49_](https://github.com/emacs-w3m/emacs-w3m/pull/49)</sub>
+  * New feature: copy a session, bound to 'c' and 'C'.
+  * Bugfixes: properly position point after operations.
+  * Bugfix: delete a session when deleting its last element.
+
 * `bb_local_files`<sub>[_pr #48_](https://github.com/emacs-w3m/emacs-w3m/pull/48)</sub>
   * Expands environment variables (eg. $HOME, $TEMPDIR, ~)
   * Respects documentation for w3m-local-find-file-regexps, in terms
