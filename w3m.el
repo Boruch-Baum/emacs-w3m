@@ -11319,29 +11319,18 @@ The following command keys are available:
 (unless w3m-select-buffer-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map)
-    (substitute-key-definition
-     'next-line 'w3m-select-buffer-next-line map global-map)
-    (substitute-key-definition
-     'previous-line 'w3m-select-buffer-previous-line map global-map)
-    (substitute-key-definition
-     'w3m-copy-buffer 'w3m-select-buffer-copy-buffer map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-next-buffer 'w3m-select-buffer-next-line map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-previous-buffer 'w3m-select-buffer-previous-line map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-delete-buffer 'w3m-select-buffer-delete-buffer map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-delete-other-buffers
-     'w3m-select-buffer-delete-other-buffers map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-scroll-up-or-next-url
-     'w3m-select-buffer-show-this-line map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-scroll-down-or-previous-url
-     'w3m-select-buffer-show-this-line-and-down map w3m-mode-map)
-    (substitute-key-definition
-     'w3m-select-buffer 'w3m-select-buffer-toggle-style map w3m-mode-map)
+    (define-key map [remap next-line]     'w3m-select-buffer-next-line)
+    (define-key map [remap previous-line] 'w3m-select-buffer-previous-line)
+    (dolist (x '(
+      (w3m-copy-buffer     . w3m-select-buffer-copy-buffer)
+      (w3m-next-buffer     . w3m-select-buffer-next-line)
+      (w3m-previous-buffer . w3m-select-buffer-previous-line)
+      (w3m-delete-buffer   . w3m-select-buffer-delete-buffer)
+      (w3m-delete-other-buffers        . w3m-select-buffer-delete-other-buffers)
+      (w3m-scroll-up-or-next-url       . w3m-select-buffer-show-this-line)
+      (w3m-scroll-down-or-previous-url . w3m-select-buffer-show-this-line-and-down)
+      (w3m-select-buffer               . w3m-select-buffer-toggle-style)))
+     (substitute-key-definition (car x) (cdr x) map w3m-mode-map))
     (define-key map " " 'w3m-select-buffer-show-this-line)
     (define-key map [down] 'w3m-select-next-line)
     (define-key map [up] 'w3m-select-previous-line)
