@@ -706,8 +706,7 @@ buffer in the current session."
                                 (if (integerp num) num (car num))
                                 (1- (length sessions))))
 	(w3m-session-select-open-session-group w3m-session-group-open)
-	(forward-line (min (1+ (cdr num))
-			   (- (line-number-at-pos (point-max)) 4)))))))
+	(forward-line (min (1+ (cdr num))))))))
 
 (defun w3m-session-select-copy ()
   "Copy the currently selected session."
