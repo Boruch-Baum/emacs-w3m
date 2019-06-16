@@ -11470,7 +11470,7 @@ The following command keys are available:
   "Move cursor vertically down N lines, maintaining column position."
   (interactive "p")
   (let ((col-1 (current-column)))
-    (line-move (or n 1))
+    (line-move (or n 1) t)
     (when (eobp)
       (forward-line 0)
       (forward-char col-1))))
