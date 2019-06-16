@@ -473,14 +473,14 @@ buffer's url history."
     (define-key map "R" 'w3m-session-select-rename)
     (define-key map "m" 'w3m-session-select-merge)
     (define-key map "M" 'w3m-session-select-merge)
-    (define-key map "n" 'w3m-session-select-next)
-    (define-key map "j" 'w3m-session-select-next)
-    (define-key map "\C-n" 'w3m-session-select-next)
-    (define-key map [down] 'w3m-session-select-next)
-    (define-key map "p" 'w3m-session-select-previous)
-    (define-key map "k" 'w3m-session-select-previous)
-    (define-key map "\C-p" 'w3m-session-select-previous)
-    (define-key map [up] 'w3m-session-select-previous)
+    (define-key map "n" 'w3m-select-next-line)
+    (define-key map "j" 'w3m-select-next-line)
+    (define-key map "\C-n" 'w3m-select-next-line)
+    (define-key map [down] 'w3m-select-next-line)
+    (define-key map "p" 'w3m-select-previous-line)
+    (define-key map "k" 'w3m-select-previous-line)
+    (define-key map "\C-p" 'w3m-select-previous-line)
+    (define-key map [up] 'w3m-select-previous-line)
     (setq w3m-session-select-mode-map map)))
 
 ;;; Local variables
@@ -498,8 +498,8 @@ buffer's url history."
 \\[w3m-session-select-rename]	Rename the session.
 \\[w3m-session-select-merge]	Merge the session into another one.
 \\[w3m-session-select-save]	Save the session.
-\\[w3m-session-select-next]	Move the point to the next session.
-\\[w3m-session-select-previous]	Move the point to the previous session.
+\\[w3m-select-next-line]	Move the point to the next session.
+\\[w3m-select-previous-line]	Move the point to the previous session.
 \\[w3m-session-select-quit]	Exit selecting session.
 "
   (w3m-session-ignore-errors
@@ -523,11 +523,12 @@ buffer's url history."
 Meant for use  with  `pre-command-hook' and `post-command-hook'."
   (let ((beg (line-beginning-position))
 	(inhibit-read-only t))
-   (put-text-property beg (next-single-property-change beg 'w3m-session-number)
-     'face
-     (if (equal (get-text-property beg 'face) 'w3m-session-select)
-       'w3m-session-selected
-      'w3m-session-select))))
+    (when (get-text-property beg 'w3m-session-number)
+      (put-text-property beg (next-single-property-change beg 'w3m-session-number)
+        'face
+        (if (equal (get-text-property beg 'face) 'w3m-session-selected)
+          'w3m-session-select
+         'w3m-session-selected)))))
 
 (defun w3m-session-select-list-all-sessions ()
   "List all saved sessions."
@@ -598,9 +599,8 @@ buffer in the current session."
       (setq urls (nreverse urls))
       (setq max (+ max 2))
       (erase-buffer)
-      (insert "Select session:\n\n")
       (setq pos (point))
-      (insert "Open all sessions")
+      (insert ">> Open *ALL* of the sessions listed below! <<")
       (add-text-properties pos (point)
 			   `(face w3m-session-selected
 				  w3m-session-number ,arg))
@@ -617,26 +617,11 @@ buffer in the current session."
 	(setq num (1+ num))
 	(insert (make-string (- max (string-width title)) ?\ ))
 	(insert url "\n"))
+      (delete-char -1)
       (goto-char (point-min))
-      (goto-char (next-single-property-change
-		  (point) 'w3m-session-number)))
+      (w3m--session-update-faces))
     (set-buffer-modified-p nil)
     (setq buffer-read-only t)))
-
-(defun w3m-session-select-next (&optional arg)
-  "Move the point to the next session."
-  (interactive "p")
-  (unless arg (setq arg 1))
-  (let ((target (1+ (mod (1- (+ arg (line-number-at-pos (point))))
-			 (line-number-at-pos (point-max))))))
-    (goto-char (point-min))
-    (forward-line (1- target))
-    (set-buffer-modified-p nil)))
-
-(defun w3m-session-select-previous (&optional arg)
-  "Move the point to the previous session."
-  (interactive "p")
-  (w3m-session-select-next (- arg)))
 
 (defun w3m-session-select-quit ()
   "Exit from w3m session select mode."
@@ -672,8 +657,7 @@ buffer in the current session."
 (defun w3m-session-select-open-session-group (&optional arg)
   "Open the session group."
   (interactive)
-  (beginning-of-line)
-  (let ((num (or arg (get-text-property (point) 'w3m-session-number)))
+  (let ((num (or arg (get-text-property (point-at-bol) 'w3m-session-number)))
 	wheight)
     (if (consp num)
 	(w3m--message t 'w3m-error "This is not a session group.")
@@ -825,7 +809,7 @@ being below or beside the main window."
 	 (progn
 	   (w3m--setup-popup-window toggle showbuf nomsg)
 	   (w3m-session-select-mode sessions)
-	   (when n (w3m-session-select-next n)))
+	   (when n (w3m-select-next-line n)))
        ;; else, ie. (not sessions)
        (when (setq showbuf (get-buffer showbuf))
 	 (when (setq window (prog1 (get-buffer-window showbuf t)

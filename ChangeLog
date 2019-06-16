@@ -1,3 +1,10 @@
+2019-06-16  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-session.el (w3m-session-select-list-session-group): Make header
+	non-navigable.
+	(w3m-session-select-next): Refactor to w3m-select-next-line.
+	(w3m-session-select-previous): Refactor to w3m-select-previous-line.
+
 2019-06-14  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-session.el (w3m-session-select-delete): Advance to next session
