@@ -310,7 +310,8 @@ These are:`w3m--download-queued', `w3m--download-running',
 (defvar w3m-download-queue-mode-map nil
   "Major mode for viewing and editing the `w3m-download' queue.")
 (unless w3m-download-queue-mode-map
-  (let ((map (make-keymap)))
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map w3m-mode-map)
     (suppress-keymap map)
     (define-key map "\C-o"      'w3m-download-toggle-details)
     (define-key map "\C-c\C-o"  'w3m-download-toggle-all-details)
