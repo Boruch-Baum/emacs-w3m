@@ -765,7 +765,6 @@ nil which provides Lynx-like keys."
   "*Directory where emacs-w3m config files are loaded from or saved to."
   :group 'w3m
   :type 'directory)
-(require 'w3m-download)
 
 (defcustom w3m-init-file "~/.emacs-w3m"
   "*Your emacs-w3m startup file name.
@@ -2842,6 +2841,7 @@ db-history\\|antenna\\|namazu\\|dtree\\)/.*\\)?\\'\
   "Regexp matching urls which aren't stored in the history.")
 
 (defvar w3m-mode-map nil "Keymap for emacs-w3m buffers.")
+(require 'w3m-download)
 
 (defvar w3m-url-completion-map (let ((map (make-sparse-keymap)))
 				 (define-key map " " 'self-insert-command)
