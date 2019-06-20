@@ -449,7 +449,7 @@ An argument of nil means kill the current buffer."
   "Create and return a buffer with a name based on NAME.
 Make the new buffer the next of the current buffer if NEXT is non-nil."
   (when (or (not (stringp name))
-            (string-blank-p name)
+            (string-match-p "\\`[ \t\n\r]*\\'" name)
             (string-match "\\*w3m\\*\\(<\\([0-9]+\\)>\\)?\\'" name))
     (setq name "*w3m*"))
   (when next
@@ -1286,7 +1286,7 @@ websites or referers embed. See `w3m-strip-queries-alist'."
        (when (string-match (car strip) base)
          (while (string-match (cadr strip) queries)
            (setq queries (replace-match "" t t queries 0)))))
-     (if (string-empty-p queries)
+     (if (string-match-p "\\`[ \t\n\r]*\\'" queries)
        (substring base 0 -1)
       (concat base queries)))))
 
