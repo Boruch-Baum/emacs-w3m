@@ -18,6 +18,11 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_quick-search_POST-DATA_issue_0052`<sub>[_pr #54_](https://github.com/emacs-w3m/emacs-w3m/pull/54)</sub>
+  * Fixes bug that was preventing the likes of duckduckgo searches
+    from functioning when using the emacs-w3m 'quick-saerch' feature,
+    eg. ddg:foo.
+
 * `bb_toggle_unread`<sub>[_pr #50_](https://github.com/emacs-w3m/emacs-w3m/pull/50)</sub>
   * New feature: In the buffer select pop-up window, toggle whether a
     buffer is considered and labeled 'unread'. Bound to 'u'.
