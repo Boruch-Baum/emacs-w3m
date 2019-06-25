@@ -1,5 +1,10 @@
 2019-06-25  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-hist.el (w3m-history-scrub): Make the output buffer a w3m-mode buffer.
+	Colorize warning message.
+
+2019-06-25  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m.el (w3m--goto-url--valid-url): Ensure query trackers are stripped
 	at first opportunity.
 	(w3m--retrieve-1--handler-function): Undo potential url modification

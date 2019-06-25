@@ -744,7 +744,9 @@ a crashed emacs session."
   ;   timeframe, for elements that store timestamp information.
   (interactive)
   (let ((stdout-buf (generate-new-buffer "*w3m-scrub-history*"))
-        (warning-msg "Warning: This will irrevocably erase ALL your emacs-w3m browsing history.\nPlease confirm to proceed."))
+        (warning-msg (propertize
+                       "Warning: This will irrevocably erase ALL your emacs-w3m browsing history.\nPlease confirm to proceed."
+                       'face 'w3m-warning)))
    (switch-to-buffer stdout-buf)
    (w3m--full-window-message warning-msg)
    (cond
@@ -843,7 +845,8 @@ a crashed emacs session."
           (insert (format "\n  FAILURE! - Unable to write to %s\n  Aborting..."
                     w3m-session-file))
          (insert " Complete.\n\nemacs-w3m history scrub completed "))
-        (insert (format-time-string "%Y-%m-%d %H:%M:%S.%N\n"))))))))
+        (insert (format-time-string "%Y-%m-%d %H:%M:%S.%N\n")))))))
+        (w3m-mode))
 
 (eval-when-compile
   (defvar w3m-arrived-db)
