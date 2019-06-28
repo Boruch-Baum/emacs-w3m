@@ -18,6 +18,12 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_content_type`<sub>[_pr #55_](https://github.com/emacs-w3m/emacs-w3m/pull/55)</sub>
+  * Fixes many bugs related to recognizing a URL's content-type and
+    respecting user's wishes for how to handle them. See the commit
+    message of c2917160b7162049 and the pull-request message, for a
+    full explanation.
+
 * `bb_quick-search_POST-DATA_issue_0052`<sub>[_pr #54_](https://github.com/emacs-w3m/emacs-w3m/pull/54)</sub>
   * Fixes bug that was preventing the likes of duckduckgo searches
     from functioning when using the emacs-w3m 'quick-saerch' feature,
