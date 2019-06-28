@@ -7502,7 +7502,7 @@ No method to view `%s' is registered. Use `w3m-edit-this-url'"
 		 ((and command (memq 'file arguments))
 		  (let ((w3m-current-buffer (current-buffer)))
 		    (w3m-process-do
-			(success (w3m-download-using-wget url file no-cache handler))
+			(success (w3m-download-using-w3m url file no-cache handler))
 		      (when success
 			(w3m-external-view-file command file url arguments)))))
 		 (command
