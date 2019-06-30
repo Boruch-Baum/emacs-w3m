@@ -800,10 +800,15 @@ a crashed emacs session."
         (erase-buffer)))
       (setq w3m-cache-hashtb nil
             w3m-cache-articles nil)
+      (insert " Complete.\nInitializing input URL history from memory ...")
+      (setq w3m-input-url-history nil)
       (insert " Complete.\nInitializing cookies from memory ...")
       (setq w3m-cookies nil)
       (when cookie-buf
         (kill-buffer cookie-buf))
+      (insert " Complete.\nInitializing bookmark edit history from memory ...")
+      (setq w3m-bookmark-section-history nil)
+      (setq w3m-bookmark-title-history nil)
       (insert " Complete.\nInitializing global history from memory ...")
       (setq w3m-arrived-db nil)
       (insert " Complete.\nInitializing individual buffer histories and forms ...")
@@ -812,7 +817,8 @@ a crashed emacs session."
           (setq w3m-history nil)
           (setq w3m-history-flat nil)
           (cond
-           ((or (string-match "^about://\\(cookie\\|history\\|db-history\\)/" w3m-current-url)
+           ((or (string-match "^about://\\(cookie\\|history\\|db-history\\)/"
+                              (or w3m-current-url ""))
                 w3m-form-input-textarea-mode
                 (eq major-mode 'w3m-form-input-select-mode)
                 (eq major-mode 'w3m-form-input-map-mode))
