@@ -1939,8 +1939,6 @@ Are you trying to resume an aborted partial download? ")))
         (w3m--message t 'w3m-error "A url is required")
         (sit-for 1)))
     (setq url (w3m-url-decode-string url))
-
-
     (setq basename (w3m--download-validate-basename url))
     (when (and (setq caption (w3m-image-alt))
                (not (setq extension (file-name-extension basename)))
@@ -1949,9 +1947,6 @@ Are you trying to resume an aborted partial download? ")))
       (setq basename alt-basename)
       (setq extension alt-extension)
       (setq save-path (concat w3m-default-save-directory alt-basename)))
-
-
-
     (when current-prefix-arg
       (setq save-path
         (w3m-read-file-name
@@ -1964,8 +1959,6 @@ Are you trying to resume an aborted partial download? ")))
         (if save-path
           (file-name-directory save-path)
          w3m-default-save-directory)))
-
-
     (when (and w3m-download-save-metadata
                caption
                extension)
@@ -1980,7 +1973,6 @@ Are you trying to resume an aborted partial download? ")))
                    --set-value=\"%s\" --output=\"%s\" %s.PART"
                   caption save-path save-path))
          (t nil))))
-
     (when interactively
       (when (file-exists-p save-path)
         (if (y-or-n-p (format overwrite-prompt save-path))
