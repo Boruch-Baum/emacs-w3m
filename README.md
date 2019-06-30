@@ -18,6 +18,10 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_awesome_bar`<sub>[_pr #56_](https://github.com/emacs-w3m/emacs-w3m/pull/56)</sub>
+  * Adds bookmark urls and titles to the autocomplete i-search when
+    prompting for a url, just like all the other modern browsers do!
+
 * `bb_content_type`<sub>[_pr #55_](https://github.com/emacs-w3m/emacs-w3m/pull/55)</sub>
   * Fixes many bugs related to recognizing a URL's content-type and
     respecting user's wishes for how to handle them. See the commit
