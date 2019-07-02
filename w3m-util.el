@@ -202,6 +202,32 @@ into it."
 				 (list 'face new-prop)))
       (setq pos next))))
 
+(defun w3m--remove-face-property (start end name &optional object)
+  "WARNING: This next is a re-do of function `w3m-remove-face-property'.
+
+Function ``w3m-remove-face-property' seems buggy: 1) it doesn't
+perform `remove-text-properties', so properties accumulate; 2) it
+uses`eq' instead of `equal', so it doesn't catching explicit
+properties such as '(:weight bold); 3) it calls
+w3m-add-text-properties without the OBJECT arg that it receives.
+
+Remove face NAME from the face text property of text from START to END.
+The value of the existing text property should be a list.
+If the optional fourth argument OBJECT is a buffer (or nil, which means
+the current buffer), START and END are buffer positions (integers or
+markers).  If OBJECT is a string, START and END are 0-based indices
+into it."
+  (let ((pos start)
+	next prop new-prop elem)
+    (while (< pos end)
+      (setq prop (get-text-property pos 'face object))
+      (setq next (next-single-property-change pos 'face object end))
+      (setq new-prop (remove name prop))
+      (remove-text-properties pos next 'face object)
+      (when new-prop
+        (add-text-properties pos next (list 'face new-prop) object))
+      (setq pos next))))
+
 (defmacro w3m-get-text-property-around (prop)
   "Search for the text property PROP in one character before and behind
 the current position.  Return the value corresponding to PROP or nil.
