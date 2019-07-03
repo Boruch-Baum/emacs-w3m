@@ -1,5 +1,10 @@
 2019-07-02  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-hist.el (w3m-history-scrub): Render display earlier. Initialize
+	arrived-db for awesome-bar feature support.
+
+2019-07-02  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-download.el (w3m-download-refresh-interval): Reduce from 16 to
 	one second.
 
