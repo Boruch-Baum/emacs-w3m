@@ -17,11 +17,28 @@
 
 2. Requirements
 
+<<<<<<< HEAD
 2.1. Emacs versions
+=======
+   Check whether your system meets the following requirements before
+   installing emacs-w3m.
+
+   Now emacs-w3m will work with Emacs 25, 26, and hopefully 27 (not
+   released yet, though).  XEmacs support has been dropped.
+
+   Emacs-w3m requires the latest version of w3m (version 0.3.1 and
+   later).  Since this program is much sensitive to the version of w3m,
+   you should confirm it if you already have w3m installed.  And we
+   recommend you visit the official w3m web page to check whether a
+   newer version of w3m has been released:
+
+       http://prdownloads.sourceforge.net/w3m/
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
      Emacs-w3m supports the latest two major stable versions of Emacs. Thus, when the latest
      stable Emacs was 26.1, Emacs-w3m was supporting versions 26.1, 25.3, 25.2, and 25.1.
 
+<<<<<<< HEAD
      Older versions of Emacs may still be able to successfully use the current version of
      emacs-w3m, but as the current versions of Emacs or ELisp themselves change, deprecate,
      or remove features, the latest version of emacs-w3m can be expected to keep pace, and
@@ -40,6 +57,8 @@
 
      Optionally, if you would like to use the shimbun library included in the emacs-w3m
      distribution, you have to install the Emacs packages APEL and FLIM.
+=======
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 3. Installation
 
@@ -54,20 +73,10 @@
 
          % autoconf
 
-     Important notice to the Gnus users:
-     ===================================
-     If the various versions of Gnusae are installed in your system (it
-     is likely that there are the released version and the development
-     version of Gnusae), make sure that priority is given to the
-     directory where the gnus.elc file which you use is installed in the
-     load-path.  To do that, use the --with-addpath option as follows:
-
-         % ./configure --with-addpath=/usr/local/share/emacs/site-lisp/gnus
-
      If you've installed APEL, FLIM or something in non-standard
      directories other than the default `load-path', you must specify
-     them using the --with-addpath option as follows (you may also
-     include the Gnus directory being separated with `:' in it):
+     them using the --with-addpath option as follows (this is the case
+     where you want to use the shimbun library):
 
          % ./configure --with-addpath=/opt/share/apel:/opt/share/flim
 
@@ -77,8 +86,7 @@
          % make
          % make install
 
-     If you are using Emacs 21 or XEmacs, you had better install icon
-     image files.  To do this:
+     You may as well install icon image files, too.  To do this:
 
          % make install-icons
      or
@@ -86,17 +94,7 @@
 
      The latter will install the slightly larger icons with characters.
 
-     You can also install emacs-w3m as an XEmacs package using
-     `make install-package' instead of `make install'.
-
-         % make
-         % make install-package
-
-     In this case, you don't have to execute `make install-icons' nor
-     `make install-icons30'.
-
-     The info files will also be installed by `make install' or
-     `make install-package'.
+     The info files will also be installed by `make install'.
 
 3.2. Installing on non-UNIX-like systems
 
@@ -127,14 +125,11 @@
 
          (require 'w3m-load)
 
-     You have nothing to do if you have emacs-w3m installed as an XEmacs
-     package.
-
 4.2. mime-w3m.el
 
      In order to handle text/html part with emacs-w3m under SEMI MUAs
-     such as T-gnus and Wanderlust, you have to put the following line
-     in your ~/.emacs file:
+     such as Wanderlust, you have to put the following line in your
+     ~/.emacs file:
 
          (require 'mime-w3m)
 
@@ -186,6 +181,7 @@
 
 7. Related Information
 
+<<<<<<< HEAD
    [1] APEL (Available on MELPA)
        http://kanji.zinbun.kyoto-u.ac.jp/~tomo/lemi/dist/apel/
 
@@ -194,12 +190,22 @@
 
    [3] gifsicle
        http://www.lcdf.org/gifsicle/
+=======
+   Now w3m is beeing actively developed in:
+   https://salsa.debian.org/debian/w3m
+
+   You can get APEL and FLIM from: https://github.com/wanderlust/
+   Install APEL before installing FLIM.
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 Local Variables:
 mode: outline
 mode: indented-text
 outline-regexp: "[0-9]\\.[0-9]\\.[0-9]\\.\\|[0-9]\\.[0-9]\\.\\|[0-9]\\."
+<<<<<<< HEAD
 coding: utf-8
+=======
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 fill-column: 72
 End:

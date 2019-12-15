@@ -1,29 +1,30 @@
-���Υѥå������ˤ� w3m �� Emacs ���ư��������Υץ������ emacs-w3m ��
-�ޤޤ�Ƥ��ޤ���
+このパッケージには w3m を Emacs 上で動かすためのプログラム emacs-w3m が
+含まれています．
 
-1. �Ϥ����
+1. はじめに
 
-   w3m �ϡ���ƣ��§����ˤ�äƳ�ȯ���줿 World Wide Web ���б������ڡ�
-   ����Ǥ��������ޤǥڡ�����Ǥ������ƥ����ȥ١��� WWW �֥饦���Ȥ��Ƥ�
-   �Ȥ����Ȥ��Ǥ��ޤ����ܺ٤ˤĤ��Ƥϡ�
+   w3m は，伊藤彰則さんによって開発された World Wide Web に対応したペー
+   ジャです．あくまでページャですが，テキストベース WWW ブラウザとしても
+   使うことができます．詳細については，
 
        http://w3m.sourceforge.net/
 
-   �򻲾Ȥ��Ƥ���������
+   を参照してください．
 
-   emacs-w3m �ϡ�Emacs ���ư���ñ�ʤ륤�󥿡��ե������ץ������˲�
-   ���ޤ��󡥸��� Web �ڡ����� URL �ϡ�
+   emacs-w3m は，Emacs 上で動作する単なるインターフェースプログラムに過
+   ぎません．公式 Web ページの URL は，
 
         http://emacs-w3m.namazu.org/
 
-   �Ǥ����ʲ��������Τ�äȾܤ�����Τ�HTML �����줿 Info �η����ɤळ
-   �Ȥ��Ǥ��ޤ���
+   です．以下の説明のもっと詳しいものを，HTML 化された Info の形で読むこ
+   とができます．
 
         http://emacs-w3m.namazu.org/info/
 
 
-2. ư��Ķ�
+2. 動作環境
 
+<<<<<<< HEAD
 2.1. Emacs �ΥС������
 
      Emacs-w3m �ϰ����ǤǺǿ��� 2�ĤΥ᥸�㡼�С������� Emacs �򥵥ݡ��Ȥ��ޤ����Ĥޤꡢ�⤷�ǿ��ΰ����Ǥ� Emacs �� 26.1 �Ǥ���ʤ�С�
@@ -43,164 +44,154 @@
 2.3. APEL and FLIM
 
      �⤷ emacs-w3m �����ۤ˴ޤޤ�Ƥ��� ��ʹ�饤�֥�� ��Ȥ������ʤ�С�Emacs �ѥå����� APEL �� FLIM �򥤥󥹥ȡ��뤷�ʤ���Фʤ�ޤ���
+=======
+   emacs-w3m をインストールする前に，必要な環境が整っているか調べてくだ
+   さい．
+
+   現在 emacs-w3m は Emacs 25，26，そしてうまくいけば 27 (まだリリースさ
+   れていませんが) で動作するでしょう．XEmacs サポートは終了しました．
+
+   emacs-w3m を動かすには最新の w3m (バージョン 0.3.1 以上) が必要です．
+   このプログラムは w3m のバージョンに強く依存しているので，既に w3m を
+   インストールしてある場合は，それを確認してください．また，w3m のより
+   新しいバージョンがリリースされているかどうかをチェックするために，公
+   式の w3m ウェブページを訪問することをお勧めします:
+
+       http://prdownloads.sourceforge.net/w3m/
+
+   emacs-w3m に同梱して配布されている shimbun ライブラリを利用するために
+   は，FLIM を前もってインストールしておく必要があります．詳細については，
+   Info の「Shimbun Library」節を確認してください．
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
-3. ���󥹥ȡ���
+3. インストール
 
-3.1. UNIX �ϤδĶ��ǥ��󥹥ȡ��뤹����
+3.1. UNIX 系の環境でインストールする場合
 
-     �ǽ�ˡ�configure ������ץȤ�¹Ԥ��Ƥ���������
+     最初に，configure スクリプトを実行してください．
 
          % ./configure
 
-     �⤷�� configure ������ץȤ����Ĥ����ʤ���С� autoconf ���ޥ��
-     ��¹Ԥ��Ƥ��������� ����ϡ� configure ������ץȤ�������ޤ���
+     もし， configure スクリプトが見つかられなければ， autoconf コマンド
+     を実行してください。 これは，configure スクリプトを作成します。
 
          % autoconf
 
-     Gnus �桼���ؤν��פʤ��Τ餻:
-     ==============================
-     ���������ʥС������� Gnus �����󥹥ȡ��뤵��Ƥ����� (��꡼��
-     �Ǥȳ�ȯ�Ǥ� Gnus �����뤫�⤷��ޤ���) �ϡ����ʤ����Ȥ� gnus.elc
-     �ե����뤬���󥹥ȡ��뤵��Ƥ���ǥ��쥯�ȥ꤬ load-path �����ͥ��
-     �����褦�ˤ��Ƥ�������������ˤϰʲ��Τ褦�� `--with-addpath' ��
-     �ץ�����ȤäƤ���������
-
-         % ./configure --with-addpath=/usr/local/share/emacs/site-lisp/gnus
-
-     APEL �� FLIM �ʤɤ�ɬ�פʥ⥸�塼�뤬��ɸ��Ū�ǤϤʤ��ǥ��쥯�ȥ��
-     ���󥹥ȡ��뤵��Ƥ�����ˤϡ�`--with-addpath' ���ץ�����Ȥäơ�
-     ���Υǥ��쥯�ȥ����ꤹ��ɬ�פ�����ޤ� (����ˡ������ Gnus �Υǥ�
-     �쥯�ȥ�� `:' ��ʬ���ƴޤ�Ƥ⹽���ޤ���)��
+     APEL や FLIM などの必要なモジュールが，標準的ではないディレクトリに
+     インストールされている場合には，`--with-addpath' オプションを使って，
+     そのディレクトリを指定する必要があります (これは shimbun ライブラリ
+     を使いたい場合です)．
 
          % ./configure --with-addpath=/opt/share/apel:/opt/share/flim
 
-     ���ˡ�emacs-w3m ��Ŭ���ʥǥ��쥯�ȥ�˥��󥹥ȡ��뤹�뤿�ᡤ���Υ�
-     �ޥ�ɤ�¹Ԥ��Ƥ���������
+     次に，emacs-w3m を適当なディレクトリにインストールするため，次のコ
+     マンドを実行してください．
 
          % make
          % make install
 
-     Emacs 21 �ޤ��� XEmacs ��ȤäƤ���ʤ�С�������������Υե������
-     ���󥹥ȡ��뤷�������ɤ��Ǥ��礦�������Ԥʤ��ˤ�:
+     アイコン画像のファイルもインストールした方が良いでしょう．
+     それを行なうには:
 
          % make install-icons
-     �ޤ���
+     または
          % make install-icons30
 
-     ��ԤϤ���ä��礭�ʡ�ʸ�������ä��������������Ȥ�����Τ�ΤǤ���
+     後者はちょっと大きな，文字も入ったアイコン画像を使うためのものです．
 
-     install ������� install-package ��Ȥ��ȡ�XEmacs �� package �Ȥ�
-     �ƥ��󥹥ȡ��뤹�뤳�Ȥ�Ǥ��ޤ���
+     `make install' によって info ファイルもインストールされます．
 
-         % make
-         % make install-package
+3.2. 非 UNIX 系の環境でインストールする場合
 
-     ���ξ�� install-icons �ޤ��� make install-icons30 ��¹Ԥ���ɬ�פ�
-     ����ޤ���
-
-     `make install' �ޤ��� `make install-package' �ˤ�ä� info �ե�����
-     �⥤�󥹥ȡ��뤵��ޤ���
-
-3.2. �� UNIX �ϤδĶ��ǥ��󥹥ȡ��뤹����
-
-     configure ������ץȤ�¹ԤǤ��ʤ����ޤ��� make ���ޥ�ɤ�¸�ߤ���
-     ���Ķ��ξ��ϡ��ʲ��Υ��ޥ�ɤ�¹Ԥ��Ƥ���������
+     configure スクリプトを実行できない，または make コマンドが存在しな
+     い環境の場合は，以下のコマンドを実行してください．
 
          % emacs -batch -q -no-site-file -l w3mhack.el NONE -f w3mhack-nonunix-install
 
-     APEL �� FLIM �ʤɤ�ɬ�פʥ⥸�塼�뤬��ɸ��Ū�ǤϤʤ��ǥ��쥯�ȥ��
-     ���󥹥ȡ��뤵��Ƥ�����ˤϡ��ʲ��Τ褦�ˤ��Υǥ��쥯�ȥ�����
-     ����ɬ�פ�����ޤ���
+     APEL や FLIM などの必要なモジュールが，標準的ではないディレクトリに
+     インストールされている場合には，以下のようにそのディレクトリを指定
+     する必要があります．
 
          % emacs -batch -q -no-site-file -l w3mhack.el //c/share/apel://c/share/flim -f w3mhack-nonunix-install
 
 
-4. ����
+4. 設定
 
-   Emacs-w3m �Τ�������ѿ��򤤤���Ȥ��ϡ�~/.emacs-w3m �ե����� (����
-   �� `w3m-init-file' �Ȥ����ѿ��Υǥե�����ͤǤ�) �����Ѥ�侩���ޤ���
-   ���Υե������ ~/.emacs �Ȼ��Ƥ��ޤ������������ emacs-w3m ����ư����
-   �Ȥ����ɤ߹��ޤ�ޤ������������㤨�� w3m-command �Τ褦�ˡ������˽�
-   ���Ȥ��Ǥ��ʤ����ץ���󤬤��뤳�Ȥ����դ��Ƥ���������
+   Emacs-w3m のいろんな変数をいじるときは，~/.emacs-w3m ファイル (これ
+   は `w3m-init-file' という変数のデフォルト値です) の利用を推奨します．
+   このファイルは ~/.emacs と似ていますが，こちらは emacs-w3m が起動する
+   ときに読み込まれます．しかし，例えば w3m-command のように，そこに書く
+   ことができないオプションがあることに注意してください．
 
-4.1. ����
+4.1. 基本
 
-     ��������� ~/.emacs �ե�������ɲä��Ƥ���������
+     次の設定を ~/.emacs ファイルに追加してください．
 
          (require 'w3m-load)
 
-     XEmacs package �Ȥ��� emacs-w3m �򥤥󥹥ȡ��뤷���Τʤ�С�������
-     ������פǤ���
-
 4.2. mime-w3m
 
-     T-gnus �� Wanderlust �ʤɤ� SEMI MUA ��ǡ���å�������� text/html
-     �ѡ��Ȥ� emacs-w3m ��Ȥä�ɽ��������ˤϡ��ʲ�������� ~/.emacs �ե�
-     ������ɲä���ɬ�פ�����ޤ���
+     Wanderlust などの SEMI MUA 上で，メッセージ中の text/html パートを
+     emacs-w3m を使って表示させるには，以下の設定を ~/.emacs ファイルに
+     追加する必要があります．
 
          (require 'mime-w3m)
 
 4.3. Proxy Gateway
 
-     ����ˤϤ����Ĥ�����ˡ������ޤ�����ĤϴĶ��ѿ� http_proxy ��
-     shell ��ǡ�����ʤդ��˥������Х�����ꤹ�뤳�ȤǤ�:
+     これにはいくつかの方法があります．一つは環境変数 http_proxy を
+     shell 上で，こんなふうにグローバルに設定することです:
 
         setenv http_proxy http://proxy.hogege.com:8000/
 
-     ¾�ˡ����ץ���� `w3m-command-arguments' �򥫥����ޥ������ơ�"-o"
-     ����� "http_proxy=http://PROXY_SERVER_NAME:PORT/" ���ɲä�����ˡ��
-     ����ޤ�������� ~/.emacs-w3m �ե�����ǰʲ��Τ褦�˹Ԥʤ����Ȥ�
-     �Ǥ��ޤ���
+     他に，オプション `w3m-command-arguments' をカスタマイズして，"-o"
+     および "http_proxy=http://PROXY_SERVER_NAME:PORT/" を追加する方法が
+     あります．これは ~/.emacs-w3m ファイルで以下のように行なうことも
+     できます．
 
         (setq w3m-command-arguments
               (nconc w3m-command-arguments
                      '("-o" "http_proxy=http://proxy.hogege.com:8000/")))
 
-     �Ķ��ѿ� no-proxy �˥���ޤǶ�ʬ�����줿�ۥ���̾�����ꤹ�뤫���ޤ�
-     �ϰʲ��Τ褦�˥ɥᥤ��̾ (�ۥ���̾�ǤϤʤ�) �Υꥹ�Ȥ򥪥ץ����
-     `w3m-no-proxy-domains' �����ꤹ�뤳�Ȥˤ�äơ�proxy �����ȥ�������
-     �Ȥ鷺����³����ۥ��Ȥ���ꤹ�뤳�Ȥ��Ǥ��ޤ���
+     環境変数 no-proxy にコンマで区分けされたホスト名を設定するか，また
+     は以下のようにドメイン名 (ホスト名ではない) のリストをオプション
+     `w3m-no-proxy-domains' に設定することによって，proxy ゲートウェイを
+     使わずに接続するホストを指定することができます．
 
         (setq w3m-no-proxy-domains '("local.com" "neighbor.com"))
 
-     no-proxy �ۥ��Ȥ����������ɽ����Ȥ��ˤϡ����ץ����
-     `w3m-command-arguments-alist' �Υɥ�����Ȥ򸫤Ƥ���������
+     no-proxy ホストの設定に正規表現を使うには，オプション
+     `w3m-command-arguments-alist' のドキュメントを見てください．
 
 
-5. Ϣ����
+5. 連絡先
 
-   �Х���ݡ��ȡ������ؤι׸�����ơ��ޤ��Ͻ��������ˤϡ��᡼���
-   <emacs-w3m@namazu.org> �������äƤ����������⤷ `mail-user-agent' ��
-   ������ư���褦�����ꤷ�Ƥ���С�`report-emacs-w3m-bug' ���ޥ�ɤ�
-   `C-c C-b' ������ȤäƥХ���ݡ��Ȥ����뤳�Ȥ�Ǥ��ޤ���
-
-
-6. �ռ�
-
-   ��ƣ��§����ˤ�äƳ�ȯ���줿 w3m ���ʤ���С����Υץ�������¸�ߤ�
-   �ޤ���Ǥ���������μհդ򡤰�ƣ��������������Ȼפ��ޤ���
+   バグリポート，改善への貢献，提案，または助けを求めるには，メールを
+   <emacs-w3m@namazu.org> 宛に送ってください．もし `mail-user-agent' を
+   正しく動作するように設定してあれば，`report-emacs-w3m-bug' コマンドか
+   `C-c C-b' キーを使ってバグリポートを送ることもできます．
 
 
-7. ��Ϣ����
+6. 謝辞
 
-   [1] APEL
-       http://kanji.zinbun.kyoto-u.ac.jp/~tomo/lemi/dist/apel/ ����
-       ����Ǥ��ޤ���
+   伊藤彰則さんによって開発された w3m がなければ，このプログラムは存在し
+   ませんでした．最大の謝意を，伊藤さんに捧げたいと思います．
 
-   [2] FLIM
-       http://kanji.zinbun.kyoto-u.ac.jp/~tomo/lemi/dist/flim/flim-1.14/
-       ��������Ǥ��ޤ���APEL �˰�¸���Ƥ��ޤ���
 
-   [3] gifsicle
-       http://www.lcdf.org/gifsicle/ ��������Ǥ��ޤ���
+7. 関連情報
+
+   現在 w3m は次の場所で活発に開発されています:
+   https://salsa.debian.org/debian/w3m
+
+   APEL と FLIM は https://github.com/wanderlust/ から入手できます．
+   FLIM をインストールする前に APEL をインストールしてください．
 
 
 Local Variables:
 mode: outline
 mode: indented-text
 outline-regexp: "[0-9]\\.[0-9]\\.[0-9]\\.\\|[0-9]\\.[0-9]\\.\\|[0-9]\\."
-coding: euc-japan
 use-kuten-for-period: nil
 use-touten-for-comma: nil
 fill-column: 72

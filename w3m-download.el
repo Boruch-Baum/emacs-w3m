@@ -249,8 +249,6 @@
 ;;; Dependencies:
 (require 'w3m-util)
 
-
-
 ;;; Temporary compatability operation(s):
 
 ;; My development git fork has a different messaging standard, based

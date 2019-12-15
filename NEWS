@@ -1,16 +1,27 @@
 Emacs-w3m NEWS -- history of user-visible changes.
 
+<<<<<<< HEAD
 Copyright (C) 2000-2019 TSUCHIYA Masatoshi
 See the end of the file for license conditions.
 
 Please send bug reports to emacs-w3m@namazu.org, preferably using `M-x
 report-emacs-w3m-bug', or submit bug reports as issues directly to our
 github repository (https://github.com/emacs-w3m/emacs-w3m).
+=======
+Copyright (C) 2019 TSUCHIYA Masatoshi
+See the end of the file for license conditions.
+
+Please send bug reports to emacs-w3m@namazu.org.
+If possible, use M-x report-emacs-w3m-bug.
+
+This file is about emacs-w3m as of June 2019.
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 * Required Emacs version changes
 
 ** Emacs-w3m no longer works with old Emacs versions.
+<<<<<<< HEAD
 Emacs-w3m supports the latest two major stable versions of Emacs.
 Thus, when the latest stable Emacs was 26.1, Emacs-w3m was
 supporting versions 26.1, 25.3, 25.2, and 25.1.
@@ -54,6 +65,10 @@ us on our mailing list!
 
 
 * Shimbun changes
+=======
+Now emacs-w3m will work with Emacs 25, 26, and hopefully 27 (not
+released yet, though).  XEmacs support has been dropped.
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 * License

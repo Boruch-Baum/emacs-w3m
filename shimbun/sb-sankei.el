@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(eval-when-compile (require 'cl)) ;; lexical-let
+;; Note: the `w3m-process-do-with-temp-buffer' macro uses `lexical-let'.
+
 (require 'sb-multi)
 
 (luna-define-class shimbun-sankei
@@ -402,9 +405,10 @@ class=\"pageNextsubhead\"" nil t)
 	  (shimbun-article-base-url shimbun header) "&gt;</a>\n</div>\n"))
 
 (eval-when-compile
-  (require 'cl)
   (require 'w3m-cookie)
   (require 'w3m-form))
+
+(declare-function w3m-cookie-save "w3m-cookie" (&optional domain))
 
 (autoload 'password-cache-add "password-cache")
 (autoload 'password-read-from-cache "password-cache")

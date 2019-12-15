@@ -1,16 +1,22 @@
-Emacs-w3m $B%K%e!<%9(B -- $B%f!<%6!<$KH=FI$G$-$kJQ99$NMzNr!#(B
+Emacs-w3m ニュース -- ユーザーに判読できる変更の履歴。
 
+<<<<<<< HEAD
 Copyright (C) 2000-2019 $BEZ202mL-(B
 $B%i%$%;%s%9$N>r7o$K$D$$$F$O$3$N%U%!%$%k$NKvHx$r8+$F$/$@$5$$!#(B
+=======
+Copyright (C) 2019 土屋雅稔
+ライセンスの条件についてはこのファイルの末尾を見てください。
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
-$B%P%0%j%]!<%H$O(B emacs-w3m@namazu.org $B$KAw$C$F$/$@$5$$!#(B
-$B$b$72DG=$J$i(B M-x report-emacs-w3m-bug $B$r;H$C$F$/$@$5$$!#(B
+バグリポートは emacs-w3m@namazu.org に送ってください。
+もし可能なら M-x report-emacs-w3m-bug を使ってください。
 
-$B$3$N%U%!%$%k$O(B emacs-w3m $B%P!<%8%g%s(B 1.5 $B$NJQ99$K4X$9$k$b$N$G$9!#(B
+このファイルは 2019年6月現在の emacs-w3m に関するものです。
 
 
-* $BI,MW$J(B Emacs $B%P!<%8%g%s$,JQ$o$j$^$7$?(B
+* 必要な Emacs バージョンが変わりました
 
+<<<<<<< HEAD
 ** Emacs-w3m $B$O$b$O$d8E$$%P!<%8%g%s$N(B Emacs $B$G$OF0:n$7$^$;$s!#(B
 Emacs-w3m $B$O0BDjHG$G:G?7$N(B 2$B$D$N%a%8%c!<%P!<%8%g%s$N(B Emacs $B$r%5%]!<%H(B
 $B$7$^$9!#$D$^$j!"$b$7:G?7$N0BDjHG$N(B Emacs $B$,(B 26.1 $B$G$"$k$J$i$P!"(B
@@ -54,6 +60,11 @@ Elisp $B<+BN$,$$$m$$$m$J5!G=$K$D$$$F9T$J$&JQ99$d!"(B $BHs?d>)$K$7$?$j:o=|$9(
 
 
 * Shimbun $B$K4X$9$kJQ99(B
+=======
+** Emacs-w3m はもはや古いバージョンの Emacs では動作しません。
+現在 emacs-w3m は Emacs 25、26、そしてうまくいけば 27 (まだリリースさ
+れていませんが) で動作するでしょう。XEmacs サポートは終了しました。
+>>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 * License
@@ -76,5 +87,4 @@ Boston, MA 02110-1301, USA.
 Local variables:
 mode: outline
 paragraph-separate: "[ 	]*$"
-coding: iso-2022-7bit
 end:
