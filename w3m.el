@@ -3798,17 +3798,25 @@ off this option."
   :type 'boolean)
 
 ;; Note: third party software might not use `w3m-image-hseq'.
-(defsubst w3m-search-for-next-image (start &optional end)
+(defsubst w3m-search-for-next-image-boundary (start &optional end)
   "Search for the next image boundary within START and END.
 Return the point or nil if not found."
   (or (next-single-property-change start 'w3m-image-hseq nil end)
       (next-single-property-change start 'w3m-image nil end)))
 
-(defsubst w3m-search-for-previous-image (start)
+(defsubst w3m-search-for-previous-image-boundary (start)
   "Search for the image boundary backward from START.
 Return the point or nil if not found."
-  (or (previous-single-property-change start 'w3m-image-hseq)
-      (previous-single-property-change start 'w3m-image)))
+  (let ((img (or (get-text-property start 'w3m-image-hseq)
+		 (get-text-property start 'w3m-image))))
+    (if (or (and img (= start (point-min)))
+	    ;; Is the point just the boundary?
+	    (not (equal img
+			(or (get-text-property (1- start) 'w3m-image-hseq)
+			    (get-text-property (1- start) 'w3m-image)))))
+	start
+      (or (previous-single-property-change start 'w3m-image-hseq)
+	  (previous-single-property-change start 'w3m-image)))))
 
 (defvar w3m-image-no-idle-timer nil)
 (defun w3m-toggle-inline-images-internal (status
@@ -3831,9 +3839,9 @@ If URL is specified, only the image with URL is toggled."
 	  (while (< (setq start
 			  (if (w3m-image end)
 			      end
-			    (w3m-search-for-next-image end end-pos)))
+			    (w3m-search-for-next-image-boundary end end-pos)))
 		    end-pos)
-	    (setq end (or (w3m-search-for-next-image start)
+	    (setq end (or (w3m-search-for-next-image-boundary start)
 			  (point-max))
 		  iurl (w3m-image start)
 		  size (get-text-property start 'w3m-image-size))
@@ -3921,9 +3929,10 @@ If URL is specified, only the image with URL is toggled."
 	;; Remove.
 	(while (< (setq start (if (w3m-image end)
 				  end
-				(w3m-search-for-next-image end end-pos)))
+				(w3m-search-for-next-image-boundary
+				 end end-pos)))
 		  end-pos)
-	  (setq end (or (w3m-search-for-next-image start)
+	  (setq end (or (w3m-search-for-next-image-boundary start)
 			(point-max))
 		iurl (w3m-image start))
 	  ;; IMAGE-ALT-STRING DUMMY-STRING
@@ -3964,7 +3973,7 @@ non-nil, cached data will not be used."
 		end (region-end))
 	  (deactivate-mark)
 	  (while (< p end)
-	    (setq p (w3m-search-for-next-image p end))
+	    (setq p (w3m-search-for-next-image-boundary p end))
 	    (when (and (< p end)
 		       (setq iurl (w3m-image p))
 		       (not (assoc iurl toggle-list)))
@@ -3986,8 +3995,11 @@ non-nil, cached data will not be used."
 			(if force (setq status 'off))
 			(w3m-toggle-inline-images-internal
 			 status no-cache url
-			 (or begin (point-min))
-			 (or end (point-max))))
+			 (or begin
+			     (w3m-search-for-previous-image-boundary (point))
+			     (point-min))
+			 (or end (w3m-search-for-next-image-boundary (point))
+			     (point-max))))
 		    (setq safe-regexp
 			  (get-text-property (point) 'w3m-safe-url-regexp))
 		    (if (or force
@@ -3995,9 +4007,10 @@ non-nil, cached data will not be used."
 			    (string-match safe-regexp url))
 			(w3m-toggle-inline-images-internal
 			 status no-cache url
-			 (or begin (w3m-search-for-previous-image (point))
+			 (or begin
+			     (w3m-search-for-previous-image-boundary (point))
 			     (point-min))
-			 (or end (w3m-search-for-next-image (point))
+			 (or end (w3m-search-for-next-image-boundary (point))
 			     (point-max)))
 		      (when (w3m-interactive-p)
 			(w3m--message nil 'w3m-warn "This image is considered to be unsafe;\
@@ -4045,14 +4058,14 @@ variable is non-nil (default=t)."
 	   (when (setq url (get-text-property pos 'w3m-image))
 	     (unless (string-match safe-regexp url)
 	       (throw 'done nil))
-	     (setq pos (w3m-search-for-next-image pos)))
+	     (setq pos (w3m-search-for-next-image-boundary pos)))
 	   (while (< pos end)
 	     (when (and
-		    (setq pos (w3m-search-for-next-image pos end))
+		    (setq pos (w3m-search-for-next-image-boundary pos end))
 		    (setq url (get-text-property pos 'w3m-image)))
 	       (unless (string-match safe-regexp url)
 		 (throw 'done nil)))
-	     (setq pos (w3m-search-for-next-image pos end)))
+	     (setq pos (w3m-search-for-next-image-boundary pos end)))
 	   t))))
     (if (or force
 	    status
@@ -4078,7 +4091,7 @@ URL is a url of an image.  RATE is a number of percent used when
 resizing an image."
   (let* ((inhibit-read-only t)
 	 (start (point))
-	 (end (or (w3m-search-for-next-image start)
+	 (end (or (w3m-search-for-next-image-boundary start)
 		  (point-max)))
 	 (iurl (w3m-image start))
 	 (size (get-text-property start 'w3m-image-size))
@@ -7717,10 +7730,10 @@ Return t if highlighting is successful."
   "Go to the bginning of the next image."
   ;; Move the point to the end of the current image.
   (when (w3m-image (point))
-    (goto-char (w3m-search-for-next-image (point))))
+    (goto-char (w3m-search-for-next-image-boundary (point))))
   ;; Find the next image.
   (or (w3m-image (point))
-      (let ((pos (w3m-search-for-next-image (point))))
+      (let ((pos (w3m-search-for-next-image-boundary (point))))
 	(when pos
 	  (goto-char pos)
 	  t))))
@@ -7744,13 +7757,13 @@ Return t if highlighting is successful."
   "Go to the bginning of the previous image."
   ;; Move the point to the beginning of the current image.
   (when (w3m-image (point))
-    (goto-char (w3m-search-for-previous-image (1+ (point)))))
+    (goto-char (w3m-search-for-previous-image-boundary (1+ (point)))))
   ;; Find the previous image.
-  (let ((pos (w3m-search-for-previous-image (point))))
+  (let ((pos (w3m-search-for-previous-image-boundary (point))))
     (if pos
 	(goto-char
 	 (if (w3m-image pos) pos
-	   (w3m-search-for-previous-image pos))))))
+	   (w3m-search-for-previous-image-boundary pos))))))
 
 (defun w3m-previous-image (&optional arg)
   "Move the point to the previous image."

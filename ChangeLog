@@ -1,6 +1,6 @@
 2020-12-23  Boruch Baum  <boruch_baum@gmx.com>
 
-	* w3m.el (w3m--retrieve-1--handler-function): Fix Debian bug 933371 for
+        * w3m.el (w3m--retrieve-1--handler-function): Fix Debian bug 933371 for
 	url queries.
 
 2020-12-22  Boruch Baum  <boruch_baum@gmx.com>
@@ -251,6 +251,18 @@
 	for all queues.
 	(w3m--download-queue-adjust, w3m-download-queue-raise)
 	(w3m-download-queue-drop): Use prefix-arg to move multiple positions in queues.
+
+2020-03-17  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Fix how it (two consecutive identical images) works at just the image
+	boundary (issue #76)
+
+	* w3m.el (w3m-search-for-next-image-boundary)
+	(w3m-search-for-previous-image-boundary): Rename from
+	w3m-search-for-next-image and w3m-search-for-previous-image.
+	(w3m-search-for-previous-image-boundary): Don't search for the one
+	previous image if it is at just the boundary position.
+	(w3m-toggle-inline-image): Turn off a single image, not all.
 
 2020-03-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
