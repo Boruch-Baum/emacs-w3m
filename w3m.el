@@ -6944,25 +6944,51 @@ when the URL of the retrieved page matches the REGEXP."
     (".*" . "^p-search$"))
   "Identification of 'junk' anchor to be ignored in user searches.
 
-The car of each element is a URL regex, and the CDR is a regex of
-anchor names to prune.
+The car of each element is a URL regexp, and the cdr is a regexp of
+anchor names to prune.  If the car of each element is a cons cell,
+its car is a regexp matching a URL to be filtered and its cdr is a
+regexp matching a URL not to be filtered.
 
 This feature was prompted by the large number of useless anchors
 created by the very popular media-wiki software used for sites
 such as wikipedia."
   :group 'w3m
-  :type '(repeat (cons :format "%v" :indent 9
-		       (regexp :format "URL: %v\n")
-		       (regexp :format "%t: %v\n"))))
+  :type '(repeat
+	  (cons
+	   :format "%v" :indent 2
+	   (group
+	    :format "%v"
+	    :match (lambda (_widget value)
+		     (or (consp value) (stringp value)))
+	    :value-to-internal (lambda (_widget value)
+				 (if (consp value)
+				     (if (consp (cdr value))
+					 value
+				       (list (car value) (cdr value)))
+				   (list value)))
+	    :value-to-external (lambda (_widget value)
+				 (if (cdr value)
+				     (apply #'cons value)
+				   (car value)))
+	    (regexp :format "Regexp matching url to be filtered: %v")
+	    (checklist
+	     :inline t
+	     (regexp :format "Regexp matching url not to be filtered: %v")))
+	   (regexp :format "Regexp matching anchor name: %v"))))
 
 (defun w3m--filter-page-anchors (anchor-list)
-  "Prune 'junk' anchors from ANCHOR-LIST."
-  (dolist (filter w3m-anchor-list-filter-alist anchor-list)
-    (when (string-match (car filter) w3m-current-url)
-      (setq anchor-list
-        (remove-if
-          (lambda (x) (string-match (cdr filter) (car x)))
-          anchor-list)))))
+  "Prune \"junk\" anchors from ANCHOR-LIST."
+  (let (url-regexp)
+    (dolist (filter w3m-anchor-list-filter-alist anchor-list)
+      (when (if (consp (setq url-regexp (car filter)))
+		(and (string-match (car url-regexp) w3m-current-url)
+		     (not (string-match (cdr url-regexp) w3m-current-url)))
+	      (string-match url-regexp w3m-current-url))
+	(setq anchor-list
+	      (cl-remove-if
+	       (lambda (x)
+		 (or (not (car x)) (string-match (cdr filter) (car x))))
+	       anchor-list))))))
 
 (defun w3m--get-page-anchors (&optional sub-sets sort-method)
   "Return list of page anchors, sorted by SORT-METHOD.
