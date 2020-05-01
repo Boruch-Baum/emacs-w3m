@@ -1,3 +1,14 @@
+2020-04-29  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m.el (w3m-anchor-list-filter-alist, w3m--filter-page-anchors):
+	Allow non-matching regexp; fix bug when encountering nil string.
+
+	This is a partial merge of commit f26bf3f90be38076b149b41ac06609c97d0a711e
+        Author: Hideyuki SHIRAI <shirai@meadowy.org>
+        Date:   2019-08-20 07:54
+	I'm rejecting its change to the default variable setting, and its
+	additional use of anchor2 data.
+
 2020-04-28  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el (w3m-download-queue-mode): disable undo in download buffer.
