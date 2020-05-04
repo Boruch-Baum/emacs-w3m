@@ -103,6 +103,9 @@ See [below](#project-readme-documentation) for the project's [README documentati
     metadata.
   * New feature: Use `youtube-dl` when available, for downloading videos.
   * New file `w3m-download.el` collects most downloaded-related functions.
+  * New feature: Optionally deep-search links from within HTML "SCRIPT"
+    elements and other 'hidden' parts of HTML source code.
+  * New feature: Smart auto-rename ambiguous and duplicate download names.
 
 * `bb_history-scrub`<sub>[_pr #2_](https://github.com/emacs-w3m/emacs-w3m/pull/2)</sub>
   * New feature `w3m-history-scrub` (keybinding `S-C-delete`) to
@@ -606,3 +609,7 @@ While that is still possible, in most casses it's probably best for
 all concerned to post submissions via github, prferably as a pull request.
 <p>
 <font size=-1><i>last updated 2019-02-19</i></font>
+
+[![License: GPL
+v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+>>>>>>> bb_download
