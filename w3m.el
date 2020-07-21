@@ -8826,13 +8826,19 @@ When called interactively, ARG defaults to 1."
   "Scroll the current window up ARG lines, or go to the next page."
   (interactive "P")
   (if (w3m-image-page-displayed-p)
-      (image-scroll-up arg)
-    (if (and w3m-previous-url
-	     (pos-visible-in-window-p (point-min)))
-	(let ((w3m-prefer-cache t))
-	  (w3m-history-store-position)
-	  (w3m-goto-url w3m-previous-url))
-      (w3m-scroll-down arg))))
+    (image-scroll-up arg)
+   (if (and w3m-next-url
+           (pos-visible-in-window-p
+             (let ((cur (point)))
+              (goto-char (point-max))
+              (skip-chars-backward "\t\n\r ")
+              (forward-line 1)
+              (prog1 (point)
+                     (goto-char cur)))))
+     (let ((w3m-prefer-cache t))
+       (w3m-history-store-position)
+      (w3m-goto-url w3m-next-url))
+    (w3m-scroll-up arg))))
 
 (defun w3m-scroll-down (&optional arg interactive-p)
   "Scroll the current window down ARG lines.
