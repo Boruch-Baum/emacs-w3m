@@ -135,28 +135,6 @@ by way of `post-command-hook'."
     (goto-char p)
     (insert "\n")
     (goto-char p)
-<<<<<<< HEAD
-    (mime-w3m-save-background-color
-     (save-restriction
-       (narrow-to-region p p)
-       (mime-insert-text-content entity)
-       (run-hooks 'mime-text-decode-hook)
-       (condition-case err
-	   (let ((w3m-safe-url-regexp mime-w3m-safe-url-regexp)
-		 (w3m-display-inline-images mime-w3m-display-inline-images)
-		 w3m-force-redisplay)
-	     (w3m-region p (point-max)
-			 (and (stringp xref)
-			      (string-match "\\`http://" xref)
-			      xref)
-			 (mime-content-type-parameter
-			  (mime-entity-content-type entity)
-			  "charset"))
-	     (add-text-properties p (point-max)
-				  (list 'keymap w3m-minor-mode-map
-					'text-rendered-by-mime-w3m t)))
-	 (error (w3m--message t 'w3m-error "%s" err)))))))
-=======
     (save-restriction
       (narrow-to-region p p)
       (mime-insert-text-content entity)
@@ -176,7 +154,6 @@ by way of `post-command-hook'."
 				 (list 'keymap w3m-minor-mode-map
 				       'text-rendered-by-mime-w3m t)))
 	(error (message "%s" err))))))
->>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 (let (current-load-list)
   (defadvice mime-display-message
