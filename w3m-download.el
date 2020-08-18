@@ -2119,7 +2119,7 @@ Are you trying to resume an aborted partial download? ")))
         (w3m-read-file-name
           (format "Download %s to: " url)
           w3m-default-save-directory
-          basename)))
+          nil nil basename)))
     (setq save-path
       (expand-file-name
         (replace-regexp-in-string " " "_"

@@ -9,7 +9,7 @@ v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org
 This is a fork of the
 [emacs-w3m](https://github.com/emacs-w3m/emacs-w3m) git repository.
 The `master` branch here provides my tested modifications to the
-original, while the `bb-upstream`branch here _should_ track the
+original, while the `bb-upstream` branch here _should_ track the
 official repository's `master` branch. Additionally, this fork will
 have unique branches for development experiments, projects, and
 pending pull requests.
@@ -18,29 +18,8 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
-* `bb_awesome_bar`<sub>[_pr #56_](https://github.com/emacs-w3m/emacs-w3m/pull/56)</sub>
-  * Adds bookmark urls and titles to the autocomplete i-search when
-    prompting for a url, just like all the other modern browsers do!
-
-* `bb_content_type`<sub>[_pr #55_](https://github.com/emacs-w3m/emacs-w3m/pull/55)</sub>
-  * Fixes many bugs related to recognizing a URL's content-type and
-    respecting user's wishes for how to handle them. See the commit
-    message of c2917160b7162049 and the pull-request message, for a
-    full explanation.
-
-* `bb_quick-search_POST-DATA_issue_0052`<sub>[_pr #54_](https://github.com/emacs-w3m/emacs-w3m/pull/54)</sub>
-  * Fixes bug that was preventing the likes of duckduckgo searches
-    from functioning when using the emacs-w3m 'quick-saerch' feature,
-    eg. ddg:foo.
-
-* `bb_toggle_unread`<sub>[_pr #50_](https://github.com/emacs-w3m/emacs-w3m/pull/50)</sub>
-  * New feature: In the buffer select pop-up window, toggle whether a
-    buffer is considered and labeled 'unread'. Bound to 'u'.
-
-* `bb_sessions_copy`<sub>[_pr #49_](https://github.com/emacs-w3m/emacs-w3m/pull/49)</sub>
-  * New feature: copy a session, bound to 'c' and 'C'.
-  * Bugfixes: properly position point after operations.
-  * Bugfix: delete a session when deleting its last element.
+* `bb_save-dir-update`<sub>[_pr #80_](https://github.com/emacs-w3m/emacs-w3m/pull/80)</sub>
+  * Updates the session-default save directory upon use.
 
 * `bb_local_files`<sub>[_pr #48_](https://github.com/emacs-w3m/emacs-w3m/pull/48)</sub>
   * Expands environment variables (eg. $HOME, $TEMPDIR, ~)
@@ -49,38 +28,11 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * Doesn't hide a new find-file buffer when creating it using
     function w3m-goto-url-new-session.
 
-* `bb_query_trackers`<sub>[_pr #47_](https://github.com/emacs-w3m/emacs-w3m/pull/47)</sub>
-  * Allow users to remove trackers embedded in URLs.
-  * See `defcustom` `w3m-strip-queries-alist`.
-
-* `bb_page_anchors`<sub>[_pr #46_](https://github.com/emacs-w3m/emacs-w3m/pull/46)</sub>
-  * Make old interactive feature usable: `w3m-search-name-anchor` to
-    jump to an HTML anchor on the current page.
-  * Default keybinding 'C-c j'.
-
-* `bb_sessions_merge`<sub>[_~~pr #43~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/43)</sub>
-  * New feature: copy session element(s) into another session.
-  * Default keybinding 'm', 'M'.
-
-* `bb_sessions_2`<sub>[_~~pr #42~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/42)</sub>
-  * Bugfix: Don't quit the session buffer after opening a session.
-  * Bugfix: Retain session buffer in its window (it was being replaced
-    with the created buffer(s)).
-  * Bugfix: Don't create duplicate buffers.
-
 * `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
   * Change the way the session pop-up window behaves when deleting
     buffers and when exiting the pop-up, so that the currently
     displayed buffer is the one that remains 'on top'. This is mainly
     the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
-
-* `bb_magnet` <sub>[_~~pr #37~~
-  merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/37), [_~~pr
-  #38~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/38)</sub>
-  * New feature: Download torrents and magnet links. This feature
-    requires external command-line utilities from the
-    `transmission` project (`transmission-daemon`, `transmission-cli`)
-    and recommends `transmission-remote-cli` from the same source.
 
 * `bb_download` <sub>[_pr #27_](https://github.com/emacs-w3m/emacs-w3m/pull/27)</sub>
   * New feature: Use `wget` for downloads, when available.
@@ -126,6 +78,91 @@ See [below](#project-readme-documentation) for the project's [README documentati
     displaying and how many entries to display per page.
   * Cosmetic changes to the global history listing, including better timestamping.
   * Improved docstrings.
+
+* `bb_messaging` <sub>[_pr #14_](https://github.com/emacs-w3m/emacs-w3m/pull/14)</sub>
+  * Adds timeouts and colorization to w3m messages in the echo area. Also standardizes
+    use of the w3m message function (use `w3m--message`) and the method of clearing
+    the echo area (use (`w3m-message nil)`).
+  * This is a large and hasn't been exhaustively tested, but the refactor was pretty
+    straightforward, it seems to work, and if there is a mistake hiding in there, it
+    shouldn't have earth-shattering consequences, so its ready for this master branch.
+
+* `bb_clipboard`<sub>[_pr #12_](https://github.com/emacs-w3m/emacs-w3m/pull/12)</sub>
+  * Functions that copy urls to the emacs kill-ring also copy them to
+    the operating system clipboard.
+  * NOTE: This is an imperfect pull-request in that it is only
+    pre-configured for linux. For other operating systems, cons cells
+    need to be added to the new variable `w3m-gui-clipboard-commands`
+    with the OS type and the command string that OS would use to put
+    text into its clipboard. At this point, do *NOT* use `M-x
+    customize-variable` to modify the variable; the defcustom for the
+    variable has a known bug. Other than that, it all seems to work great.
+
+* `bb_documentation`<sub>[_pr #22_](https://github.com/emacs-w3m/emacs-w3m/pull/22)</sub>
+  * Suggested improvements to all documentation files.
+
+* `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
+
+* `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
+  * Remove support for xemacs. The upstream has not been in
+    development for years, there doesn't seem to be a user-base, and I
+    understand from the mailing list that it doesn't work anyway, so
+    this will remove the cruft from the code-base.
+  * This will probably be a slow process of incremental commits, just
+    to be sure there are no side-effects.
+
+## Branches merged to upstream
+
+* `bb_awesome_bar`<sub>[_~~pr #56~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/56)</sub>
+  * Adds bookmark urls and titles to the autocomplete i-search when
+    prompting for a url, just like all the other modern browsers do!
+
+* `bb_content_type`<sub>[_~~pr #55~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/55)</sub>
+  * Fixes many bugs related to recognizing a URL's content-type and
+    respecting user's wishes for how to handle them. See the commit
+    message of c2917160b7162049 and the pull-request message, for a
+    full explanation.
+
+* `bb_quick-search_POST-DATA_issue_0052`<sub>[_~~pr #54~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/54)</sub>
+  * Fixes bug that was preventing the likes of duckduckgo searches
+    from functioning when using the emacs-w3m 'quick-saerch' feature,
+    eg. ddg:foo.
+
+* `bb_toggle_unread`<sub>[_~~pr #50~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/50)</sub>
+  * New feature: In the buffer select pop-up window, toggle whether a
+    buffer is considered and labeled 'unread'. Bound to 'u'.
+
+* `bb_sessions_copy`<sub>[_~~pr #49~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/49)</sub>
+  * New feature: copy a session, bound to 'c' and 'C'.
+  * Bugfixes: properly position point after operations.
+  * Bugfix: delete a session when deleting its last element.
+
+* `bb_query_trackers`<sub>[_~~pr #47~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/47)</sub>
+  * Allow users to remove trackers embedded in URLs.
+  * See `defcustom` `w3m-strip-queries-alist`.
+
+* `bb_page_anchors`<sub>[_~~pr #46~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/46)</sub>
+  * Make old interactive feature usable: `w3m-search-name-anchor` to
+    jump to an HTML anchor on the current page.
+  * Default keybinding 'C-c j'.
+
+* `bb_sessions_merge`<sub>[_~~pr #43~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/43)</sub>
+  * New feature: copy session element(s) into another session.
+  * Default keybinding 'm', 'M'.
+
+* `bb_sessions_2`<sub>[_~~pr #42~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/42)</sub>
+  * Bugfix: Don't quit the session buffer after opening a session.
+  * Bugfix: Retain session buffer in its window (it was being replaced
+    with the created buffer(s)).
+  * Bugfix: Don't create duplicate buffers.
+
+* `bb_magnet` <sub>[_~~pr #37~~
+  merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/37), [_~~pr
+  #38~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/38)</sub>
+  * New feature: Download torrents and magnet links. This feature
+    requires external command-line utilities from the
+    `transmission` project (`transmission-daemon`, `transmission-cli`)
+    and recommends `transmission-remote-cli` from the same source.
 
 * `bb_bookmarks` <sub>[_~~pr #40~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/40)</sub>
   * Improvements: w3m-bookmark-add-all prompts only once for a section
@@ -187,25 +224,6 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * w3m-dtree shouldn't abort on subdir permission restriction `<sub>[_~~pr #10~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/10)</sub>
   * w3m-favicon-convert needed basic bounds checking  `<sub>[_~~pr #21~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/21)</sub>
 
-* `bb_messaging` <sub>[_pr #14_](https://github.com/emacs-w3m/emacs-w3m/pull/14)</sub>
-  * Adds timeouts and colorization to w3m messages in the echo area. Also standardizes
-    use of the w3m message function (use `w3m--message`) and the method of clearing
-    the echo area (use (`w3m-message nil)`).
-  * This is a large and hasn't been exhaustively tested, but the refactor was pretty
-    straightforward, it seems to work, and if there is a mistake hiding in there, it
-    shouldn't have earth-shatteringconsequences, so its ready for this master branch.
-
-* `bb_clipboard`<sub>[_pr #12_](https://github.com/emacs-w3m/emacs-w3m/pull/12)</sub>
-  * Functions that copy urls to the emacs kill-ring also copy them to
-    the operating system clipboard.
-  * NOTE: This is an imperfect pull-request in that it is only
-    pre-configured for linux. For other operating systems, cons cells
-    need to be added to the new variable `w3m-gui-clipboard-commands`
-    with the OS type and the command string that OS would use to put
-    text into its clipboard. At this point, do *NOT* use `M-x
-    customize-variable` to modify the variable; the defcustom for the
-    variable has a known bug. Other than that, it all seems to work great.
-
 * `bb_travis`<sub>[_~~pr #16~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/16)</sub>
   * Adds multiple combinations of operating systems and emacs versions
     to .travis.yml
@@ -216,19 +234,6 @@ See [below](#project-readme-documentation) for the project's [README documentati
 * `bb_view_url` <sub>[~~_pr #44~~_](https://github.com/emacs-w3m/emacs-w3m/pull/44)</sub>
   * remove duplicate code by replacing use of `w3m-view-this-url-1'
     with calls to w3m-goto-url{,-new-session}.
-
-* `bb_documentation`<sub>[_pr #22_](https://github.com/emacs-w3m/emacs-w3m/pull/22)</sub>
-  * Suggested improvements to all documentation files.
-
-* `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
-
-* `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
-  * Remove support for xemacs. The upstream has not been in
-    development for years, there doesn't seem to be a user-base, and I
-    understand from the mailing list that it doesn't work anyway, so
-    this will remove the cruft from the code-base.
-  * This will probably be a slow process of incremental commits, just
-    to be sure there are no side-effects.
 
 ## Project README documentation
 

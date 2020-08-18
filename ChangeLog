@@ -1,3 +1,21 @@
+2020-08-17  Boruch Baum  <boruch_baum@gmx.com>
+
+	* w3m-download.el (w3m-download-using-wget): update args for new version of
+	`w3m-read-file-name'.
+
+	* w3m-save.el (w3m-save-buffer-directory): Mark variable as deprecated
+	in favor of `w3m-default-save-directory'.
+	(w3m-save-buffer): Replace deprecated variable, and use function
+	`w3m-read-file-name' instead of `read-file-name'. This has the
+	consequence of updating a session's default save directory to the most
+	recent used save diretory. Update docstring.
+
+	* w3m.el (w3m-read-file-name): Rename and re-order args to be
+	consistent with underlying emacs function `read-file-name', and update
+	docstring.
+	(w3m-goto-ftp-url): update args for new version of
+	`w3m-read-file-name'
+
 2020-05-10  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el (w3m-download-queue-mode-map): Bind '?' to describe mode.

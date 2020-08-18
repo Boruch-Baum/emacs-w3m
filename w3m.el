@@ -4779,20 +4779,27 @@ BUFFER is nil, all contents will be inserted in the current buffer."
 	      (string-match "^\\(?:last-modified\\|etag\\):" head))))))
        ident))))
 
-(defun w3m-read-file-name (&optional prompt dir default existing)
+(defun w3m-read-file-name (&optional prompt dir default-filename mustmatch initial)
+  "Prompt the user for a file-path name, and returns that value.
+
+This is basically a wrapper for the emacs-native function
+ `read-file-name'. If PROMPT is NIL, use default string 'Save
+ to'. If DIR is NIL, use `w3m-default=dave-directory'. DEFAULT-FILENAME,
+ MUSTMATCH, and INITIAL are as documented for function
+ `read-file-name'."
   (unless prompt
-    (setq prompt (if (and default (not (string-equal default "")))
-		     (format "Save to (%s): " default)
+    (setq prompt (if (and initial (not (string-equal initial "")))
+		     (format "Save to (%s): " initial)
 		   "Save to: ")))
   (setq dir (file-name-as-directory (or dir w3m-default-save-directory)))
   (let ((default-directory dir)
-	(file (read-file-name prompt dir nil existing default)))
+	(file (read-file-name prompt dir default-filename mustmatch initial)))
     (if (not (file-directory-p file))
 	(setq w3m-default-save-directory
 	      (or (file-name-directory file) w3m-default-save-directory))
       (setq w3m-default-save-directory file)
-      (if default
-	  (setq file (expand-file-name default file))))
+      (if initial
+	  (setq file (expand-file-name initial file))))
     (expand-file-name file)))
 
 ;;; Handling character sets:
@@ -9234,7 +9241,7 @@ this function will prompt user for it."
 	(dired-other-window ftp)
       (setq file (file-name-nondirectory ftp))
       (unless filename
-	(setq filename (w3m-read-file-name nil nil file)))
+	(setq filename (w3m-read-file-name nil nil nil nil file)))
       (unless (file-writable-p (file-name-directory filename))
 	(error "Permission denied, %s" (file-name-directory filename)))
       (when (or (not (file-exists-p filename))
