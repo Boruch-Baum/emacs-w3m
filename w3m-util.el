@@ -67,6 +67,7 @@
 (declare-function w3m-fb-frame-parameter "w3m-fb" (frame parameter))
 (declare-function w3m-history-restore-position "w3m-hist")
 (declare-function w3m-mode "w3m")
+(declare-function w3m-url-to-file-name "w3m" (url))
 
 ;; ;;; Control structures:
 
@@ -1114,7 +1115,8 @@ START and END are lists which represent time in Emacs-style."
 (defun w3m-url-local-p (url)
   "If URL points a file on the local system, return non-nil value.
 Otherwise return nil."
-  (string-match "\\`file:" url))
+  (and (string-match "\\`file:" url)
+       (w3m-url-to-file-name url)))
 
 (defconst w3m-url-authinfo-regexp
   "\\`\\([^:/?#]+:\\)?//\\([^/?#:]+\\)\\(?::\\([^/?#@]+\\)\\)?@"
