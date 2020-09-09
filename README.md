@@ -18,6 +18,15 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
+* `bb_tab_move`<sub>[_pr #82_](https://github.com/emacs-w3m/emacs-w3m/pull/82)</sub>
+  * Fixes bug that moving a tab more than one position away would swap
+    tabs instead.
+
+* `bb_ambiguous_navigation`<sub>[_pr #81_](https://github.com/emacs-w3m/emacs-w3m/pull/81)</sub>
+  * Adds intelligence to quickly navigate series' of pages on the same
+    web site to include cases of URL links with only 'next' /
+    'previous' in their text strings, not inside their HTML tags.
+
 * `bb_save-dir-update`<sub>[_pr #80_](https://github.com/emacs-w3m/emacs-w3m/pull/80)</sub>
   * Updates the session-default save directory upon use.
 
