@@ -8836,8 +8836,8 @@ Used by function `w3m-scroll-down-or-previous-url'.")
 (defcustom w3m-page-navigation-labels
   ; At time of commit only English tested!
   '((".*prev" . ".*next")    ; English most commonly used first
-    (".*back" . ".*forward") ; English more
-    (".*back" . ".*fwd")     ; English remote possibility
+    (".*back[^[:alpha:]-]" . ".*forward") ; English more
+    (".*back[^[:alpha:]-]" . ".*fwd")     ; English remote possibility
     (".*קודם" . ".*הבא")     ; Hebrew looks wrong because of unicode RTL bug?
     ; Blame: Google translate & too much free time
     (".*前" . ".*次")               ; Japanese
@@ -8963,7 +8963,7 @@ PREFIX-ARG."
   (cond
    ((w3m-image-page-displayed-p)
      (image-scroll-down w3m-scroll-interval))
-   ((not (pos-visible-in-window-p (goto-char (point-min))))
+   ((not (pos-visible-in-window-p (point-min)))
      (w3m-scroll-down w3m-scroll-interval))
    (w3m-previous-url ; the page parser found a 'previous' url
      (let ((w3m-prefer-cache t))
@@ -8981,7 +8981,8 @@ PREFIX-ARG."
            (when (string-match (car regex) txt)
              (cl-pushnew (list txt (get-text-property (point) 'w3m-href-anchor))
                          options))))
-       (when options
+       (if (not options)
+          (goto-char (point-min))
          (cond
           ((setq next (assoc label options))
             (w3m-goto-url (cadr next))
