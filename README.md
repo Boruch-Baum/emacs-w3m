@@ -26,6 +26,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * Adds intelligence to quickly navigate series' of pages on the same
     web site to include cases of URL links with only 'next' /
     'previous' in their text strings, not inside their HTML tags.
+    * Additional logix to support google search pages' website design.
 
 * `bb_save-dir-update`<sub>[_pr #80_](https://github.com/emacs-w3m/emacs-w3m/pull/80)</sub>
   * Updates the session-default save directory upon use.
