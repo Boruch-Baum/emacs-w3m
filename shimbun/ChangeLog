@@ -1,3 +1,88 @@
+2020-10-21  Tsuyoshi CHO  <Tsuyoshi.CHO@Gmail.com>
+
+	File author Tsuyoshi CHO's email address updated.
+	Old was non-reach to the latest.
+
+	* sb-arch-bluegate.el, sb-atom-hash.el, sb-atom.el, sb-cnet-jp.el,
+	sb-cnn-jp.el, sb-engadget-ja.el, sb-excite.el, sb-hash.el, sb-mailman.el,
+	sb-pcweb-column.el, sb-rss-hash.el, sb-scipy.el, sb-tigris.el, sb-w3m-dev.el,
+	sb-wikimedia.el, sb-x51.el, sb-zdnet-jp.el:
+	File author Tsuyoshi CHO's email address updated.
+
+2020-08-13  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Drop Emacs 25 support
+
+	* sb-asahi.el, sb-rss.el, sb-yomiuri.el:
+	Drop Emacs 25 support because of Emacs 27.1 having been released.
+
+2020-04-06  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* shimbun.el (shimbun-retrieve-url): Remove a workaround for Sankei.
+
+2019-09-30  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* nnshimbun.el (nnshimbun-close-server): Add a dummy arg _defs.
+
+2019-08-26  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Improve custom type for some shimbun options
+
+	* mew-shimbun.el (mew-shimbun-folder-groups, mew-shimbun-expires)
+	(mew-shimbun-db-length):
+	* sb-geocrawler.el (shimbun-geocrawler-group-alist):
+	* sb-hns.el (shimbun-hns-group-alist):
+	* sb-marc-aims.el (shimbun-marc-aims-group-alist):
+	* sb-slashdot-jp.el (shimbun-slashdot-jp-group-alist):
+	* sb-sourceforge-jp.el (shimbun-sourceforge-jp-mailing-lists):
+	* sb-tigris.el (shimbun-tigris-group-alist):
+	* sb-wiki.el (shimbun-wiki-group-alist):
+	* shimbun.el (shimbun-server-additional-path)
+	(shimbun-x-face-database-function): Improve custom type.
+
+2019-08-08  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Don't load cl for Emacs 26 and greater
+
+	* sb-asahi.el, sb-rss.el, sb-yomiuri.el: Add comment about cl.
+	* sb-emacs-w3m.el, shimbun.el: Don't load cl.
+	* shimbun.el (shimbun-entity-cid): Use gv-define-simple-setter instead
+	of defsetf.
+
+2019-07-31  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-sankei.el (shimbun-sankei-login):
+	Make it work even if some kinds of cookies are left in the cache.
+
+2019-07-29  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-cgi-board.el (shimbun-cgi-board-make-date-string):
+	* sb-cnet.el (shimbun-rss-process-date):
+	* sb-multi.el (shimbun-multi-make-contents): Use cl-multiple-value-bind
+	and cl-values-list instead of multiple-value-bind and values-list.
+
+2019-07-28  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-sankei.el (shimbun-sankei-clear-contents): Delete useless buttons.
+	(shimbun-sankei-login): Delete old cookies in advance.
+
+2019-07-26  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-sankei.el (shimbun-sankei-login, shimbun-sankei-logout): Work.
+
+2019-06-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Remove backlog stuff that didn't work as intended
+	(rely it fully on Gnus's backlog facility)
+
+	* nnshimbun.el (nnshimbun-backlog-articles, nnshimbun-backlog-hashtb)
+	(nnshimbun-keep-backlog, nnshimbun-backlog)
+	(nnshimbun-unadvised-gnus-backlog-shutdown): Remove definittions.
+	(gnus-backlog-shutdown): Remove advice.
+	(nnshimbun-close-server): Remove caches in Gnus' backlog.
+	(nnshimbun-request-article-1): Don't call gnus-backlog-request-article
+	as this function won't be called anyway if Gnus has a cache in backlog.
+
 2019-05-17  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* nnshimbun.el (nnshimbun-replace-date-header): Use mail-header-date
