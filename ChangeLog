@@ -1,5 +1,10 @@
 2020-10-27  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m-page-nav--duckduckgo-style-next): Improve post-update
+	positioning.
+
+2020-10-27  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-filter.el (w3m-filter-youtube): Empty the content of the filter,
 	because site is now full javascript.
 
