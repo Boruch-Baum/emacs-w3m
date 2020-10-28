@@ -1055,8 +1055,7 @@ way of `post-command-hook'."
   :type 'string)
 
 (require 'mailcap)
-(mailcap-parse-mailcaps nil t)
-(mailcap-parse-mimetypes nil t)
+(mailcap-parse-mimetypes)
 
 (defvar w3m-content-type-alist
   (let ((additions
@@ -1081,13 +1080,12 @@ way of `post-command-hook'."
 	  (unless (or (zerop (length (car tem))) (member (car tem) exts))
 	    (push (car tem) exts))
 	  (setq extensions (delq tem extensions)))
-	(setq viewer (mailcap-mime-info type))
 	(push (list type
 		    (concat (if (cdr exts)
 				(regexp-opt exts)
 			      (regexp-quote ext))
 			    "\\'")
-		    (when (stringp viewer) viewer)
+		    (list 'mailcap-mime-info type)
 		    nil)
 	      rest)))
     ;; items w/o file extension
@@ -1102,13 +1100,15 @@ way of `post-command-hook'."
 		    rest)))))
     ;; convert viewers
     (dolist (elem rest)
-      (when (setq viewer (car (cdr (cdr elem))))
+      (when (and (setq viewer (car (cddr elem)))
+		 (not (and (consp viewer)
+			   (eq 'mailcap-mime-info (car viewer)))))
 	(dolist (v (prog1 (split-string viewer) (setq viewer nil)))
 	  (push (cond ((string-equal "%s" v) 'file)
 		      ((string-equal "%u" v) 'url)
 		      (t v))
 		viewer))
-	(setcar (cdr (cdr elem)) (nreverse viewer))))
+	(setcar (cddr elem) (nreverse viewer))))
     ;; addition
     (dolist (elem additions)
       (if (setq tem (assoc (car elem) rest))
@@ -1122,7 +1122,7 @@ Each element is a list which consists of the following data:
 
 2. Regexp matching a url or a file name.
 
-3. Method to view contents.  The following three types may be used:
+3. Method to view contents.  The following four types may be used:
    a. Lisp function which takes the url to view as an argument.
    b. (\"COMMAND\" [ARG...]) -- where \"COMMAND\" is the external command
       and ARG's are the arguments passed to the command if any.  The
@@ -1130,6 +1130,9 @@ Each element is a list which consists of the following data:
       respectively with the name of a temporary file which contains
       the contents and the string of the url to view.
    c. nil which means to download the url into the local file.
+   d. (mailcap-mime-info \"Content-Type\") -- it will be replaced with
+      the return value that is gotten by evaluatiing this form.  Value
+      may be one of the above three types.
 
 4. Content type that overrides the one specified by `1. Content type'.
    Valid values include:
@@ -7183,26 +7186,37 @@ command instead."
       (w3m-process-do
 	  (type (w3m-content-type url no-cache handler))
 	(if (not type)
-		  (w3m-download-using-wget url nil no-cache handler)
-	  (lexical-let ((method
-			 (or (nth 2 (assoc type w3m-content-type-alist))
-			     (nth 2 (assoc (w3m-prepare-content url type nil)
-					   w3m-content-type-alist))))
-			(default
-			  (nth 2 (assoc "text/html" w3m-content-type-alist))))
-            (when (consp method)
-              (let ((result))
+          (w3m-download-using-wget url nil no-cache handler)
+         (lexical-let*
+           ((def     (assoc type w3m-content-type-alist))
+            (method  (nth 2 def))
+            (default (nth 2 (assoc "text/html" w3m-content-type-alist))))
+          (unless method
+            (setq def (assoc (w3m-prepare-content url type nil)
+                             w3m-content-type-alist)
+                  method (nth 2 def)))
+          (when (and (consp method) (eq 'mailcap-mime-info (car method)))
+            (mailcap-parse-mailcaps)
+            (when (setq method (eval method))
+              (dolist (v (prog1 (split-string method) (setq method nil)))
+                (push (cond ((string-equal "%s" v) 'file)
+                            ((string-equal "%u" v) 'url)
+                            (t v))
+                      method))
+              (setcar (cddr def) (setq method (nreverse method)))))
+          (when (consp method)
+            (let ((result))
               (setq method
-                (dolist (elem (reverse method) result)
-                  (push (if (and (stringp elem)
-                                 (string-match  "^[\"']?%s[\"']?$"  elem))
-                          'file
-                         elem)
-                        result)))))
-	    (cond
-	     ((not method)
-	      (if (w3m-url-local-p url)
-		  (error "\
+                    (dolist (elem (reverse method) result)
+                      (push (if (and (stringp elem)
+                                     (string-match  "^[\"']?%s[\"']?$"  elem))
+                		'file
+			      elem)
+			    result)))))
+	  (cond
+	   ((not method)
+	    (if (w3m-url-local-p url)
+		(error "\
 No method to view `%s' is registered. Use `w3m-edit-this-url'"
 			 (file-name-nondirectory (w3m-url-to-file-name url)))
 		(w3m-download-using-wget url nil no-cache handler)))
