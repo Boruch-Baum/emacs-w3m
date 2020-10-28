@@ -1,5 +1,10 @@
 2020-10-27  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-filter.el (w3m-filter-youtube): Empty the content of the filter,
+	because site is now full javascript.
+
+2020-10-27  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-download.el (w3m-download-queue-help)
 	(w3m--download-queue-buffer-header-string)
 	(w3m--download-queue-buffer-help-string): New keybinding help feature,
