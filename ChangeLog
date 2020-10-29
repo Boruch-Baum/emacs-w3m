@@ -140,6 +140,16 @@
 	(w3m-goto-ftp-url): update args for new version of
 	`w3m-read-file-name'
 
+2020-08-16  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* .travis.yml (before_script): Fix melpa url.
+	* .travis.yml (allow_failures): Temporarily add builds on emacs27
+	that doesn't seem to be available on Travis CI at this time.
+	(before_script): Fix melpa url.
+
+	Boruch Baum's note: This is really a cherry-pick of: 866f7c6a,
+	a6699824, ...
+
 2020-05-10  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el (w3m-download-queue-mode-map): Bind '?' to describe mode.
