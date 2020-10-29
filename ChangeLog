@@ -2,6 +2,7 @@
 
 	* w3m-util.el (w3m-remove-face-property): bugfixes for handling of
 	OBJECT and non-list possibility for PROP [emacs-w3m 13684-13686].
+	(w3m--remove-face-property): remove temporary function.
 
 	* w3m-download.el (w3m--download-update-faces-pre-command): Use the
 	function.
