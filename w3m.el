@@ -6703,32 +6703,34 @@ such as wikipedia."
 
 (defun w3m--get-page-anchors (&optional sub-sets sort-method)
   "Return list of page anchors, sorted by SORT-METHOD.
-SUB-SETS defines from where to draw anchor information. It
-defaults to 'all, but may also be 'w3m-name-anchor or
-'w3m-name-anchor2. SORT-METHOD defaults to 'position, but may
-also be 'name or a function that can be passed to `sort'."
+SUB-SETS defines from where to draw anchor information.  It defaults to
+`all', but may also be `w3m-name-anchor' or `w3m-name-anchor2'.
+SORT-METHOD defaults to `position', but may also be `name' or a function
+that can be passed to `sort'."
   (let ((pos (point-min))
-        (cur-pos (point))
-        anchor-list)
+	anchor-list anchor2 name)
     ;; NOTE: w3m-name-anchor aggregates data from `w3m -half-dump'.
     (unless (eq sub-sets 'w3m-name-anchor2)
       (while (setq pos (next-single-property-change pos 'w3m-name-anchor))
-        (push (cons (car (get-text-property pos 'w3m-name-anchor)) pos)
-              anchor-list))
+	(push (cons (car (get-text-property pos 'w3m-name-anchor)) pos)
+	      anchor-list))
       (setq pos (point-min)))
     (unless (eq sub-sets 'w3m-name-anchor)
       (while (setq pos (next-single-property-change pos 'w3m-name-anchor2))
-        (push (cons (car (get-text-property pos 'w3m-name-anchor2)) pos)
-              anchor-list)))
+	(setq anchor2 (get-text-property pos 'w3m-name-anchor2))
+	(while anchor2
+	  (if (assoc (setq name (pop anchor2)) anchor-list)
+	      (setq anchor2 nil)
+	    (push (cons name pos) anchor-list)))))
     (setq anchor-list (w3m--filter-page-anchors anchor-list))
     (sort anchor-list
-      (cond
-       ((or (not sort-method) (eq sort-method 'position))
-        (lambda (x y) (< (cdr x) (cdr y))))
-       ((eq sort-method 'name)
-          (lambda (x y) (string-lessp (downcase (car x)) (downcase (car y)))))
-       ((functionp sort-method) sort-method)
-       (t (error "Invalid arg: SORT-METHOD"))))))
+	  (cond
+	   ((or (not sort-method) (eq sort-method 'position))
+	    (lambda (x y) (< (cdr x) (cdr y))))
+	   ((eq sort-method 'name)
+	    (lambda (x y) (string-lessp (downcase (car x)) (downcase (car y)))))
+	   ((functionp sort-method) sort-method)
+	   (t (error "Invalid arg: SORT-METHOD"))))))
 
 (defun w3m-search-name-anchor (name &optional quiet no-record)
   "Navigate to HTML anchor NAME in the current buffer.
