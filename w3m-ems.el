@@ -1,6 +1,6 @@
 ;;; w3m-ems.el --- GNU Emacs stuff for emacs-w3m -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2013, 2016-2019 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
+;; Copyright (C) 2001-2013, 2016-2020 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Authors: Yuuichi Teranishi  <teranisi@gohome.org>,
 ;;          TSUCHIYA Masatoshi <tsuchiya@namazu.org>,
@@ -34,7 +34,7 @@
 
 ;;; Code:
 
-(require 'cl-lib) ;; cl-decf, cl-incf
+(require 'cl-lib) ;; cl-incf
 (require 'w3m-util)
 (require 'w3m-proc)
 (require 'w3m-image)

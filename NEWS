@@ -1,74 +1,19 @@
 Emacs-w3m NEWS -- history of user-visible changes.
 
-<<<<<<< HEAD
-Copyright (C) 2000-2019 TSUCHIYA Masatoshi
-See the end of the file for license conditions.
-
-Please send bug reports to emacs-w3m@namazu.org, preferably using `M-x
-report-emacs-w3m-bug', or submit bug reports as issues directly to our
-github repository (https://github.com/emacs-w3m/emacs-w3m).
-=======
-Copyright (C) 2019 TSUCHIYA Masatoshi
+Copyright (C) 2020 TSUCHIYA Masatoshi
 See the end of the file for license conditions.
 
 Please send bug reports to emacs-w3m@namazu.org.
 If possible, use M-x report-emacs-w3m-bug.
 
-This file is about emacs-w3m as of June 2019.
->>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
+This file is about emacs-w3m as of August 2020.
 
 
 * Required Emacs version changes
 
 ** Emacs-w3m no longer works with old Emacs versions.
-<<<<<<< HEAD
-Emacs-w3m supports the latest two major stable versions of Emacs.
-Thus, when the latest stable Emacs was 26.1, Emacs-w3m was
-supporting versions 26.1, 25.3, 25.2, and 25.1.
-
-Older versions of Emacs may still be able to successfully use the
-current version of emacs-w3m, but as the current versions of
-Emacs or ELisp themselves change, deprecate, or remove features,
-the latest version of emacs-w3m can be expected to keep pace,
-and thus will gradually lose functionality when run in older
-Emacs versions.
-
-Pre-release versions of Emacs and even development snapshots are
-unofficially supported, as we do try to keep the code up-to-date,
-so if you are using a "bleeding edge" Emacs version and do
-experience a problem, please do file a bug report by contacting
-us on our mailing list!
-
-
-* Appearance changes
-
-
-* Changes in tabs, sessions, and menu
-
-
-* Changes in contents decoding
-
-
-* New Lisp modules
-
-
-* Search engines changes
-
-
-* Changes in filters
-
-
-* Miscellaneous
-
-** We've done many other improvements and bug fixes in this release.
-(Some of them might cause new bugs, though.)
-
-
-* Shimbun changes
-=======
-Now emacs-w3m will work with Emacs 25, 26, and hopefully 27 (not
+Now emacs-w3m will work with Emacs 26, 27, and hopefully 28 (not
 released yet, though).  XEmacs support has been dropped.
->>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 * License

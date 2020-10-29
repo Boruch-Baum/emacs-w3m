@@ -1,6 +1,6 @@
 ;;; w3m-hist.el --- the history management system for emacs-w3m -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2012, 2019 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
+;; Copyright (C) 2001-2012, 2019, 2020 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Author: Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: w3m, WWW, hypermedia
@@ -32,13 +32,7 @@
 
 ;;; Code:
 
-;; Delete this section when emacs-w3m drops the Emacs 25 support.
-(eval-when-compile
-  (unless (>= emacs-major-version 26)
-    (require 'cl))) ;; c[ad][ad][ad]+r
-
 (require 'cl-lib) ;; cl-decf, cl-incf
-
 (require 'w3m-util)
 
 (defcustom w3m-history-reuse-history-elements nil

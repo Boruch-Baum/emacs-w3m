@@ -1,6 +1,6 @@
 ;;; w3m-session.el --- Functions to operate session of w3m -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2003, 2005-2013, 2017-2019
+;; Copyright (C) 2001-2003, 2005-2013, 2017-2020
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Author: Hideyuki SHIRAI <shirai@meadowy.org>
@@ -85,11 +85,6 @@
 
 
 ;;; Code:
-
-;; Delete this section when emacs-w3m drops the Emacs 25 support.
-(eval-when-compile
-  (unless (>= emacs-major-version 26)
-    (require 'cl))) ;; c[ad][ad][ad]+r
 
 (require 'w3m-util)
 

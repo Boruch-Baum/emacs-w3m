@@ -1,70 +1,20 @@
 Emacs-w3m ニュース -- ユーザーに判読できる変更の履歴。
 
-<<<<<<< HEAD
-Copyright (C) 2000-2019 $BEZ202mL-(B
-$B%i%$%;%s%9$N>r7o$K$D$$$F$O$3$N%U%!%$%k$NKvHx$r8+$F$/$@$5$$!#(B
-=======
-Copyright (C) 2019 土屋雅稔
+Copyright (C) 2020 土屋雅稔
 ライセンスの条件についてはこのファイルの末尾を見てください。
 >>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 バグリポートは emacs-w3m@namazu.org に送ってください。
 もし可能なら M-x report-emacs-w3m-bug を使ってください。
 
-このファイルは 2019年6月現在の emacs-w3m に関するものです。
+このファイルは 2020年8月現在の emacs-w3m に関するものです。
 
 
 * 必要な Emacs バージョンが変わりました
 
-<<<<<<< HEAD
-** Emacs-w3m $B$O$b$O$d8E$$%P!<%8%g%s$N(B Emacs $B$G$OF0:n$7$^$;$s!#(B
-Emacs-w3m $B$O0BDjHG$G:G?7$N(B 2$B$D$N%a%8%c!<%P!<%8%g%s$N(B Emacs $B$r%5%]!<%H(B
-$B$7$^$9!#$D$^$j!"$b$7:G?7$N0BDjHG$N(B Emacs $B$,(B 26.1 $B$G$"$k$J$i$P!"(B
-emacs-w3m $B$O(B 26.1$B!"(B25.3$B!"(B25.2$B!"$*$h$S(B 25.1 $B$r%5%]!<%H$9$k$H$$$&$3$H$G(B
-$B$9!#(B
-
-$B8E$$%P!<%8%g%s$N(B Emacs $B$G$b!"$^$@8=9THG$N(B emacs-w3m $B$rLdBj$J$/;H$&$3$H(B
-$B$,$G$-$k$+$b$7$l$^$;$s!#$7$+$7:G?7$N(B emacs-w3m $B$O!":G?7$N(B Emacs $B$d(B
-Elisp $B<+BN$,$$$m$$$m$J5!G=$K$D$$$F9T$J$&JQ99$d!"(B $BHs?d>)$K$7$?$j:o=|$9(B
-$B$k$3$H$rDI$$$+$1$F$$$k$G$7$g$&$+$i!"8E$$%P!<%8%g%s$N(B Emacs $B$GAv$i$;$F(B
-$B$$$k$H!"=x!9$K5!G=$7$J$/$J$C$F$$$/$G$7$g$&!#(B
-
-$B%3!<%I$r:G?7$N>uBV$K0];}$7$h$&$H$7$F$$$k$N$G!"%j%j!<%9A0$N(B Emacs $B$d3+(B
-$BH/Cf$N$b$N$N%9%J%C%W%7%g%C%H$G$5$($bHs8x<0$K%5%]!<%H$7$F$$$^$9!#(B $B$7$?(B
-$B$,$C$F:G@hC<$N(B Emacs $B$r;H$C$F$$$FLdBj$K$V$D$+$C$?$i!"(B $B$=$N%P%0$r%a!<%j(B
-$B%s%0%j%9%H$GCN$i$;$F$/$@$5$$!#(B
-
-
-* $B304Q$K4X$9$kJQ99(B
-
-
-* $B%?%V!"%;%C%7%g%s!"$*$h$S%a%K%e!<$K4X$9$kJQ99(B
-
-
-* $B%3%s%F%s%D$N%G%3!<%I$K4X$9$kJQ99(B
-
-
-* $B?7$7$$(B Lisp $B%b%8%e!<%k(B
-
-
-* $B8!:w%(%s%8%s$K4X$9$kJQ99(B
-
-
-* $B%U%#%k%?!<$K4X$9$kJQ99(B
-
-
-* $B$=$NB>(B
-
-** $B$3$N%j%j!<%9$G$OB>$K$bB?$/$N2~NI$H%P%0$N=$@5$r9T$J$$$^$7$?!#(B
-($B$=$l$i$N$$$/$D$+$O?7$7$$%P%0$r0z$-5/$3$9$+$b$7$l$^$;$s$1$l$I!#(B)
-
-
-* Shimbun $B$K4X$9$kJQ99(B
-=======
 ** Emacs-w3m はもはや古いバージョンの Emacs では動作しません。
-現在 emacs-w3m は Emacs 25、26、そしてうまくいけば 27 (まだリリースさ
+現在 emacs-w3m は Emacs 26、27、そしてうまくいけば 28 (まだリリースさ
 れていませんが) で動作するでしょう。XEmacs サポートは終了しました。
->>>>>>> b5ec8774904ac9be0879928283b99ac77c3e2b63
 
 
 * License

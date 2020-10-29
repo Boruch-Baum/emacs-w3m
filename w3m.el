@@ -50,12 +50,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; c[ad][ad][ad]+r, defsetf, lexical-let
-;; The `defsetf' macro uses this function at compile-time.
-(declare-function gv--defsetter "gv" (name setter do args &optional vars))
-;; `cl' employs `cl-lib'.
-;; (require 'cl-lib) ;; cl-decf, cl-incf, cl-labels
-
+(require 'cl-lib) ;; cl-decf, cl-incf, cl-labels, cl-remove-if
 (require 'w3m-util)
 (require 'w3m-proc)
 

@@ -1,6 +1,6 @@
 ;;; w3m-proc.el --- Functions and macros to control sub-processes -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2005, 2007-2010, 2012, 2013, 2016-2019
+;; Copyright (C) 2001-2005, 2007-2010, 2012, 2013, 2016-2020
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Authors: TSUCHIYA Masatoshi <tsuchiya@namazu.org>,
@@ -38,23 +38,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
-;; `cl' employs `cl-lib'.
-;; (require 'cl-lib) ;; cl-incf, cl-labels
-
-;; Delete these two sections and use `gensym' instead of `w3m-gensym'
-;; when emacs-w3m drops the Emacs 25 support.
-(eval-when-compile
-  (require 'cl) (require 'cl-macs)) ;; `gensym' for Emacs 25
-(eval-and-compile
-  (if (>= emacs-major-version 26)
-      (defalias 'w3m-gensym 'gensym)
-    (defun w3m-gensym (&optional prefix)
-      "Generate a new uninterned symbol.
-The name is made by appending a number to PREFIX, default \"G\"."
-      (unless (boundp 'cl--gensym-counter) (set 'cl--gensym-counter 0))
-      (inline (cl-gensym prefix)))))
-
+(require 'cl-lib) ;; cl-gensym (autoloaded from cl-macs), cl-incf, cl-labels
 (require 'w3m-util)
 
 ;; External functions and variables used in this module,
@@ -327,7 +311,7 @@ which have no handler."
   "Generate the null handler, and evaluate BODY.
 When BODY is evaluated, the local variable `handler' keeps the null
 handler."
-  (let ((var (w3m-gensym "--tempvar--")))
+  (let ((var (gensym "--tempvar--")))
     `(let ((,var (let (handler) ,@body)))
        (when (w3m-process-p ,var)
 	 (w3m-process-start-process ,var))
@@ -371,8 +355,8 @@ otherwise returns nil."
   "Generate the waiting handler, and evaluate BODY.
 When BODY is evaluated, the local variable `handler' keeps the handler
 which will wait for the end of the evaluation."
-  (let ((result (w3m-gensym "--result--"))
-	(wait-function (w3m-gensym "--wait-function--")))
+  (let ((result (gensym "--result--"))
+	(wait-function (gensym "--wait-function--")))
     `(let ((w3m-process-waited t)
 	   (,result)
 	   (,wait-function (make-symbol "wait-function")))
@@ -447,9 +431,9 @@ be evaluated after the end of the process with the variable VAR which
 is set to the result of the form FORM.  Otherwise, the body BODY is
 evaluated at the same time, and this macro returns the result of the
 body BODY."
-  (let ((var (or (car spec) (w3m-gensym "--tempvar--")))
+  (let ((var (or (car spec) (gensym "--tempvar--")))
 	(form (cdr spec))
-	(post-function (w3m-gensym "--post-function--")))
+	(post-function (gensym "--post-function--")))
     `(let ((,post-function (lambda (,var) ,@body)))
        (let ((,var (let ((handler (cons ,post-function handler)))
 		     ,@form)))
@@ -469,12 +453,12 @@ body BODY."
   "(w3m-process-do-with-temp-buffer (VAR FORM) BODY...):
 Like `w3m-process-do', but the form FORM and the body BODY are
 evaluated in a temporary buffer."
-  (let ((var (or (car spec) (w3m-gensym "--tempvar--")))
+  (let ((var (or (car spec) (gensym "--tempvar--")))
 	(form (cdr spec))
-	(post-body (w3m-gensym "--post-body--"))
-	(post-handler (w3m-gensym "--post-handler--"))
-	(temp-buffer (w3m-gensym "--temp-buffer--"))
-	(current-buffer (w3m-gensym "--current-buffer--")))
+	(post-body (gensym "--post-body--"))
+	(post-handler (gensym "--post-handler--"))
+	(temp-buffer (gensym "--temp-buffer--"))
+	(current-buffer (gensym "--current-buffer--")))
     `(lexical-let ((,temp-buffer
 		    (w3m-get-buffer-create
 		     (generate-new-buffer-name w3m-work-buffer-name)))
