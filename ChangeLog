@@ -1,5 +1,6 @@
 2020-12-19  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-hist.el (w3m-history-scrub): Update for new hash table handling
 	* w3m-download.el (w3m--download-check-and-use-cache): Update for new
 	hash table handling.
 
