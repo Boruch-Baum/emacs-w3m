@@ -1596,7 +1596,7 @@ data to be copied."
               (radio :indent 8
 	        (symbol :format "GNU/Linux\n"         gnu/linux)
                 (symbol :format "GNU Hurd\n"          gnu)
-	        (symbol :format "GNU/FreeBSD\n"       gnu/kfreebsd )
+	        (symbol :format "GNU/FreeBSD\n"       gnu/kfreebsd)
 	        (symbol :format "Darwin (MacOS)\n"    darwin)
 	        (symbol :format "MS-DOS\n"            ms-dos)
 	        (symbol :format "Windows NT 32-bit\n" windows-nt)
