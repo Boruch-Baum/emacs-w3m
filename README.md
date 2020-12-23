@@ -18,32 +18,6 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 ## Unique branches here
 
-* `bb_tab_move`<sub>[_pr #82_](https://github.com/emacs-w3m/emacs-w3m/pull/82)</sub>
-  * Fixes bug that moving a tab more than one position away would swap
-    tabs instead.
-
-* `bb_ambiguous_navigation`<sub>[_pr #81_](https://github.com/emacs-w3m/emacs-w3m/pull/81)</sub>
-  * Adds intelligence to quickly navigate series' of pages on the same
-    web site to include cases of URL links with only 'next' /
-    'previous' in their text strings, not inside their HTML tags.
-    * Additional logix to support google search pages' website design.
-
-* `bb_save-dir-update`<sub>[_pr #80_](https://github.com/emacs-w3m/emacs-w3m/pull/80)</sub>
-  * Updates the session-default save directory upon use.
-
-* `bb_local_files`<sub>[_pr #48_](https://github.com/emacs-w3m/emacs-w3m/pull/48)</sub>
-  * Expands environment variables (eg. $HOME, $TEMPDIR, ~)
-  * Respects documentation for w3m-local-find-file-regexps, in terms
-    of what the included and excluded regexes do.
-  * Doesn't hide a new find-file buffer when creating it using
-    function w3m-goto-url-new-session.
-
-* `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
-  * Change the way the session pop-up window behaves when deleting
-    buffers and when exiting the pop-up, so that the currently
-    displayed buffer is the one that remains 'on top'. This is mainly
-    the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
-
 * `bb_download` <sub>[_pr #27_](https://github.com/emacs-w3m/emacs-w3m/pull/27)</sub>
   * New feature: Use `wget` for downloads, when available.
   * New feature: Allow resumption of aborted downloads.
@@ -108,18 +82,36 @@ See [below](#project-readme-documentation) for the project's [README documentati
     customize-variable` to modify the variable; the defcustom for the
     variable has a known bug. Other than that, it all seems to work great.
 
+* `bb_ambiguous_navigation`<sub>[_pr #81_](https://github.com/emacs-w3m/emacs-w3m/pull/81)</sub>
+  * Adds intelligence to quickly navigate series' of pages on the same
+    web site to include cases of URL links with only 'next' /
+    'previous' in their text strings, not inside their HTML tags.
+    * Additional logix to support google search pages' website design.
+
+* `bb_tab_move`<sub>[_pr #82_](https://github.com/emacs-w3m/emacs-w3m/pull/82)</sub>
+  * Fixes bug that moving a tab more than one position away would swap
+    tabs instead.
+
+* `bb_save-dir-update`<sub>[_pr #80_](https://github.com/emacs-w3m/emacs-w3m/pull/80)</sub>
+  * Updates the session-default save directory upon use.
+
+* `bb_local_files`<sub>[_pr #48_](https://github.com/emacs-w3m/emacs-w3m/pull/48)</sub>
+  * Expands environment variables (eg. $HOME, $TEMPDIR, ~)
+  * Respects documentation for w3m-local-find-file-regexps, in terms
+    of what the included and excluded regexes do.
+  * Doesn't hide a new find-file buffer when creating it using
+    function w3m-goto-url-new-session.
+
+* `bb_sessions`<sub>[_based upon pr #26_](https://github.com/emacs-w3m/emacs-w3m/pull/26)</sub>
+  * Change the way the session pop-up window behaves when deleting
+    buffers and when exiting the pop-up, so that the currently
+    displayed buffer is the one that remains 'on top'. This is mainly
+    the contribution of Eugene Sharygin (@eush77) commit 390c4622eae.
+
 * `bb_documentation`<sub>[_pr #22_](https://github.com/emacs-w3m/emacs-w3m/pull/22)</sub>
   * Suggested improvements to all documentation files.
 
 * `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
-
-* `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
-  * Remove support for xemacs. The upstream has not been in
-    development for years, there doesn't seem to be a user-base, and I
-    understand from the mailing list that it doesn't work anyway, so
-    this will remove the cruft from the code-base.
-  * This will probably be a slow process of incremental commits, just
-    to be sure there are no side-effects.
 
 ## Branches merged to upstream
 
@@ -187,6 +179,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * New filter: xkcd <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * fix-filter: rt <sub>[_~~pr #30~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/30)</sub>
   * fix filter: stackexchange <sub>[_~~pr #31~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
+  * fix filter: stackexchange <sub>[_~~pr #86~~_](https://github.com/emacs-w3m/emacs-w3m/pull/86)</sub>
 
 * `bb_background_tab`<sub>[_~~pr #32~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
   * BUGFIX: allow new tabs to be loaded in background
@@ -244,6 +237,15 @@ See [below](#project-readme-documentation) for the project's [README documentati
 * `bb_view_url` <sub>[~~_pr #44~~_](https://github.com/emacs-w3m/emacs-w3m/pull/44)</sub>
   * remove duplicate code by replacing use of `w3m-view-this-url-1'
     with calls to w3m-goto-url{,-new-session}.
+
+## Branches now obsolete
+
+* `bb_xemacs_kill` <sub>[_pr #28_](https://github.com/emacs-w3m/emacs-w3m/pull/28)</sub>
+  * Remove support for xemacs. The upstream has not been in
+    development for years, there doesn't seem to be a user-base, and I
+    understand from the mailing list that it doesn't work anyway, so
+    this will remove the cruft from the code-base.
+  * Performed independently upstream.
 
 ## Project README documentation
 
