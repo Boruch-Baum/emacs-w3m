@@ -179,7 +179,7 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * New filter: xkcd <sub>[_~~pr #7~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/7)</sub>
   * fix-filter: rt <sub>[_~~pr #30~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/30)</sub>
   * fix filter: stackexchange <sub>[_~~pr #31~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
-  * fix filter: stackexchange <sub>[_~~pr #86~~_](https://github.com/emacs-w3m/emacs-w3m/pull/86)</sub>
+  * fix filter: stackexchange <sub>[_~~pr #87~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/87)</sub>
 
 * `bb_background_tab`<sub>[_~~pr #32~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
   * BUGFIX: allow new tabs to be loaded in background
