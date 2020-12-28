@@ -113,6 +113,8 @@ See [below](#project-readme-documentation) for the project's [README documentati
 
 * `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
 
+* `bb_buffer_quit_function`<sub>[_pr #88_](https://github.com/emacs-w3m/emacs-w3m/pull/88)</sub>
+
 ## Branches merged to upstream
 
 * `bb_awesome_bar`<sub>[_~~pr #56~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/56)</sub>
