@@ -87,6 +87,8 @@ See [below](#project-readme-documentation) for the project's [README documentati
     web site to include cases of URL links with only 'next' /
     'previous' in their text strings, not inside their HTML tags.
     * Additional logix to support google search pages' website design.
+  * Improves scrolling behavior at end of page to maintain an entire
+    window-full visible.
 
 * `bb_tab_move`<sub>[_pr #82_](https://github.com/emacs-w3m/emacs-w3m/pull/82)</sub>
   * Fixes bug that moving a tab more than one position away would swap
@@ -112,8 +114,6 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * Suggested improvements to all documentation files.
 
 * `bb_compiler_warnings`<sub>[_pr #24_](https://github.com/emacs-w3m/emacs-w3m/pull/24)</sub>
-
-* `bb_buffer_quit_function`<sub>[_pr #88_](https://github.com/emacs-w3m/emacs-w3m/pull/88)</sub>
 
 ## Branches merged to upstream
 
@@ -239,6 +239,9 @@ See [below](#project-readme-documentation) for the project's [README documentati
 * `bb_view_url` <sub>[~~_pr #44~~_](https://github.com/emacs-w3m/emacs-w3m/pull/44)</sub>
   * remove duplicate code by replacing use of `w3m-view-this-url-1'
     with calls to w3m-goto-url{,-new-session}.
+
+* `bb_buffer_quit_function`<sub>[~~_pr #88_~~ merged!](https://github.com/emacs-w3m/emacs-w3m/pull/88)</sub>
+  * properly exit pop-up windows when attempting to ESCape them.
 
 ## Branches now obsolete
 
