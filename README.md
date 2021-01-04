@@ -183,6 +183,13 @@ See [below](#project-readme-documentation) for the project's [README documentati
   * fix filter: stackexchange <sub>[_~~pr #31~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/31)</sub>
   * fix filter: stackexchange <sub>[_~~pr #87~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/87)</sub>
 
+* `bb_history_on_history`<sub>[_~~pr #89~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/89)</sub>
+  * BUGFIX: Instances of viewing a buffer's history should themselves
+    not be added to the history.
+  * Generalize the above for handling of all "about://" pages.
+  * Side benefit. ow users can restore from "about://source" and
+    "about://heading" by using keybinding 'B' w3m-view-previous-page.
+
 * `bb_background_tab`<sub>[_~~pr #32~~ merged!_](https://github.com/emacs-w3m/emacs-w3m/pull/32)</sub>
   * BUGFIX: allow new tabs to be loaded in background
   * New options: Functions `w3m-goto-url-new-session` and
