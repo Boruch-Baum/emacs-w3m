@@ -4035,7 +4035,7 @@ even in new sessions if the `w3m-toggle-inline-images-permanently'
 variable is non-nil (default=t)."
   (interactive "P")
   (unless (display-images-p)
-    (error "Can't display images in this environment"))
+    (user-error "Can't display images in this environment"))
   (let ((status (cond ((eq force 'turnoff) t)
 		      (force nil)
 		      (t w3m-display-inline-images)))
@@ -6410,7 +6410,7 @@ If so return \"text/html\", otherwise \"text/plain\"."
 
 (defsubst w3m-image-page-displayed-p ()
   (and w3m-current-url
-       (string-match "\\`image/" (w3m-content-type w3m-current-url))
+       (string-match "\\`image/" (or (w3m-content-type w3m-current-url) ""))
        (eq (get-text-property (point-min) 'w3m-image-status) 'on)))
 
 (defun w3m-create-image-page (url type charset page-buffer)
@@ -6899,7 +6899,7 @@ COUNT is treated as 1 by default if it is omitted."
          ((and (equal w3m-current-url "about://cookie/")
                (> (length (w3m-list-buffers t)) 1))
            (w3m-delete-buffer))
-         ((string-match "^about://" w3m-current-url)
+         ((string-match "^about://" (or w3m-current-url ""))
            (setq hist (w3m-history-backward 0))
            (w3m-goto-url (caar hist) nil nil
                          (w3m-history-plist-get :post-data)
@@ -9752,79 +9752,80 @@ helpful message is presented and the operation is aborted."
 					    redisplay name reuse-history action
 					    orig history-position)
   (with-current-buffer w3m-current-buffer
-    (setq w3m-current-process nil)
-    (if (not action)
-	(w3m-history-push w3m-current-url
-			  (list :title (or w3m-current-title "<no-title>")))
-      (w3m-string-match-url-components w3m-current-url)
-      (and (match-beginning 8)
-	   (setq name (match-string 9 w3m-current-url)))
-      (when (and name
-                 (w3m-search-name-anchor name
-                   nil (not (eq action 'cursor-moved))))
-	(setf (w3m-arrived-time (w3m-url-strip-authinfo orig))
-	      (w3m-arrived-time url))
-;	(unless (or w3m-message-silent
-;		    (not (eq this-command 'w3m-view-this-url-new-session))
-;		    (get-buffer-window w3m-current-buffer (selected-frame)))
-;	  (when (string-match "\\*w3m\\*<[0-9]+>\\'"
-;			      (setq name (buffer-name w3m-current-buffer)))
-;	    (setq name (match-string 0 name)))
-;	  (w3m--message t t "The content (%s) has been retrieved in %s" url name))
-        )
-      (unless (eq action 'cursor-moved)
-	(if (equal referer "about://history/")
-	    ;; Don't sprout a new branch for
-	    ;; the existing history element.
-	    (let ((w3m-history-reuse-history-elements t))
-	      (w3m-history-push w3m-current-url
-				(list :title w3m-current-title))
-	      ;; Fix the history position pointers.
-	      (when history-position
-		(setcar w3m-history
-			(w3m-history-regenerate-pointers history-position))))
-	  (let ((w3m-history-reuse-history-elements reuse-history)
-		(position (when (eq 'reload reuse-history)
-			    (cadar w3m-history))))
-	    (w3m-history-push w3m-current-url (list :title w3m-current-title))
-	    (when position
-	      (w3m-history-set-current position))))
-	(w3m-history-add-properties (list :referer referer
-					  :post-data post-data))
-	(unless w3m-toggle-inline-images-permanently
-	  (setq w3m-display-inline-images w3m-default-display-inline-images))
-	(when (and w3m-use-form reload)
-	  (w3m-form-textarea-files-remove))
-	(cond ((w3m-display-inline-images-p)
-	       (and w3m-force-redisplay (sit-for 0))
-	       (w3m-toggle-inline-images 'force reload))
-	      ((and (display-images-p) (eq action 'image-page))
-	       (and w3m-force-redisplay (sit-for 0))
-	       (w3m-toggle-inline-image 'force reload)))))
-    (setq buffer-read-only t)
-    (set-buffer-modified-p nil)
-    (setq list-buffers-directory w3m-current-title)
-    ;; must be `w3m-current-url'
-    (setq default-directory (w3m-current-directory w3m-current-url))
-    (w3m-buffer-name-add-title)
-    (let ((real-url (if (w3m-arrived-p url)
-			(or (w3m-real-url url) url)
-		      url)))
-      (run-hook-with-args 'w3m-display-functions real-url)
-      (run-hook-with-args 'w3m-display-hook real-url))
-    (w3m-select-buffer-update)
-    (w3m-session-crash-recovery-save)
-    (and w3m-current-url
-	 (stringp w3m-current-url)
-	 (or (string-match "\\`about://\\(?:header\\|source\\)/"
-			   w3m-current-url)
-	     (equal (w3m-content-type w3m-current-url) "text/plain"))
-	 (setq truncate-lines nil))
-    ;; restore position must call after hooks for localcgi.
-    (when (or reload redisplay)
-      (w3m-history-restore-position))
-    (w3m-set-buffer-unseen)
-    (w3m-refresh-at-time)))
+    (when w3m-current-url
+      (setq w3m-current-process nil)
+      (if (not action)
+  	(w3m-history-push w3m-current-url
+  			  (list :title (or w3m-current-title "<no-title>")))
+        (w3m-string-match-url-components w3m-current-url)
+        (and (match-beginning 8)
+  	   (setq name (match-string 9 w3m-current-url)))
+        (when (and name
+                   (w3m-search-name-anchor name
+                     nil (not (eq action 'cursor-moved))))
+  	(setf (w3m-arrived-time (w3m-url-strip-authinfo orig))
+  	      (w3m-arrived-time url))
+  ;	(unless (or w3m-message-silent
+  ;		    (not (eq this-command 'w3m-view-this-url-new-session))
+  ;		    (get-buffer-window w3m-current-buffer (selected-frame)))
+  ;	  (when (string-match "\\*w3m\\*<[0-9]+>\\'"
+  ;			      (setq name (buffer-name w3m-current-buffer)))
+  ;	    (setq name (match-string 0 name)))
+  ;	  (w3m--message t t "The content (%s) has been retrieved in %s" url name))
+          )
+        (unless (eq action 'cursor-moved)
+  	(if (equal referer "about://history/")
+  	    ;; Don't sprout a new branch for
+  	    ;; the existing history element.
+  	    (let ((w3m-history-reuse-history-elements t))
+  	      (w3m-history-push w3m-current-url
+  				(list :title w3m-current-title))
+  	      ;; Fix the history position pointers.
+  	      (when history-position
+  		(setcar w3m-history
+  			(w3m-history-regenerate-pointers history-position))))
+  	  (let ((w3m-history-reuse-history-elements reuse-history)
+  		(position (when (eq 'reload reuse-history)
+  			    (cadar w3m-history))))
+  	    (w3m-history-push w3m-current-url (list :title w3m-current-title))
+  	    (when position
+  	      (w3m-history-set-current position))))
+  	(w3m-history-add-properties (list :referer referer
+  					  :post-data post-data))
+  	(unless w3m-toggle-inline-images-permanently
+  	  (setq w3m-display-inline-images w3m-default-display-inline-images))
+  	(when (and w3m-use-form reload)
+  	  (w3m-form-textarea-files-remove))
+  	(cond ((w3m-display-inline-images-p)
+  	       (and w3m-force-redisplay (sit-for 0))
+  	       (w3m-toggle-inline-images 'force reload))
+  	      ((and (display-images-p) (eq action 'image-page))
+  	       (and w3m-force-redisplay (sit-for 0))
+  	       (w3m-toggle-inline-image 'force reload)))))
+      (setq buffer-read-only t)
+      (set-buffer-modified-p nil)
+      (setq list-buffers-directory w3m-current-title)
+      ;; must be `w3m-current-url'
+      (setq default-directory (w3m-current-directory w3m-current-url))
+      (w3m-buffer-name-add-title)
+      (let ((real-url (if (w3m-arrived-p url)
+  			(or (w3m-real-url url) url)
+  		      url)))
+        (run-hook-with-args 'w3m-display-functions real-url)
+        (run-hook-with-args 'w3m-display-hook real-url))
+      (w3m-select-buffer-update)
+      (w3m-session-crash-recovery-save)
+      (and w3m-current-url
+  	 (stringp w3m-current-url)
+  	 (or (string-match "\\`about://\\(?:header\\|source\\)/"
+  			   w3m-current-url)
+  	     (equal (w3m-content-type w3m-current-url) "text/plain"))
+  	 (setq truncate-lines nil))
+      ;; restore position must call after hooks for localcgi.
+      (when (or reload redisplay)
+        (w3m-history-restore-position))
+      (w3m-set-buffer-unseen)
+      (w3m-refresh-at-time))))
 
 (defun w3m--goto-url--valid-url (url reload charset post-data referer handler
 				     element no-popup save-pos)
@@ -9836,7 +9837,7 @@ helpful message is presented and the operation is aborted."
     (w3m-popup-buffer (current-buffer)))
   (w3m-cancel-refresh-timer (current-buffer))
   (w3m--buffer-busy-error)
-  (w3m-process-stop (current-buffer))	; Stop all processes retrieving images.
+  (w3m-process-stop (current-buffer) 'kill)	; Stop all processes retrieving images.
   (w3m-idle-images-show-unqueue (current-buffer))
   ;; Store the current position in the history structure if SAVE-POS
   ;; is set or `w3m-goto-url' is called interactively.
