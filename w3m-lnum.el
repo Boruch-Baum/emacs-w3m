@@ -1,6 +1,6 @@
 ;;; w3m-lnum.el --- Operations using link numbers -*- coding: utf-8; -*-
 
-;; Copyright (C) 2004-2014, 2016, 2017, 2019
+;; Copyright (C) 2004-2014, 2016, 2017, 2019, 2021
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Authors: TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -876,10 +876,10 @@ Function has to take one argument that is selection info."
 
 ;;;###autoload
 (defun w3m-lnum-universal ()
-  "Turn on link numbers, ask for one and offer actions over it \
-depending on selection type.
-Actions may be selected either by hitting corresponding key,
-pressing <return> over the action line or left clicking."
+  "Turn on link numbers, ask for one and offer actions over it.
+It will be done depending on the selection type.  Actions may be
+selected either by hitting corresponding key, pressing <return> over
+the action line or left clicking."
   (interactive)
   (let ((filter "")
 	(label w3m-current-url)

@@ -8,10 +8,63 @@
 	(w3m--goto-url--handler-function): when w3m-current-url is NIL, don't
 	perform string operations on it.
 
+2021-03-29  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Delete useless history warning
+
+	* w3m-hist.el (w3m-history-add-properties): Don't warn about null hist.
+
+2021-03-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Silence the byte compiler on Emacs 28
+
+	* mew-w3m.el (mew-w3m-ext-url-fetch):
+	* w3m-proc.el (w3m-process-with-null-handler):
+	Init let-bound var `handler' to nil explicitly.
+
+2021-02-26  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Don't show a backstage while performing `text-scale-adjust'
+
+	* w3m.el (w3m-text-scale-adjust): Don't show a halfway of redisplay.
+
+2021-02-24  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make text-scale-adjust work
+
+	* w3m.el (w3m-with-text-scale-mode): Fix way to refer remapped face.
+	Reported by Dan Jacobson.
+
+2021-02-01  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Docfix so not to be wider than 80 chars
+
+	* w3m-filter.el (w3m-toggle-filtering):
+	* w3m-lnum.el (w3m-lnum-universal): Docfix.
+
+	* w3mhack.el (w3mhack-generate-load-file): Fold long `\(fn ' lines.
+
+2021-02-01  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Bugfix 'w3m-previous-image doesn't work' ([emacs-w3m:13747])
+
+	* w3m.el (w3m-search-for-next-image-boundary)
+	(w3m-search-for-previous-image-boundary): Make it work for an image
+	on the bottom edge or the top edge of the page.
+	(w3m-goto-next-image): Refactor.
+	(w3m-next-image): Don't miss an image on the top edge of the page.
+	(w3m-goto-previous-image): Make sure an image exists at the position to
+	go to.
+
 2021-01-07  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-hist.el (w3m-history-scrub): Update for new history behavior of
 	"about://" urls.
+
+2021-01-05  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* w3m.el (w3m-download): Add option to w3m so to work for downloading
+	any kinds of contents ([emacs-w3m:13731]).  Thanks to Kinoshita-san.
 
 2021-01-03  Boruch Baum  <boruch_baum@gmx.com>
 

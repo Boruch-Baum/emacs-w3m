@@ -1,6 +1,6 @@
 ;;; w3mhack.el --- a hack to setup the environment for building w3m -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2010, 2012, 2013, 2015, 2017, 2019
+;; Copyright (C) 2001-2010, 2012, 2013, 2015, 2017, 2019-2021
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Author: Katsumi Yamaoka <yamaoka@jpl.org>
@@ -136,8 +136,9 @@ There seems to be no shell command which is equivalent to /bin/sh.
 
 (defun w3mhack-module-list ()
   "Returna a list of w3m modules should be byte-compile'd."
-  (let* ((modules (directory-files default-directory nil "^[^#]+\\.el$"))
-	 (ignores '("w3mhack.el")) ;; modules not to be byte-compiled.
+  (let* ((modules (directory-files default-directory nil "\\`[^#]+\\.el\\'"))
+	 ;; Modules not to be byte-compiled.
+	 (ignores '(".dir-locals.el" "w3mhack.el"))
 	 (shimbun-dir (file-name-as-directory shimbun-module-directory))
 	 print-level print-length)
     (unless (locate-library "mew")
@@ -146,7 +147,7 @@ There seems to be no shell command which is equivalent to /bin/sh.
 	(progn
 	  ;; Add shimbun modules.
 	  (dolist (file (directory-files (expand-file-name shimbun-dir)
-					 nil "^[^#]+\\.el$"))
+					 nil "\\`[^#]+\\.el\\'"))
 	    (setq modules (nconc modules (list (concat shimbun-dir file)))))
 	  ;; mew-shimbun check
 	  (when (or (member "mew-w3m.el" ignores)
@@ -158,8 +159,9 @@ There seems to be no shell command which is equivalent to /bin/sh.
 		      (let ((load-path (list (file-name-directory gnus))))
 			(locate-library "nnimap"))))
 	    (push (concat shimbun-dir "nnshimbun.el") ignores)))
-      (push "mime-w3m.el" ignores)
       (push "octet.el" ignores))
+    (if (not (locate-library "mime-view"))
+	(push "mime-w3m.el" ignores))
     ;; List shimbun modules which cannot be byte-compiled with this system.
     (let (list)
       ;; Byte-compile w3m-util.el first.
@@ -299,6 +301,56 @@ install-info:
 	     info-dir))
   (message ""))
 
+(defun w3mhack-do-itemize (from)
+  ;; An improved version of `texinfo-do-itemize'.
+  (save-excursion
+    (save-restriction
+      (narrow-to-region from (point))
+      (goto-char from)
+      (while (re-search-forward "\\([^\n]\\)\b" nil t)
+	(replace-match "\\1\n\b"))
+      (goto-char from)
+      (while (not (eobp))
+	(unless (looking-at "\b\\|[\t ]*$")
+	  (insert "     "))
+	(forward-line 1))
+      (goto-char from)
+      (let (st b fill-prefix)
+	(while (re-search-forward "^\b" nil t)
+	  (delete-char -1)
+	  (setq st (point))
+	  (when (and (not (eq (following-char) ? ))
+		     (progn
+		       (forward-line 1)
+		       (looking-at "\\(?:[\t ]*\n\\)+")))
+	    (delete-region (point) (match-end 0)))
+	  (unless (eq (following-char) ?\b)
+	    (setq b (point))
+	    (re-search-forward "\\(^\b\\)\\|^[\t ]*$" nil 'move)
+	    (save-restriction
+	      (narrow-to-region b (if (match-beginning 1)
+				      (1- (match-beginning 0))
+				    (point)))
+	      (goto-char b)
+	      (while (re-search-forward
+		      "\\(\\cj\\)?[\t ]*\n[\t ]*\\(\\cj\\)?" nil t)
+		(replace-match
+		 (if (and (match-beginning 1) (match-beginning 2))
+		     "\\1\\2" "\\1 \\2")))
+	      (goto-char b)
+	      (when (looking-at
+		     "[\t ]*\\(?:\\*\\|[0-9a-z]\\.\\|([0-9]+)\\)?[\t ]*")
+		(goto-char (match-end 0))
+		(setq fill-prefix (make-string (- (match-end 0) b) ? )))
+	      (fill-paragraph)
+	      (goto-char (point-max))
+	      (widen)
+	      (unless (and (= (line-beginning-position) st)
+			   (looking-at "\n\b"))
+		(insert "\n")))))))))
+
+(byte-compile 'w3mhack-do-itemize)
+
 (defun w3mhack-makeinfo ()
   "Emacs makeinfo in batch mode.
 NOTE: This function must be called from the top directory."
@@ -344,6 +396,9 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 		(if (nth 1 args)
 		    (insert  (nth 1 args) " (" (nth 0 args) ")")
 		  (insert "`" (nth 0 args) "'"))))))
+
+    ;; Override the function definition.
+    (defalias 'texinfo-do-itemize 'w3mhack-do-itemize)
 
     (cd "doc")
     (condition-case err
@@ -473,6 +528,16 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 	  (setq generated-autoload-load-name
 		(file-name-sans-extension (file-name-nondirectory file)))
 	  (autoload-generate-file-autoloads file (current-buffer)))
+	(when (boundp 'byte-compile-docstring-max-column) ;; Emacs >= 28
+	  ;; Fold long `\(fn ARGS...)' lines.
+	  (let* ((col (max byte-compile-docstring-max-column fill-column))
+		 (regexp (concat "^\\\\?(fn [^\"]\\{" (int-to-string (- col 4))
+				 ",\\}\""))
+		 (fill-column col)
+		 (fill-prefix " "))
+	    (goto-char (point-min))
+	    (while (re-search-forward regexp nil t)
+	      (fill-region (match-beginning 0) (1- (match-end 0))))))
 	(goto-char (point-min))
 	(insert ";;; " w3mhack-load-file
 		" --- automatically extracted autoload\n;;
@@ -501,4 +566,9 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
   (let (print-level print-length)
     (princ emacs-w3m-version)))
 
+;; Local Variables:
+;; version-control: never
+;; no-byte-compile: t
+;; no-update-autoloads: t
+;; End:
 ;;; w3mhack.el ends here

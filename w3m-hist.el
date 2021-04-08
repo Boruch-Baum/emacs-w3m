@@ -90,13 +90,13 @@ be arranged in increasing order (the newest history element will be
 the last element of the list).  Each history element represents a link
 which consists of the following records:
 
-	(URL PROPERTIES BRANCH BRANCH ...)
+        (URL PROPERTIES BRANCH BRANCH ...)
 
 Where URL is a string of an address of a link.  PROPERTIES is a plist
 which is able to contain any kind of data to supplement the URL as
 follows:
 
-	(KEYWORD VALUE KEYWORD VALUE ...)
+        (KEYWORD VALUE KEYWORD VALUE ...)
 
 A note for programmers: PROPERTIES should always be a non-nil value in
 order to make it easy to share the value in every history element in
@@ -132,7 +132,7 @@ In addition, the first element of `w3m-history' is special.  It is a
 list containing pointers which point to three history elements as
 shown below:
 
-	(PREV CURRENT NEXT)
+        (PREV CURRENT NEXT)
 
 PREV points to the previous history element, CURRENT points to the
 current one and NEXT points to the next one.  Each of them is a list
@@ -207,18 +207,18 @@ form.  FYI, to know the current position, the `(cadar w3m-history)'
 form for example can be used."
   (when position
     (if flat
-	(let ((flat w3m-history-flat)
-	      element)
-	  (while flat
-	    (if (equal (caddr (setq element (pop flat))) position)
-		(setq flat nil)
-	      (setq element nil)))
-	  element)
+        (let ((flat w3m-history-flat)
+              element)
+          (while flat
+            (if (equal (caddr (setq element (pop flat))) position)
+                (setq flat nil)
+              (setq element nil)))
+          element)
       (let ((element (nth (pop position) (cdr w3m-history))))
-	(while position
-	  (setq element (nth (pop position) (cddr element))
-		element (nth (pop position) element)))
-	element))))
+        (while position
+          (setq element (nth (pop position) (cddr element))
+                element (nth (pop position) element)))
+        element))))
 
 (defun w3m-history-previous-position (position)
   "Return a history position of the previous location of POSITION.
@@ -227,16 +227,16 @@ of the elements of the `car' of `w3m-history' (which see)."
   (let (class number previous)
     (when position
       (setq class (1- (length position))
-	    number (nth class position))
+            number (nth class position))
       (if (zerop number)
-	  ;; This POSITION is the beginning of the branch.
-	  (unless (zerop class)
-	    ;; There's a parent.
-	    (setq previous (copy-sequence position))
-	    (setcdr (nthcdr (- class 2) previous) nil))
-	;; This POSITION is not the beginning of the branch.
-	(setq previous (copy-sequence position))
-	(setcar (nthcdr class previous) (1- number))))
+          ;; This POSITION is the beginning of the branch.
+          (unless (zerop class)
+            ;; There's a parent.
+            (setq previous (copy-sequence position))
+            (setcdr (nthcdr (- class 2) previous) nil))
+        ;; This POSITION is not the beginning of the branch.
+        (setq previous (copy-sequence position))
+        (setcar (nthcdr class previous) (1- number))))
     previous))
 
 (defun w3m-history-next-position (position)
@@ -246,21 +246,21 @@ of the elements of the `car' of `w3m-history' (which see)."
   (let (next branch element number)
     (when position
       (setq next position
-	    branch (cdr w3m-history)
-	    element (nth (pop next) branch))
+            branch (cdr w3m-history)
+            element (nth (pop next) branch))
       (while next
-	(setq branch (nth (pop next) (cddr element))
-	      element (nth (pop next) branch)))
+        (setq branch (nth (pop next) (cddr element))
+              element (nth (pop next) branch)))
       (cond ((nth 2 element)
-	     ;; There're branches sprouted from the POSITION.
-	     (setq next (copy-sequence position))
-	     (setcdr (nthcdr (1- (length next)) next)
-		     (list (- (length element) 3) 0)))
-	    ((> (length branch)
-		(setq number (1+ (nth (1- (length position)) position))))
-	     ;; This POSITION is not the end of the branch.
-	     (setq next (copy-sequence position))
-	     (setcar (nthcdr (1- (length next)) next) number))))
+             ;; There're branches sprouted from the POSITION.
+             (setq next (copy-sequence position))
+             (setcdr (nthcdr (1- (length next)) next)
+                     (list (- (length element) 3) 0)))
+            ((> (length branch)
+                (setq number (1+ (nth (1- (length position)) position))))
+             ;; This POSITION is not the end of the branch.
+             (setq next (copy-sequence position))
+             (setcar (nthcdr (1- (length next)) next) number))))
     next))
 
 (defun w3m-history-set-plist (plist property value)
@@ -272,17 +272,17 @@ instead set to `(nil nil)'.  Return PLIST itself."
     (setq plist (list nil nil)))
   (let ((pair (memq property plist)))
     (if pair
-	(if value
-	    (setcar (cdr pair) value)
-	  (if (eq (car plist) property)
-	      (progn
-		(setcar plist (nth 2 plist))
-		(setcar (cdr plist) (nth 3 plist))
-		(setcdr (cdr plist) (nthcdr 4 plist)))
-	    (setcdr (nthcdr (- (length plist) (length pair) 1) plist)
-		    (nthcdr 2 pair))))
+        (if value
+            (setcar (cdr pair) value)
+          (if (eq (car plist) property)
+              (progn
+                (setcar plist (nth 2 plist))
+                (setcar (cdr plist) (nth 3 plist))
+                (setcdr (cdr plist) (nthcdr 4 plist)))
+            (setcdr (nthcdr (- (length plist) (length pair) 1) plist)
+                    (nthcdr 2 pair))))
       (when value
-	(setcdr (nthcdr (1- (length plist)) plist) (list property value)))))
+        (setcdr (nthcdr (1- (length plist)) plist) (list property value)))))
   plist)
 
 (defun w3m-history-modify-properties (old new &optional replace)
@@ -295,12 +295,12 @@ removing, it will be instead set to `(nil nil)'."
   (prog1
       old
     (if replace
-	(progn
-	  (setcar old (car new))
-	  (setcdr old (or (cdr new) (list nil))))
+        (progn
+          (setcar old (car new))
+          (setcdr old (or (cdr new) (list nil))))
       (while new
-	(w3m-history-set-plist old (car new) (cadr new))
-	(setq new (cddr new))))
+        (w3m-history-set-plist old (car new) (cadr new))
+        (setq new (cddr new))))
     (unless old ;; FIXME: when/where/why is it made nil?
       (setq old (list nil nil)))
     (setq new (copy-sequence old))
@@ -315,18 +315,18 @@ found is returned.  If REPLACE is nil, NEPROPS will be merged into
 properties of an element.  Otherwise, properties of an element will be
 replaced with NEWPROPS."
   (let* ((current (current-buffer))
-	 (buffers (cons current (delq current (buffer-list))))
-	 element)
+         (buffers (cons current (delq current (buffer-list))))
+         element)
     (while buffers
       (set-buffer (pop buffers))
       (when (and (eq major-mode 'w3m-mode)
-		 (setq element (w3m-history-assoc url)))
-	(setq buffers nil)))
+                 (setq element (w3m-history-assoc url)))
+        (setq buffers nil)))
     (set-buffer current)
     (prog1
-	(copy-sequence element)
+        (copy-sequence element)
       (when element
-	(w3m-history-modify-properties (cadr element) newprops replace)))))
+        (w3m-history-modify-properties (cadr element) newprops replace)))))
 
 ;; Generic functions.
 (defun w3m-history-previous-link-available-p ()
@@ -346,26 +346,26 @@ negative, moving forward is performed.  Return nil if there is no
 previous element."
   (when w3m-history
     (let ((oposition (copy-sequence (car w3m-history)))
-	  position last)
+          position last)
       (cond ((or (unless count
-		   (setq count 1))
-		 (> count 0))
-	     (while (and (> count 0)
-			 (setq position (caar w3m-history)))
-	       (w3m-history-set-current (setq last position))
-	       (cl-decf count)))
-	    ((< count 0)
-	     (while (and (< count 0)
-			 (setq position (caddar w3m-history)))
-	       (w3m-history-set-current (setq last position))
-	       (cl-incf count)))
-	    (t ;; Don't move.
-	     (setq last (cadar w3m-history))))
+                   (setq count 1))
+                 (> count 0))
+             (while (and (> count 0)
+                         (setq position (caar w3m-history)))
+               (w3m-history-set-current (setq last position))
+               (cl-decf count)))
+            ((< count 0)
+             (while (and (< count 0)
+                         (setq position (caddar w3m-history)))
+               (w3m-history-set-current (setq last position))
+               (cl-incf count)))
+            (t ;; Don't move.
+             (setq last (cadar w3m-history))))
       (prog1
-	  (when last
-	    (cons (w3m-history-element (cadar w3m-history))
-		  (car w3m-history)))
-	(setcar w3m-history oposition)))))
+          (when last
+            (cons (w3m-history-element (cadar w3m-history))
+                  (car w3m-history)))
+        (setcar w3m-history oposition)))))
 
 (defun w3m-history-forward (&optional count)
   "Move forward COUNT times in the history structure.
@@ -381,8 +381,8 @@ in the history, move as far as possible."
 The history position pointers are made with the `(PREV CURRENT NEXT)'
 form which is mentioned in the documentation for `w3m-history'."
   (list (w3m-history-previous-position position)
-	position
-	(w3m-history-next-position position)))
+        position
+        (w3m-history-next-position position)))
 
 (defun w3m-history-flat ()
   "Set the value of `w3m-history-flat' due to the value of `w3m-history'.
@@ -390,34 +390,34 @@ See also the documentations for those variables."
   (setq w3m-history-flat nil)
   (when w3m-history
     (let ((history (cdr w3m-history))
-	  (position (list 0))
-	  element branches flag children)
+          (position (list 0))
+          element branches flag children)
       (while (setq element (pop history))
-	(if (stringp (car element))
-	    (progn
-	      (push (list (car element) (cadr element) (reverse position))
-		    w3m-history-flat)
-	      (if (setq element (cddr element))
-		  (progn
-		    (setq history (append element history)
-			  position (append (list 0 0) position))
-		    (push (length element) branches))
-		(setcar position (1+ (car position)))
-		(setq flag t)
-		(while (and flag
-			    children
-			    (zerop (setcar children (1- (car children)))))
-		  (setq children (cdr children))
-		  (if (zerop (setcar branches (1- (car branches))))
-		      (progn
-			(setq branches (cdr branches)
-			      position (cddr position))
-			(setcar position (1+ (car position))))
-		    (setcar position 0)
-		    (setcar (cdr position) (1+ (cadr position)))
-		    (setq flag nil)))))
-	  (setq history (append element history))
-	  (push (length element) children))))
+        (if (stringp (car element))
+            (progn
+              (push (list (car element) (cadr element) (reverse position))
+                    w3m-history-flat)
+              (if (setq element (cddr element))
+                  (progn
+                    (setq history (append element history)
+                          position (append (list 0 0) position))
+                    (push (length element) branches))
+                (setcar position (1+ (car position)))
+                (setq flag t)
+                (while (and flag
+                            children
+                            (zerop (setcar children (1- (car children)))))
+                  (setq children (cdr children))
+                  (if (zerop (setcar branches (1- (car branches))))
+                      (progn
+                        (setq branches (cdr branches)
+                              position (cddr position))
+                        (setcar position (1+ (car position))))
+                    (setcar position 0)
+                    (setcar (cdr position) (1+ (cadr position)))
+                    (setq flag nil)))))
+          (setq history (append element history))
+          (push (length element) children))))
     (setq w3m-history-flat (nreverse w3m-history-flat))))
 
 (defun w3m-history-tree (&optional newpos)
@@ -427,30 +427,30 @@ current position of the history.  It defaults to the beginning
 position of the history."
   (if w3m-history-flat
       (let ((flat w3m-history-flat)
-	    element positions rest position)
-	(setq w3m-history (list (list nil nil)))
-	(while (setq element (pop flat))
-	  (setq positions (caddr element)
-		rest w3m-history)
-	  (while positions
-	    (setq position (pop positions))
-	    (unless (> (length rest) position)
-	      (setcdr (nthcdr (1- (length rest)) rest)
-		      (make-list (- position (length rest) -1)
-				 (list nil nil))))
-	    (setq rest (nth position rest))
-	    (when positions
-	      (setq position (pop positions))
-	      (unless (> (- (length rest) 2) position)
-		(setcdr (nthcdr (1- (length rest)) rest)
-			(make-list (- position (length rest) -3)
-				   (list (list nil nil)))))
-	      (setq rest (nth (+ position 2) rest))))
-	  (setcar rest (car element))
-	  (setcar (cdr rest) (cadr element)))
-	(push 'dummy w3m-history)
-	(w3m-history-set-current (or newpos (list 0)))
-	w3m-history)
+            element positions rest position)
+        (setq w3m-history (list (list nil nil)))
+        (while (setq element (pop flat))
+          (setq positions (caddr element)
+                rest w3m-history)
+          (while positions
+            (setq position (pop positions))
+            (unless (> (length rest) position)
+              (setcdr (nthcdr (1- (length rest)) rest)
+                      (make-list (- position (length rest) -1)
+                                 (list nil nil))))
+            (setq rest (nth position rest))
+            (when positions
+              (setq position (pop positions))
+              (unless (> (- (length rest) 2) position)
+                (setcdr (nthcdr (1- (length rest)) rest)
+                        (make-list (- position (length rest) -3)
+                                   (list (list nil nil)))))
+              (setq rest (nth (+ position 2) rest))))
+          (setcar rest (car element))
+          (setcar (cdr rest) (cadr element)))
+        (push 'dummy w3m-history)
+        (w3m-history-set-current (or newpos (list 0)))
+        w3m-history)
     (setq w3m-history nil)))
 
 (defun w3m-history-push (url &optional newprops replace)
@@ -515,10 +515,10 @@ are replaced with NEWPROPS."
               (setcdr (nthcdr number (car branch)) (list (list element))))
           ;; The current position is the last of the branch.
           (setcar (nthcdr class position)
-          	(1+ (car (nthcdr class position))))
+                (1+ (car (nthcdr class position))))
           (setcdr branch (list element)))
         (setq w3m-history-flat (nconc w3m-history-flat
-          			    (list (append element (list position)))))
+                                    (list (append element (list position)))))
         (setcar w3m-history (list (cadar w3m-history) position nil)))))))
 
 (defun w3m-history-copy (buffer)
@@ -531,36 +531,36 @@ in `w3m-history-flat' will not be copied except for the positions.  If
 structure will be shrunk so that it may contain only the current
 history element."
   (let ((current (current-buffer))
-	position flat element props window-start rest)
+        position flat element props window-start rest)
     (set-buffer buffer)
     (when w3m-history
       (setq position (copy-sequence (cadar w3m-history))
-	    flat w3m-history-flat))
+            flat w3m-history-flat))
     (set-buffer current)
     (when position
       (if w3m-history-minimize-in-new-session
-	  (progn
-	    (setq w3m-history-flat flat
-		  element (copy-sequence (w3m-history-element position t)))
-	    (setcdr (cdr element) nil)
-	    (setq w3m-history (list (list nil (list 0) nil) element)
-		  w3m-history-flat (list (append element (list (list 0))))))
-	;; Remove buffer-local properties, except for the positions,
-	;; from the new `w3m-history-flat'.
-	(while flat
-	  (setq element (copy-sequence (car flat))
-		flat (cdr flat)
-		props (cdddr element)
-		window-start (plist-get props :window-start))
-	  (if window-start
-	      (setcdr (cddr element)
-		      (list :window-start window-start
-			    :position (plist-get props :position)
-			    :window-hscroll (plist-get props :window-hscroll)))
-	    (setcdr (cddr element) nil))
-	  (push element rest))
-	(setq w3m-history-flat (nreverse rest))
-	(w3m-history-tree position)))))
+          (progn
+            (setq w3m-history-flat flat
+                  element (copy-sequence (w3m-history-element position t)))
+            (setcdr (cdr element) nil)
+            (setq w3m-history (list (list nil (list 0) nil) element)
+                  w3m-history-flat (list (append element (list (list 0))))))
+        ;; Remove buffer-local properties, except for the positions,
+        ;; from the new `w3m-history-flat'.
+        (while flat
+          (setq element (copy-sequence (car flat))
+                flat (cdr flat)
+                props (cdddr element)
+                window-start (plist-get props :window-start))
+          (if window-start
+              (setcdr (cddr element)
+                      (list :window-start window-start
+                            :position (plist-get props :position)
+                            :window-hscroll (plist-get props :window-hscroll)))
+            (setcdr (cddr element) nil))
+          (push element rest))
+        (setq w3m-history-flat (nreverse rest))
+        (w3m-history-tree position)))))
 
 (defun w3m-history-plist-get (keyword &optional not-buffer-local)
   "Extract a value from the properties of the current history element.
@@ -571,9 +571,9 @@ value in buffer-local properties, otherwise looks over the global
 properties instead."
   (let ((element (w3m-history-element (cadar w3m-history) t)))
     (plist-get (if not-buffer-local
-		   (cadr element)
-		 (cdddr element))
-	       keyword)))
+                   (cadr element)
+                 (cdddr element))
+               keyword)))
 
 (defun w3m-history-add-properties (newprops &optional not-buffer-local)
   "Add NEWPROPS to the properties of the current history element.
@@ -583,26 +583,22 @@ added to the buffer-local properties.  Otherwise, NEWPROPS will be
 added to the global properties instead."
   (if not-buffer-local
       (cadr (w3m-history-seek-element
-	     (car (w3m-history-element (cadar w3m-history)))
-	     newprops))
+             (car (w3m-history-element (cadar w3m-history)))
+             newprops))
     (let ((element (w3m-history-element (cadar w3m-history) t))
-	  properties)
-      (if element
-	  (progn
-	    (setq properties (cdddr element)
-		  properties
-		  (if properties
-		      (w3m-history-modify-properties properties newprops)
-		    ;; Use `w3m-history-modify-properties' to remove
-		    ;; keyword-value pairs whose value is nil.
-		    (w3m-history-modify-properties newprops nil)))
-	    (unless (car properties) ;; check whether it is `(nil nil)'.
-	      (setq properties nil))
-	    (setcdr (cddr element) properties))
-	(w3m--message t 'w3m-warning
-          "Warning: the history database in this session seems corrupted.")
-	(sit-for 1)
-	nil))))
+          properties)
+      (when element
+        (setq properties (cdddr element)
+              properties (if properties
+                             (w3m-history-modify-properties properties
+                                                            newprops)
+                           ;; Use `w3m-history-modify-properties' to remove
+                           ;; keyword-value pairs whose value is nil.
+                           (w3m-history-modify-properties newprops nil)))
+        (unless (car properties) ;; check whether it is `(nil nil)'.
+          (setq properties nil))
+        (setcdr (cddr element) properties)))))
+
 
 (defun w3m-history-plist-put (keyword value &optional not-buffer-local)
   "Put KEYWORD and VALUE into the current history element.
@@ -620,7 +616,7 @@ Otherwise, the global properties will be modified instead."
   (let (rest)
     (while properties
       (setq rest (cons nil (cons (car properties) rest))
-	    properties (cddr properties)))
+            properties (cddr properties)))
     (w3m-history-add-properties (nreverse rest) not-buffer-local)))
 
 (defun w3m-history-store-position ()
@@ -635,24 +631,24 @@ position.  Naturally, those should be treated as buffer-local."
     ;; actually visible, and restoring it causes h-scrolling too much.
     ;; So, we store the position of an image if the cursor follows.
     (let ((column (current-column))
-	  (hscroll (window-hscroll))
-	  pos)
+          (hscroll (window-hscroll))
+          pos)
       (when (cond ((bobp) nil)
-		  ((get-text-property (point) 'w3m-image) nil)
-		  ((get-text-property (1-(point)) 'w3m-image)
-		   (goto-char (1- (point))))
-		  ((setq pos (previous-single-property-change
-			      (point) 'w3m-image nil (point-at-bol)))
-		   (unless (= pos (point-at-bol))
-		     (goto-char (1- pos)))))
-	(setq pos (current-column))
-	(move-to-column column)
-	(setq hscroll (max (- hscroll (- column pos)) 0)
-	      column pos))
+                  ((get-text-property (point) 'w3m-image) nil)
+                  ((get-text-property (1-(point)) 'w3m-image)
+                   (goto-char (1- (point))))
+                  ((setq pos (previous-single-property-change
+                              (point) 'w3m-image nil (point-at-bol)))
+                   (unless (= pos (point-at-bol))
+                     (goto-char (1- pos)))))
+        (setq pos (current-column))
+        (move-to-column column)
+        (setq hscroll (max (- hscroll (- column pos)) 0)
+              column pos))
       (w3m-history-add-properties
        (list :window-start (window-start)
-	     :position (cons (count-lines (point-min) (point-at-bol)) column)
-	     :window-hscroll hscroll)))
+             :position (cons (count-lines (point-min) (point-at-bol)) column)
+             :window-hscroll hscroll)))
     (when (w3m-interactive-p)
       (w3m--message t t "The current cursor position saved"))))
 
@@ -663,53 +659,53 @@ it works although it may not be perfect."
   (interactive)
   (when (cadar w3m-history)
     (let ((start (w3m-history-plist-get :window-start))
-	  position window)
+          position window)
       (cond ((and start
-		  (setq position (w3m-history-plist-get :position)))
-	     (when (<= start (point-max))
-	       (goto-char (point-min))
-	       (forward-line (car position))
-	       (setq window (get-buffer-window (current-buffer) 'all-frames))
-	       (when window
-		 (set-window-start window start)
-		 (set-window-hscroll
-		  window (or (w3m-history-plist-get :window-hscroll) 0)))
-	       (move-to-column (cdr position))
-	       (let ((deactivate-mark nil))
-		 (run-hooks 'w3m-after-cursor-move-hook))))
-	    ((w3m-interactive-p)
-	     (w3m--message t 'w3m-warning "No cursor position saved"))))))
+                  (setq position (w3m-history-plist-get :position)))
+             (when (<= start (point-max))
+               (goto-char (point-min))
+               (forward-line (car position))
+               (setq window (get-buffer-window (current-buffer) 'all-frames))
+               (when window
+                 (set-window-start window start)
+                 (set-window-hscroll
+                  window (or (w3m-history-plist-get :window-hscroll) 0)))
+               (move-to-column (cdr position))
+               (let ((deactivate-mark nil))
+                 (run-hooks 'w3m-after-cursor-move-hook))))
+            ((w3m-interactive-p)
+             (w3m--message t 'w3m-warning "No cursor position saved"))))))
 
 (defun w3m-history-minimize ()
   "Minimize the history so that there may be the current page only."
   (interactive)
   (let ((position (cadar w3m-history))
-	element)
+        element)
     (when position
       (setq element (w3m-history-element position t))
       (setcar (cddr element) (list 0))
       (setq w3m-history-flat (list element)
-	    w3m-history (list (list nil (list 0) nil)
-			      (list (car element) (cadr element)))))))
+            w3m-history (list (list nil (list 0) nil)
+                              (list (car element) (cadr element)))))))
 
 (defun w3m-history-slimmed-history-flat ()
   "Return slimmed history."
   (let ((position (cadar w3m-history))
-	flat-map new-flat)
+        flat-map new-flat)
     (dolist (l w3m-history-flat)
       (setq flat-map (cons (cons (nth 2 l) l)
-			   flat-map)))
+                           flat-map)))
     (setq new-flat (cons (cdr (assoc position flat-map)) nil))
     (let ((pos (w3m-history-previous-position position)))
       (while pos
-	(setq new-flat (cons (cdr (assoc pos flat-map))
-			     new-flat))
-	(setq pos (w3m-history-previous-position pos))))
+        (setq new-flat (cons (cdr (assoc pos flat-map))
+                             new-flat))
+        (setq pos (w3m-history-previous-position pos))))
     (let ((pos (w3m-history-next-position position)))
       (while pos
-	(setq new-flat (cons (cdr (assoc pos flat-map))
-			     new-flat))
-	(setq pos (w3m-history-next-position pos))))
+        (setq new-flat (cons (cdr (assoc pos flat-map))
+                             new-flat))
+        (setq pos (w3m-history-next-position pos))))
     new-flat))
 
 (defun w3m-history-slim ()
@@ -950,7 +946,7 @@ A re you absolutely sure? " target))
 
 (defvar w3m-arrived-db)
 (declare-function w3m-goto-url "w3m"
-		  (url &optional reload charset post-data referer handler))
+                  (url &optional reload charset post-data referer handler))
 
 (defun w3m-history-add-arrived-db ()
   "Add the arrived database to the history structure unreasonably.
@@ -961,27 +957,27 @@ debugging w3m-hist.el.)"
   (unless (eq 'w3m-mode major-mode)
     (error "`%s' must be invoked from an emacs-w3m buffer" this-command))
   (when (and w3m-arrived-db
-	     (prog1
-		 (yes-or-no-p
-		  "Are you sure you really want to destroy the history? ")
-	       (message nil)))
+             (prog1
+                 (yes-or-no-p
+                  "Are you sure you really want to destroy the history? ")
+               (message nil)))
     (setq w3m-history nil
-	  w3m-history-flat nil)
+          w3m-history-flat nil)
     (let ((w3m-history-reuse-history-elements t)
-	  url-title title)
+          url-title title)
       (mapatoms (lambda (symbol)
-		  (when symbol
-		    (if (setq title (get symbol 'title))
-			(push (list (symbol-name symbol)
-				    (list :title title))
-			      url-title)
-		      (push (list (symbol-name symbol)) url-title))))
-		w3m-arrived-db)
+                  (when symbol
+                    (if (setq title (get symbol 'title))
+                        (push (list (symbol-name symbol)
+                                    (list :title title))
+                              url-title)
+                      (push (list (symbol-name symbol)) url-title))))
+                w3m-arrived-db)
       (apply 'w3m-history-push (nth (random (length url-title)) url-title))
       (while url-title
-	(w3m-history-push (car (nth (random (length w3m-history-flat))
-				    w3m-history-flat)))
-	(apply 'w3m-history-push (pop url-title))))
+        (w3m-history-push (car (nth (random (length w3m-history-flat))
+                                    w3m-history-flat)))
+        (apply 'w3m-history-push (pop url-title))))
     (w3m-goto-url "about://history/" t)))
 
 (provide 'w3m-hist)
