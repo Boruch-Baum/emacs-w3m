@@ -6889,7 +6889,7 @@ If COUNT is zero, you will visit the top of this site."
         (error "No parent page for: %s" w3m-current-url))))
    (t (error "w3m-current-url is not set"))))
 
-(defun w3m-view-previous-page (&optional countno-store-pos)
+(defun w3m-view-previous-page (&optional count no-store-pos)
   "Move back COUNT pages in the history.
 If COUNT is a positive integer, move backward COUNT times in the
 history.  If COUNT is a negative integer, moving forward is performed.
