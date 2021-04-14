@@ -1,5 +1,12 @@
 2021-04-13  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m.el (w3m-view-previous-page): Minor docstring fix.
+	(w3m-external-view): When a w3m buffer is created for the sole purpose
+	of opening a URI in an external program, delete the (unnecessary) w3m
+	buffer.
+
+2021-04-13  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-download.el (w3m--download-queue-hardcoded-point-min): Eliminate
 	awful constant integer.
 	(w3m--download-queue-list-point-min): Replace with nice new variable.

@@ -6893,7 +6893,7 @@ If COUNT is zero, you will visit the top of this site."
   "Move back COUNT pages in the history.
 If COUNT is a positive integer, move backward COUNT times in the
 history.  If COUNT is a negative integer, moving forward is performed.
-COUNT is treated as 1 by default if it is omitted.NO-STORE-POS if it
+COUNT is treated as 1 by default if it is omitted. NO-STORE-POS if it
 is non-nil means not to store the window positions before going to the
 previous page."
   (interactive "p")
@@ -7333,7 +7333,13 @@ No method to view `%s' is registered. Use `w3m-edit-this-url'"
                  (command
                   (w3m-external-view-file command nil url arguments))
                  (t
-                  (w3m-download-using-wget url nil no-cache handler))))))))))))
+                  (w3m-download-using-wget url nil no-cache handler))))))))))
+      (let ((pos (point)))
+        (goto-char (point-min))
+        (if (not (re-search-forward "\n+\\( *\\)Reading [^\n]+\n\n" nil t))
+          (goto-char pos)
+         (kill-buffer)
+         (keyboard-quit)))))
 
 (defun w3m-external-view-file (command file url arguments)
   ;; The 3rd argument `url' is necessary to handle the constant `url'
