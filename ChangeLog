@@ -1,5 +1,12 @@
 2021-05-04  Boruch Baum  <boruch_baum@gmx.com>
 
+	* w3m-download.el (w3m-download--resolve-ambiguous-basenames)
+	(w3m-download--respect-query-basename, w3m--download-create-basename):
+	New functions.
+	(w3m--download-validate-basename, w3m-download-using-wget): Use them.
+
+2021-05-04  Boruch Baum  <boruch_baum@gmx.com>
+
 	* w3m-util.el (w3m-queries-log-file): Improve defcustom.
 	(w3m--url-get-queries): New function.
 	(w3m--url-strip-unwanted-queries): Improve name of function. was
