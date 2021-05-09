@@ -1154,16 +1154,20 @@ Otherwise return nil."
 ie. For anything after the first '?', for each segment until the
 next '&' or end-of-string, a CONS whose CAR is what is to the
 left of '=' and whose CDR is to the right of it."
-  (let ((parameters (when (string-match "[^?]+\\?\\(.*\\)$" url)
-                      (match-string 1 url)))
-        split query result)
-    (when parameters
-      (setq split (split-string parameters "&" 'omit-nulls))
-      (while (setq query (pop split))
-        (if (string-match "\\([^=]+\\)=\\(.*\\)$" query)
-          (push (cons (match-string 1 query) (match-string 2 query)) result)
-         (push (cons query "") result))))
-    result))
+  (let ((parms (when (string-match "[^?]+\\?\\(.*\\)$" url)
+                       (match-string 1 url)))
+        (start 0)
+        query result)
+    (when parms
+      (while (string-match "&?\\([^=]+\\)=\\([^&]+\\)" parms start)
+        (push (cons (match-string 1 parms) (match-string 2 parms)) result)
+        (setq start (match-end 0)))
+      (when (string-match "&[^=]+$" parms start)
+        ;; This is the weird case encountered with a '&' embedded in a query
+        ;; eg. occassionally by cloudflare query 'filename='
+        (setq query (pop result))
+        (push (cons (car query) (concat (cdr query) (match-string 0 parms))) result))
+      (nreverse result))))
 
 (defcustom w3m-strip-queries t
   "Remove unwanted queries from URLs.
