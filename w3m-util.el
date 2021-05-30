@@ -1626,7 +1626,11 @@ data to be copied."
       (w3m--message t 'w3m-warning "No command to copy to gui clipboard.")
      (if (not (string-match "%s" cmd))
        (w3m--message t 'w3m-error "Malformed variable w3m-gui-clipboard-commands.")
-      (shell-command (replace-match (substring-no-properties content) t t cmd))))))
+      (shell-command
+        (replace-match
+          (substring-no-properties
+            (replace-regexp-in-string "%" "%%" content))
+          t t cmd))))))
 
 (defun w3m-ensure-slash (url)
 	"Ensure that a URL ends in a /. Useful for concatenation purposes."
