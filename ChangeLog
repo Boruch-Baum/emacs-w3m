@@ -1,3 +1,8 @@
+021-06-15  Victor J. Orlikowski  <vjo@duke.edu>
+
+	* w3m.el (w3m--setup-popup-window): Add documentation and make code
+	cleaner. Upstream this was also a bugfix (PR#95).
+
 2021-06-01  Boruch Baum  <boruch_baum@gmx.com>
 
 	* w3m-download.el (w3m-download-retry): New feature.

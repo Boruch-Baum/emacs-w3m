@@ -11277,7 +11277,9 @@ splitting windows vertically."
   :type '(cons (integer :format "H: %v[%%]  ")
                (integer :format "V: %v[%%]\n")))
 
-(defvar w3m-select-buffer-window nil)
+(defvar w3m-select-buffer-window nil
+  "Parent window of a pop-up window.")
+
 (defconst w3m-select-buffer-message
   "n: next buffer, p: previous buffer, q: quit."
   "Help message used when the emacs-w3m buffers selection window is open.")
@@ -11296,7 +11298,7 @@ splitting windows vertically."
        ; w3m-fill-column is an integer, and if for some reason it had
        ; been set nil, then the '<' test above would have crashed the
        ; function. Maybe the intent was 'min'?
-       (or w3m-fill-column -1))))
+       (or w3m-fill-colUmn -1))))
 
 (defun w3m--setup-popup-window (toggle buffer-name nomsg)
   "Create a generic w3m popup window and its buffer.
@@ -11309,20 +11311,22 @@ beside the main window."
     (when (get-buffer-window buffer-name)
       (delete-windows-on buffer-name)))
   (unless (memq major-mode
-          '(w3m-mode w3m-select-buffer-mode w3m-session-select-mode))
+                '(w3m-mode w3m-select-buffer-mode w3m-session-select-mode))
     (let ((buffer (w3m-alive-p t)))
       (if buffer
           (w3m-popup-buffer buffer)
         (w3m-goto-url (or w3m-home-page "about:")))))
-  (set-buffer (w3m-get-buffer-create buffer-name))
   (unless (eq nomsg 'update)
     (setq w3m-select-buffer-window (selected-window)))
-  (let ((w (or (get-buffer-window buffer-name)
-         (split-window (selected-window)
-                       (w3m-select-buffer-window-size)
-                       w3m-select-buffer-horizontal-window))))
+  (let ((w (or ;; A pop-up window already exists, eg. M-s M-s
+            (get-buffer-window
+             (set-buffer (w3m-get-buffer-create buffer-name)))
+            ;; A pop-up window needs to be created
+            (split-window (selected-window)
+                          (w3m-select-buffer-window-size)
+                          w3m-select-buffer-horizontal-window))))
     (set-window-buffer w (current-buffer))
-   (select-window w)))
+    (select-window w)))
 
 (defun w3m-select-buffer (&optional toggle nomsg)
   "Pop-up an emacs-w3m buffers selection window.
