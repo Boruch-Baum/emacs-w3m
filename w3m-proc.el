@@ -1,4 +1,4 @@
-;;; w3m-proc.el --- Functions and macros to control sub-processes -*- coding: utf-8; -*-
+;;; w3m-proc.el --- Functions and macros to control sub-processes  -*- coding: utf-8; lexical-binding: t -*-
 
 ;; Copyright (C) 2001-2005, 2007-2010, 2012, 2013, 2016-2021
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -232,8 +232,8 @@ number of current working processes is less than `w3m-process-max'."
 	    (w3m-process-start-process obj)))))))
 
 (defun w3m-process-stop (buffer)
-  "Remove handlers related to the buffer BUFFER, and stop
-processes which have no handler."
+  "Remove handlers related to the buffer BUFFER, and stop processes
+which have no handler."
   (interactive (list (current-buffer)))
   (w3m-cancel-refresh-timer buffer)
   (setq w3m-process-queue
@@ -267,7 +267,7 @@ processes which have no handler."
 			   (w3m-process-handler-new
 			    (w3m-process-buffer obj)
 			    (w3m-process-handler-parent-buffer (car handlers))
-			    (lambda (x) (w3m-kill-buffer (current-buffer))))
+			    (lambda (_x) (w3m-kill-buffer (current-buffer))))
 			   handlers)))
 		     (when (w3m-process-process obj)
 		       (w3m-process-kill-process (w3m-process-process obj)))
@@ -286,14 +286,14 @@ processes which have no handler."
 	(goto-char (point-min))
 	(if (re-search-forward "\n*\\( *\\)Reading [^\n]+\\(\\.\\.\\.\\)"
 			       nil t)
-             (let ((inhibit-read-only t))
-               (delete-region (match-beginning 2) (point-max))
-               (insert "\n\n" (match-string 1) "Operation aborted by user.")
-               (delete-region 1 (min 3 (match-beginning 1)))
-               (set-buffer-modified-p nil)
-               (setq w3m-current-url nil
-                     w3m-current-title nil))
-          (goto-char pt)))))
+	    (let ((inhibit-read-only t))
+	      (delete-region (match-beginning 2) (point-max))
+	      (insert "\n\n" (match-string 1) "Operation aborted by user.")
+	      (delete-region 1 (min 3 (match-beginning 1)))
+	      (set-buffer-modified-p nil)
+	      (setq w3m-current-url nil
+		    w3m-current-title nil))
+	  (goto-char pt)))))
   (w3m-force-window-update-later buffer))
 
 (defun w3m-process-shutdown ()
@@ -313,8 +313,8 @@ When BODY is evaluated, the local variable `handler' keeps the null
 handler."
   (let ((var (gensym "--tempvar--")))
     `(let ((,var (let ((handler nil))
- 		   (ignore handler)
- 		   ,@body)))
+		   (ignore handler)
+		   ,@body)))
        (when (w3m-process-p ,var)
 	 (w3m-process-start-process ,var))
        ,var)))
@@ -363,7 +363,9 @@ which will wait for the end of the evaluation."
 	   (,result)
 	   (,wait-function (make-symbol "wait-function")))
        (fset ,wait-function 'identity)
-       (setq ,result (let ((handler (list ,wait-function))) ,@body))
+       (setq ,result (let ((handler (list ,wait-function)))
+		       (ignore handler)
+		       ,@body))
        (while (w3m-process-p ,result)
 	 (condition-case error
 	     (let (w3m-process-inhibit-quit inhibit-quit)
@@ -438,6 +440,7 @@ body BODY."
 	(post-function (gensym "--post-function--")))
     `(let ((,post-function (lambda (,var) ,@body)))
        (let ((,var (let ((handler (cons ,post-function handler)))
+		     (ignore handler)
 		     ,@form)))
 	 (if (w3m-process-p ,var)
 	     (if handler
@@ -461,10 +464,10 @@ evaluated in a temporary buffer."
 	(post-handler (gensym "--post-handler--"))
 	(temp-buffer (gensym "--temp-buffer--"))
 	(current-buffer (gensym "--current-buffer--")))
-    `(lexical-let ((,temp-buffer
-		    (w3m-get-buffer-create
-		     (generate-new-buffer-name w3m-work-buffer-name)))
-		   (,current-buffer (current-buffer)))
+    `(let ((,temp-buffer
+	    (w3m-get-buffer-create
+	     (generate-new-buffer-name w3m-work-buffer-name)))
+	   (,current-buffer (current-buffer)))
        (cl-labels ((,post-body (,var)
 			       (when (buffer-name ,temp-buffer)
 				 (set-buffer ,temp-buffer))
@@ -477,6 +480,7 @@ evaluated in a temporary buffer."
 	 (let ((,var (let ((handler
 			    (cons #',post-body
 				  (cons #',post-handler handler))))
+		       (ignore handler)
 		       (with-current-buffer ,temp-buffer ,@form))))
 	   (if (w3m-process-p ,var)
 	       (if handler
@@ -485,6 +489,7 @@ evaluated in a temporary buffer."
 	     (if (w3m-process-p
 		  (setq ,var (save-current-buffer
 			       (let ((handler (cons #',post-handler handler)))
+				 (ignore handler)
 				 (,post-body ,var)))))
 		 (if handler
 		     ,var
@@ -519,7 +524,7 @@ evaluated in a temporary buffer."
 (defvar w3m-process-background nil
   "Non-nil means that an after handler is being evaluated.")
 
-(defun w3m-process-sentinel (process event &optional ignore-queue)
+(defun w3m-process-sentinel (process _event &optional ignore-queue)
   ;; Ensure that this function will be never called repeatedly.
   (set-process-sentinel process 'ignore)
   (let ((inhibit-quit w3m-process-inhibit-quit)
@@ -590,7 +595,7 @@ evaluated in a temporary buffer."
 		  "\\(?:Accept [^\n]+\n\\)*\\([^\n]+: accept\\? \\)(y/n)")
 		 (= (match-end 0) (point-max)))
 	    ;; SSL certificate
-	    (message nil)
+	    (message "")
 	    (let ((yn (w3m-process-y-or-n-p w3m-current-url (match-string 1))))
 	      (ignore-errors
 		(process-send-string process (if yn "y\n" "n\n"))

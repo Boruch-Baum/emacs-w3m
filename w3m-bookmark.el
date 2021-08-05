@@ -1,6 +1,6 @@
 ;;; w3m-bookmark.el --- Functions to operate bookmark file of w3m -*- coding: utf-8; -*-
 
-;; Copyright (C) 2001-2003, 2005-2012, 2017, 2019
+;; Copyright (C) 2001-2003, 2005-2012, 2017, 2019-2020
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Authors: Shun-ichi GOTO     <gotoh@taiyo.co.jp>,
@@ -56,12 +56,11 @@ of your bookmark file."
   :group 'w3m
   :type 'coding-system)
 
-(defcustom w3m-bookmark-default-section
-  nil
+(defcustom w3m-bookmark-default-section nil
   "Default section to add new entry."
   :group 'w3m
   :type '(radio (const :tag "Not specified" nil)
-		(string :format "Default section name: %v\n")))
+		(string :format "Default section name: %v")))
 
 (defcustom w3m-bookmark-mode-hook nil
   "Hook run at the end of function `w3m-bookmark-mode'."
@@ -287,11 +286,11 @@ Optional argument TITLE is title of link."
     (and (string= section "")
 	 (setq section w3m-bookmark-default-section))
     (when (or (not section)
-	      (string-match "^[\t ]*$"  section))
+	      (string-match "\\`[\t ]*\\'"  section))
       (error "%s" "You must specify a bookmark section name"))
     (setq title (read-string "Title: " title 'w3m-bookmark-title-history))
     (when (or (not title)
-	      (string-match "^[\t ]*$" title))
+	      (string-match "\\`[\t ]*\\'" title))
       (error "%s" "You must specify a bookmark title"))
     (setq title (w3m-encode-specials-string title))
     (w3m-bookmark-write-file url
@@ -354,23 +353,26 @@ With prefix, ask for a new url instead of the present one."
 		     'w3m-bookmark-section-history))
       (when (or (not section) (not (stringp section)) (string= section ""))
 	(setq section default-section))
-      (if (string-match "^[\t ]*$" section)
+      (if (string-match "\\`[\t ]*\\'" section)
         (w3m--message t 'w3m-error
           "You must specify a bookmark section name")
        (while buffers
 	  (set-buffer (pop buffers))
 	  (if (string= w3m-current-url  "about://bookmark/")
 	      (add-to-list 'bookmark-buffers (current-buffer))
-	    (setq title (or w3m-current-title w3m-current-url))
-	    (if w3m-current-url
-		(w3m-bookmark-write-file
-		 w3m-current-url
-		 (w3m-encode-specials-string w3m-current-title)
-		 (w3m-encode-specials-string section))
+	    (setq title (w3m-encode-specials-string
+			 (or w3m-current-title w3m-current-url)))
+	    (cond
+	     (w3m-current-url
+	      (w3m-bookmark-write-file w3m-current-url title
+				       (w3m-encode-specials-string section))
+	      (push w3m-current-url w3m-input-url-history)
+	      (push title w3m-input-url-history))
+	     (t
 	      (message
 	       "w3m-bookmark: Error saving buffer %s\n  url: %s\n  title: %s"
 	       (current-buffer) w3m-current-url w3m-current-title)
-	      (cl-incf error-count))))
+	      (cl-incf error-count)))))
 	(when (> error-count 0)
 	  (w3m--message t 'w3m-error
 	   "%s Errors encountered. See *Messages* buffer for details"
@@ -519,7 +521,7 @@ The car is used if `w3m-bookmark-mode' is nil, otherwise the cdr is used.")
   "Setup w3m bookmark items in menubar."
   (unless (lookup-key w3m-mode-map [menu-bar Bookmark])
     (easy-menu-define w3m-bookmark-menu w3m-mode-map "" '("Bookmark"))
-    (easy-menu-add w3m-bookmark-menu)
+    (w3m-easy-menu-add w3m-bookmark-menu)
     (add-hook 'menu-bar-update-hook 'w3m-bookmark-menubar-update)))
 
 (defun w3m-bookmark-menubar-update ()

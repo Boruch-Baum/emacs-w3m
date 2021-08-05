@@ -164,7 +164,7 @@ __mk_ja_JP=%%83J%%83%%5E%%83J%%83i&url=search-alias%%3Daps&field-keywords=%s"
       ("ja.wikipedia" "https://ja.wikipedia.org/wiki/Special:Search?search=%s&sourceid=Mozilla-search&ns0=1"
        utf-8)
       ("msdn" "https://search.msdn.microsoft.com/search/default.aspx?query=%s")
-      ("duckduckgo" "https://duckduckgo.com/lite" utf-8 "q=%s")))
+      ("duckduckgo" "https://lite.duckduckgo.com/lite" utf-8 "q=%s")))
   "An alist of search engines.
 Each element looks like (ENGINE ACTION CODING POST-DATA)
 ENGINE is a string, the name of the search engine.
@@ -175,24 +175,22 @@ POST-DATA is optional value which is a string for POST method search engine.
 If CODING is omitted, it defaults to `w3m-default-coding-system'."
   :group 'w3m
   :type `(repeat
-	  (group :indent 2
-		 (string :format "Engine: %v\n")
-		 (string :format "       Action: %v\n")
-		 (coding-system :format "%t: %v\n")
+	  (group :format "%v" :indent 2
+		 (string :format "Engine: %v")
+		 (string :format "Action: %v")
+		 (coding-system :format "%t: %v")
 		 (checklist :inline t
-			    :entry-format ,(if (display-graphic-p)
-					       "%b   %v"
-					     "%b  %v")
-			    (string :format "PostData: %v\n")))))
+			    (string :format "PostData: %v")))))
 
 (defcustom w3m-search-default-engine "google"
   "Name of the default search engine.
 See also `w3m-search-engine-alist'."
   :group 'w3m
-  :type (nconc '(radio) (mapcar
-			 (lambda (x)
-			   (list 'const (substring-no-properties (car x))))
-			 w3m-search-engine-alist)))
+  :type '(radio
+	  :convert-widget w3m-widget-type-convert-widget
+	  `(,@(mapcar (lambda (x)
+			(list 'const (substring-no-properties (car x))))
+		      w3m-search-engine-alist))))
 
 (defcustom w3m-search-word-at-point t
   "Non-nil means that the word at point is used as an initial string.
@@ -221,7 +219,7 @@ PROMPT-WITH-DEFAULT instead of string PROMPT."
 	      (buffer-substring (region-beginning) (region-end))
 	    (unless (and (eq major-mode 'w3m-mode)
 			 (listp (get-text-property (point-at-bol) 'face))
-			 (memq 'w3m-header-line-location-title
+			 (memq 'w3m-header-line-title
 			       (get-text-property (point-at-bol) 'face)))
 	      (thing-at-point w3m-search-thing-at-point-arg))))
 	initial)

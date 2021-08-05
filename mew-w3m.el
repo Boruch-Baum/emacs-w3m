@@ -1,4 +1,4 @@
-;;; mew-w3m.el --- View Text/Html content with w3m in Mew -*- coding: utf-8; -*-
+;;; mew-w3m.el --- View Text/Html content with w3m in Mew -*- coding: utf-8; lexical-binding: t -*-
 
 ;; Copyright (C) 2001-2006, 2008-2010, 2019, 2021
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -78,7 +78,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
 (require 'mew)
 (require 'w3m)
 
@@ -112,7 +111,17 @@ Text/Html contents."
 		 (const :tag "Use Cite Mark \"> \"" "&gt;&nbsp;")
 		 (string :tag "Use Other Mark")))
 
-(defconst mew-w3m-safe-url-regexp "\\`cid:")
+(defcustom mew-w3m-safe-url-regexp "\\`\\(cid\\|data\\):"
+  "Regexp that matches safe url names.
+Some HTML mails might have the trick of spammers using <img> tags.  It
+is likely to be intended to verify whether you have read the mail.
+You can prevent your personal informations from leaking by setting
+this to the regexp which matches the safe url names.  The value of the
+variable `w3m-safe-url-regexp' will be bound with this value.  You may
+set this value to nil if you consider all the urls to be safe."
+  :group 'mew-w3m
+  :type '(choice (regexp :format "%t: %v")
+		 (const :tag "All URLs are safe" nil)))
 
 ;; Avoid bytecompile errors and warnings.
 (defvar mew-use-text/html)
@@ -211,7 +220,7 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 	      (insert mew-w3m-region-cite-mark))
 	    (end-of-line)))
 	(unless inside-blockquote
-	  ; "> > > " --> ">>> "
+	  ;; "> > > " --> ">>> "
 	  (when (and mew-w3m-region-cite-mark
 		     (string-match "&nbsp;\\'" mew-w3m-region-cite-mark))
 	    (let ((base (substring mew-w3m-region-cite-mark
@@ -220,11 +229,11 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 	      (setq regexp (concat "^" regexp "\\(?:" regexp "\\)+"))
 	      (goto-char (point-min))
 	      (while (re-search-forward regexp nil t)
-		(dotimes (i (prog1
-				(/ (- (match-end 0) (match-beginning 0))
-				   (length mew-w3m-region-cite-mark))
-			      (delete-region (match-beginning 0)
-					     (match-end 0))))
+		(dotimes (_i (prog1
+				 (/ (- (match-end 0) (match-beginning 0))
+				    (length mew-w3m-region-cite-mark))
+			       (delete-region (match-beginning 0)
+					      (match-end 0))))
 		  (insert base))
 		(insert "&nbsp;"))))
 	  (goto-char (point-min))
@@ -325,10 +334,10 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 			   xref))))
        (mew-w3m-add-text-properties `(w3m t w3m-images ,mew-w3m-auto-insert-image))))))
 
-(defun mew-w3m-cid-retrieve (url &rest args)
+(defun mew-w3m-cid-retrieve (url &rest _args)
   (let ((output-buffer (current-buffer)))
     (with-current-buffer w3m-current-buffer
-      (when (string-match "^cid:\\(.+\\)" url)
+      (when (string-match "\\`cid:\\(.+\\)" url)
 	(setq url (match-string 1 url))
 	(let* ((fld (mew-current-get-fld (mew-frame-id)))
 	       (msg (mew-current-get-msg (mew-frame-id)))
@@ -352,14 +361,13 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 (push (cons 'mew-message-mode 'mew-w3m-cid-retrieve)
       w3m-cid-retrieve-function-alist)
 
-(defun mew-w3m-ext-url-show (dummy url)
+(defun mew-w3m-ext-url-show (_dummy url)
   (pop-to-buffer (mew-buffer-message))
   (w3m url))
 
-(defun mew-w3m-ext-url-fetch (dummy url)
-  (lexical-let ((url url)
-		(name (file-name-nondirectory url))
-		(handler nil))
+(defun mew-w3m-ext-url-fetch (_dummy url)
+  (let ((name (file-name-nondirectory url))
+	(handler nil))
     (w3m-process-do
 	(success (prog1
 		     (w3m-download url nil nil handler)
@@ -411,16 +419,16 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
       (cond
        ((string= "application/xhtml+xml" ct)
 	(setq ct "text/html"))
-       ((string-match "^application/.*xml$" ct)
+       ((string-match "\\`application/.*xml\\'" ct)
 	(setq ct "text/xml")))
       (setq filename (expand-file-name (cond
-					((and (string-match "^[\t ]*$" basename)
+					((and (string-match "\\`[\t ]*\\'" basename)
 					      (string= ct "text/html"))
 					 "index.html")
-					((and (string-match "^[\t ]*$" basename)
+					((and (string-match "\\`[\t ]*\\'" basename)
 					      (string= ct "text/xml"))
 					 "index.xml")
-					((string-match "^[\t ]*$" basename)
+					((string-match "\\`[\t ]*\\'" basename)
 					 "dummy")
 					(t
 					 basename))
@@ -447,7 +455,7 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 	      (setq cs 'utf-8))
 	     (t
 	      (setq cs mew-cs-autoconv)))))
-	 ((string-match "^text/" ct)
+	 ((string-match "\\`text/" ct)
 	  (insert source)
 	  (setq cs mew-cs-autoconv))
 	 (t
@@ -489,7 +497,7 @@ The variable `mew-w3m-region-cite-mark' specifies the citation mark."
 	     (ct (mew-syntax-get-value ctl 'cap))
 	     (params (mew-syntax-get-params ctl))
 	     (ocharset "charset"))
-	(when (and (string-match "^Text" ct) charset)
+	(when (and (string-match "\\`Text" ct) charset)
 	  (setq params (mew-delete ocharset params))
 	  (setq ctl (cons ct (cons (list ocharset charset) params)))
 	  (mew-syntax-set-ct syntax ctl))

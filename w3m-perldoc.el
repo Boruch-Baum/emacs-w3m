@@ -1,4 +1,4 @@
-;;; w3m-perldoc.el --- The add-on program to view Perl documents. -*- coding: utf-8; -*-
+;;; w3m-perldoc.el --- The add-on program to view Perl documents. -*- coding: utf-8;
 
 ;; Copyright (C) 2001-2005, 2007, 2017, 2019
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -39,11 +39,10 @@
   :group 'w3m
   :prefix "w3m-perldoc-")
 
-
 (defcustom w3m-perldoc-base-url "https://perldoc.perl.org/"
-	"The URL domain base to lookup the perldoc with."
-	:group 'w3m-perldoc
-	:type 'string)
+  "The URL domain base to lookup the perldoc with."
+  :group 'w3m-perldoc
+  :type 'string)
 
 (defcustom w3m-perldoc-command "perldoc"
   "Name of the executable file of perldoc."
@@ -57,17 +56,18 @@
 
 (defcustom w3m-perldoc-pod2html-arguments
   '("--noindex")
-  "Arguments of pod2html."
+  "Arguments passed to pod2html."
   :group 'w3m-perldoc
-  :type '(repeat (string :format "Argument: %v\n"))
-  :get (lambda (symbol)
-	 (delq nil (delete "" (mapcar (lambda (x) (if (stringp x) x))
-				      (default-value symbol)))))
-  :set (lambda (symbol value)
-	 (custom-set-default
-	  symbol
-	  (delq nil (delete "" (mapcar (lambda (x) (if (stringp x) x))
-				       value))))))
+  :type '(repeat
+	  :value-to-internal
+	  (lambda (_widget value)
+	    (delq nil (delete ""
+			      (mapcar (lambda (x) (if (stringp x) x)) value))))
+	  :value-to-external
+	  (lambda (_widget value)
+	    (delq nil (delete ""
+			      (mapcar (lambda (x) (if (stringp x) x)) value))))
+	  (string :format "Argument: %v")))
 
 (defcustom w3m-perldoc-input-coding-system
   (if (string= "Japanese" w3m-language)
@@ -118,30 +118,34 @@
 		   (insert "::"))
 		 (goto-char (point-max))))
 	     "text/html")))))
-(defun w3m-perldoc-pretty (string)
-	"Make a string more likely to find a perldoc page."
-	(flet ((swap (old new string)
-							 (let ((loc (search old string)))
-								 (if loc
-										 (concat (substring string 0 loc)
-														 new
-														 (swap old new (substring string
-																											(+ (length old) loc))))
-									 string))))
-		(concat (swap " " "/" (swap "::" "/" string))
-						(if (not (string= "" string))
-								".html"
-							"")
-						"#perl_version")))
 
-(defun w3m-ensure-url )
+;; For recursive funcall by itself.
+(declare-function swap "w3m-perldoc" (old new string))
+
+(defun w3m-perldoc-pretty (string)
+  "Make a string more likely to find a perldoc page."
+  (w3m-flet ((swap (old new string)
+		   (let ((loc (string-match old string)))
+		     (if loc
+			 (concat (substring string 0 loc)
+				 new
+				 (swap old new (substring
+						string
+						(+ (length old) loc))))
+		       string))))
+    (concat (swap " " "/" (swap "::" "/" string))
+	    (if (not (string= "" string))
+		".html"
+	      "")
+	    "#perl_version")))
 
 ;;;###autoload
 (defun w3m-perldoc (docname)
   "View Perl documents."
   (interactive "sDocument: ")
   (w3m-goto-url (concat (w3m-ensure-slash w3m-perldoc-base-url)
-												(w3m-perldoc-pretty docname))))
+			(w3m-perldoc-pretty docname))))
+
 (provide 'w3m-perldoc)
 
 ;;; w3m-perldoc.el ends here.

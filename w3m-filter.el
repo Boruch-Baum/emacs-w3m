@@ -83,10 +83,6 @@
      "Filter top and bottom cruft for stackexchange.com"
      "\\`https://\\(?:[0-9A-Za-z_~-]+\\.\\)*stackexchange\\.com\\(?:\\'\\|/\\)"
      w3m-filter-stackexchange)
-    (t
-     "A filter for YouTube"
-     "\\`https://\\(?:[0-9A-Za-z_~-]+\\.\\)*youtube\\.com\\(?:\\'\\|/\\)"
-      w3m-filter-youtube)
     (nil
      ("Remove garbage in http://www.geocities.co.jp/*"
       "http://www.geocities.co.jp/* でゴミを取り除きます")
@@ -128,8 +124,8 @@
      "A filter for Wikipedia"
      "\\`http://.*\\.wikipedia\\.org/" w3m-filter-wikipedia)
     (t "filter for github.com repository main page"
-       "\\`http[s]?://github\\.com/[^/]+/[^/]+[/]?$"
-      w3m-filter-github-repo-main-page)
+       "\\`http[s]?://github\\.com/[^/]+/[^/]+[/]?\\'"
+       w3m-filter-github-repo-main-page)
     (t "xkcd filter" "\\`http[s]?://xkcd.com/" w3m-filter-xkcd)
     (nil
      ("Remove inline frames in all pages"
@@ -150,9 +146,9 @@ FLAG
   Non-nil means this filter is enabled.
 DESCRIPTION
   Describe what this filter does.  The value may be a string or a list
-  of two strings; in the latter case, those descriptions are written in
-  English and Japanese respectively, and only either one is displayed
-  in the customization buffer according to `w3m-language'.
+  of two strings; in the latter case, the first description should be written in
+  English and the second in Japanese; the unwanted one will  be hidden according
+  to `w3m-language' when customizing this variable.
 REGEXP
   Regular expression to restrict this filter so as to run only on web
   contents of which the url matches.
@@ -181,7 +177,7 @@ FUNCTION
 			       (error "The widget here is not active"))
 			     (apply #',fn args)))))
 	    `((group
-	       :indent 2
+	       :format "\n%v" :indent 0
 	       :value-create
 	       (lambda (widget)
 		 (widget-group-value-create widget)
@@ -192,7 +188,6 @@ FUNCTION
 		      (widget-get (car children) :to)
 		      (widget-get (car (last children)) :to)))))
 	       (checkbox
-		:format "\n%[%v%]"
 		:action
 		(lambda (widget &optional event)
 		  (let ((widget-edit-functions
@@ -214,13 +209,20 @@ FUNCTION
 					:children))) :to)))))))
 		    (widget-checkbox-action widget event))))
 	       (group
-		:inline t
+		:format "%v" :indent 2 :inline t
 		(choice
 		 :format " %v"
 		 (string :format "%v")
-		 (group ,@(if (equal "Japanese" w3m-language)
-			      '((sexp :format "") (string :format "%v"))
-			    '((string :format "%v") (sexp :format ""))))
+		 (string :documentation-property
+			 (lambda (value)
+			   (if (equal "Japanese" w3m-language)
+			       (concat (cadr value) "\n(" (car value) ")")
+			     (concat (car value) "\n(" (cadr value) ")")))
+			 :format "%h"
+			 :match
+			 (lambda (_widget value)
+			   (and (stringp (car-safe value))
+				(stringp (car-safe (cdr-safe value))))))
 		 (const :format "Not documented\n" nil))
 		(regexp :format "Regexp matching url: %v")
 		(choice
@@ -245,19 +247,24 @@ This variable is semi-obsolete; use `w3m-filter-configuration' instead."
   :group 'w3m
   :type '(repeat
 	  (group :format "%v" :indent 2
-		 (regexp :format "Regexp: %v\n" :value ".*")
+		 (regexp :format "Regexp: %v" :value ".*")
 		 (choice
-		  :tag "Filtering Rule"
-		  (group :inline t
+		  :format "Filtering Rule:\n  %[Value Menu%]\n  %v"
+		  (group :format "%v" :inline t
 			 :tag "Delete regions surrounded with these patterns"
 			 (const :format "Function: %v\n"
 				w3m-filter-delete-regions)
-			 (string :format "Start: %v\n"
+			 (string :format "Start: %v"
 				 :value "not a regexp")
-			 (string :format "  End: %v\n"
+			 (string :format "  End: %v"
 				 :value "not a regexp"))
 		  (function :tag "Filter with a user defined function"
-			    :format "Function: %v\n")))))
+			    :format "Function: %v"
+			    :match
+			    (lambda (_widget value)
+			      (unless (eq value 'w3m-filter-delete-regions)
+				(or (fboundp value) (functionp value)
+				    (symbolp value)))))))))
 
 (defcustom w3m-filter-google-use-utf8 (not (equal "Japanese" w3m-language))
   ;; FIXME: what does this docstring say? - ky
@@ -1261,9 +1268,6 @@ READ MORE:\\([^<]+\\)\\(</a>\\)?</strong>\\(</p>\\)?"
       (w3m-filter-replace-regexp url "<a[^>]+>" "" p1 p2)
       (w3m-filter-replace-regexp url "</?p[^>]*>" "" p1 p2))))
 
-(defun w3m-filter-youtube (url)
-  t)
-
 (defun w3m-filter-geocities-remove-garbage (url)
   "Remove garbage in http://www.geocities.co.jp/*."
   (w3m-filter-delete-regions
@@ -1286,17 +1290,17 @@ This function replaces that of src= with it."
   (goto-char (point-min))
   (let ((case-fold-search t)
 	st nd data-src)
-  (while (re-search-forward "<img[\t\n ]+[^>]+>" nil t)
-    (setq st (goto-char (match-beginning 0))
-	  nd (cadr (match-data))) ;; a marker version of (match-end 0)
-    (when (re-search-forward "[\t\n ]+data-\\(src=\"[^\"]+\"\\)" nd t)
-      (setq data-src (match-string 1))
-      (replace-match "")
-      (goto-char st)
-      (if (re-search-forward "[\t\n ]+\\(src=\"[^\"]+\"\\)" nd t)
-	  (replace-match data-src nil nil nil 1)
-	(forward-char 4)
-	(insert " " data-src)))
-    (goto-char nd))))
+    (while (re-search-forward "<img[\t\n ]+[^>]+>" nil t)
+      (setq st (goto-char (match-beginning 0))
+	    nd (cadr (match-data))) ;; a marker version of (match-end 0)
+      (when (re-search-forward "[\t\n ]+data-\\(src=\"[^\"]+\"\\)" nd t)
+	(setq data-src (match-string 1))
+	(replace-match "")
+	(goto-char st)
+	(if (re-search-forward "[\t\n ]+\\(src=\"[^\"]+\"\\)" nd t)
+	    (replace-match data-src nil nil nil 1)
+	  (forward-char 4)
+	  (insert " " data-src)))
+      (goto-char nd))))
 
 ;;; w3m-filter.el ends here

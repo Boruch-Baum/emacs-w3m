@@ -1,4 +1,4 @@
-;;; w3m-mail.el --- an interface to mail-user-agent for sending web pages -*- coding: utf-8; -*-
+;;; w3m-mail.el --- an interface to mail-user-agent for sending web pages -*- coding: utf-8;
 
 ;; Copyright (C) 2006, 2009, 2010, 2013, 2019 TSUCHIYA Masatoshi
 
@@ -46,11 +46,11 @@ Valid symbols include `url' which is replaced with the url of the page
 and `title' which is replaced with the page title.  You can also use
 just a string for this variable."
   :group 'w3m
-  :type '(radio (editable-list :format "\n%v%i\n"
+  :type '(radio (editable-list :format "%v%i\n" :indent 0
 			       (radio-button-choice
 				(const :format "%v " url)
 				(const :format "%v " title)
-				string))
+				(string :format "%v    ")))
 		string
 		(const :format "no subject" nil)))
 
@@ -251,10 +251,10 @@ the one such as \"text/html\", and the rest are the same as those of
 			    (split-string (downcase content-type) "/")))
 	 (basename (file-name-nondirectory (w3m-url-strip-query url)))
 	 (filename (cond
-		    ((and (string-match "^[\t ]*$" basename)
+		    ((and (string-match "\\`[\t ]*\\'" basename)
 			  (equal content-type '("text" "html")))
 		     "index.html")
-		    ((string-match "^[\t ]*$" basename)
+		    ((string-match "\\`[\t ]*\\'" basename)
 		     "dummy")
 		    (t
 		     basename)))

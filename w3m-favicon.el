@@ -1,4 +1,4 @@
-;;; w3m-favicon.el --- utilities for handling favicon in emacs-w3m -*- coding: utf-8; -*-
+;;; w3m-favicon.el --- utilities for handling favicon in emacs-w3m -*- coding: utf-8; lexical-binding: t -*-
 
 ;; Copyright (C) 2001-2005, 2007, 2009, 2011, 2017, 2018, 2019
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -29,8 +29,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
-
 (require 'w3m-image)
 
 (defvar w3m-current-buffer)
@@ -60,8 +58,8 @@ be omitted."
   :group 'w3m
   :type '(radio (const :tag "Not specified" nil)
 		(cons :format "%v"
-		      (integer :format "Width: %v " :value 16)
-		      (integer :format "Height: %v " :value 16))))
+		      (integer :format "Width: %v " :value 16 :size 8)
+		      (integer :format "Height: %v " :value 16 :size 8))))
 
 (defconst w3m-favicon-name "favicon.ico"
   "The favicon name.")
@@ -79,7 +77,7 @@ It defaults to the file named \".favicon\" under the directory specified
 by the `w3m-profile-directory' variable."
   :group 'w3m
   :type '(radio (const :format "Not specified\n")
-		(file :format "%t: %v\n")))
+		(file :format "%t: %v")))
 
 (defcustom w3m-favicon-cache-expire-wait (* 30 24 60 60)
   "The cache will be expired after specified seconds passed since retrieval.
@@ -87,23 +85,26 @@ If this variable is nil, never expired."
   :group 'w3m
   :type 'integer)
 
-(defcustom w3m-favicon-type
-  (let ((types '(gif png pbm xpm bmp))
-	type)
-    (catch 'det
-      (while types
-	(setq type (car types)
-	      types (cdr types))
-	(if (image-type-available-p type)
-	    (throw 'det type)))))
-  "Image type of display favicon."
+(defcustom w3m-favicon-type (when (boundp 'image-types)
+			      (catch 'det
+				(dolist (type '(gif png pbm svg xpm bmp) nil)
+				  (if (image-type-available-p type)
+				      (throw 'det type)))))
+  "Image type of favicon."
   :group 'w3m
-  :type (cons 'radio
-	      (let ((types (delq 'postscript (copy-sequence image-types))))
+  :type '(radio
+	  :convert-widget w3m-widget-type-convert-widget
+	  ;; The variable `image-types' will not be available
+	  ;; if Emacs was built without the graphics stuff.
+	  (if (boundp 'image-types)
+	      (let ((types (delq 'imagemagick
+				 (delq 'postscript
+				       (copy-sequence image-types)))))
 		(nconc (mapcar (lambda (x)
 				 `(const :format "%v  " ,x))
 			       (butlast types))
-		       `((const ,(car (last types))))))))
+		       `((const ,(car (last types))))))
+	    '((const :match (lambda (widget value) t) nil)))))
 
 (defcustom w3m-space-before-favicon " "
   "String of space char(s) to be put in front of favicon in the mode-line.
@@ -120,7 +121,7 @@ Args that are always passed to convert in addition to this value are:
 
 Args might also contain (\"-transparent\" \"COLOR\") in the beginning."
   :group 'w3m
-  :type `(repeat (group :inline t
+  :type `(repeat (group :format "%v" :inline t
 			:match-inline
 			(lambda (widget vals)
 			  (if (and (eq (aref (car vals) 0) ?-)
@@ -130,16 +131,17 @@ Args might also contain (\"-transparent\" \"COLOR\") in the beginning."
 				    (nthcdr 2 vals))
 			    (cons (list (car vals)) (cdr vals))))
 			(string :format "Arg: %v " :value "-")
-			(checklist :inline t
-				   (string :format "Value: %v\n")))))
+			(group :format "%v" :inline t
+			       (checklist :inline t
+					  (string :format "Value: %v"))))))
 
 (defcustom w3m-favicon-default-background nil
   "Color name used as transparent color of favicon image.
 Nil means to use the background color of the Emacs frame.  The null
 string \"\" is special, that will be replaced with the background color
-of the header line or the mode line on which the favicon is displayed."
+of the tab line or the mode line on which the favicon is displayed."
   :group 'w3m
-  :type '(radio (string :format "Color: %v\n"
+  :type '(radio (string :format "Color: %v"
 			:match (lambda (widget value)
 				 (and (stringp value) (> (length value) 0))))
 		(const :tag "Use the background color of the Emacs frame" nil)
@@ -280,10 +282,7 @@ stored in the `w3m-favicon-image' buffer-local variable."
 		  w3m-favicon-cache-expire-wait)))
       (with-current-buffer target
 	(w3m-favicon-set-image (w3m-favicon-cache-favicon url)))
-    (lexical-let ((url url)
-		  (type type)
-		  (target target)
-		  (silent w3m--message-silent))
+    (let ((silent w3m--message-silent))
       (w3m-process-with-null-handler
 	(w3m-process-do-with-temp-buffer
 	    (ok (w3m-retrieve url 'raw nil nil nil handler))

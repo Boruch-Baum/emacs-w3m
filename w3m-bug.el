@@ -1,4 +1,4 @@
-;;; w3m-bug.el --- command to report emacs-w3m bugs -*- coding: utf-8 -*-
+;;; w3m-bug.el --- command to report emacs-w3m bugs
 
 ;; Copyright (C) 2002, 2003, 2005, 2007, 2010, 2019
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -38,18 +38,16 @@
 
 (defconst report-emacs-w3m-bug-system-informations
   (eval
-   '`(,@(if (boundp 'emacs-w3m-git-revision)
-	    ;; Abnormally built (or perhaps released) emacs-w3m might not
-	    ;; provide this constant.
-	    '(emacs-w3m-git-revision))
+   '`(emacs-w3m-git-revision
       emacs-w3m-version
       emacs-version
+      ;; The form ,@(if (boundp 'foo) '(foo)) used here is
+      ;; meant to generate nothing if `foo' is not bound.
       ,@(if (boundp 'mule-version)
 	    '(mule-version))
-      ,@(if (boundp 'Meadow-version)
-	    '(Meadow-version))
       system-type
       (featurep 'gtk)
+      (featurep 'w3m-load)
       w3m-version
       w3m-type
       w3m-compile-options
@@ -67,6 +65,7 @@
   ;; a Lisp function with no argument or any Lisp form to be evaluated.
   )
 
+;;;###autoload
 (defun report-emacs-w3m-bug (topic &optional buffer)
   "Report a bug in emacs-w3m.
 Prompts for bug subject.  Leaves you in a mail buffer."
@@ -95,7 +94,7 @@ Prompts for bug subject.  Leaves you in a mail buffer."
 	     (setq buffer nil)))))
      (list (read-string "Bug Subject: ") buffer)))
   (let (after-load-alist)
-    (load "w3m-load")
+    (load "w3m-load" t t)
     ;; See the comment for `report-emacs-w3m-bug-system-informations'.
     (load "w3m-bug"))
   (compose-mail report-emacs-w3m-bug-address topic nil 'new)
@@ -183,6 +182,7 @@ System Info to help track down your bug:
 	      infos)
 	(push "\n" infos)))
     (apply 'insert (nreverse infos))
-    (goto-char user-point)))
+    (goto-char user-point)
+    (set-buffer-modified-p nil)))
 
 ;;; w3m-bug.el ends here

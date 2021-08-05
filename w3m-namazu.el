@@ -1,4 +1,4 @@
-;;; w3m-namazu.el --- The add-on program to search files with Namazu. -*- coding: utf-8; -*-
+;;; w3m-namazu.el --- The add-on program to search files with Namazu. -*- coding: utf-8;
 
 ;; Copyright (C) 2001-2005, 2007, 2009, 2017, 2019
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -70,7 +70,7 @@
   "Arguments of Namazu."
   :group 'w3m-namazu
   :type '(repeat
-	  (restricted-sexp :format "Argument: %v\n"
+	  (restricted-sexp :format "Argument: %v"
 			   :match-alternatives
 			   (stringp 'w3m-namazu-page-max 'whence))))
 
@@ -84,10 +84,11 @@
 
 (defconst w3m-namazu-default-index-customize-spec
   '`(choice
+     :format "%{%t%}:\n%[Value Menu%] %v"
      (const :tag "No default index" nil)
      ,@(mapcar (lambda (x) (list 'const (car x)))
 	       w3m-namazu-index-alist)
-     (directory :format "Index directory: %v\n")))
+     (directory :format "Index directory: %v")))
 
 (defcustom w3m-namazu-index-alist
   (when (boundp 'namazu-dir-alist)
@@ -98,13 +99,11 @@
   "Alist of alias and index directories."
   :group 'w3m-namazu
   :type '(repeat
-	  (group
-	   :indent 0 :inline t
-	   (cons :format "%v"
-		 (string :format "Alias: %v\n")
+	   (cons :format "%v" :indent 0
+		 (string :format "Alias: %v")
 		 (repeat
-		  :format "%v%i\n" :indent 8
-		  (directory :format "Index directory: %v\n")))))
+		  :format "  Index directories:\n%v%i\n" :indent 2
+		  (directory :format "%v"))))
   :set (lambda (symbol value)
 	 (custom-set-default symbol value)
 	 (put 'w3m-namazu-default-index 'custom-type

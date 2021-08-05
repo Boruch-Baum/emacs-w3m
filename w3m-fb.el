@@ -163,26 +163,24 @@ This allows frame-local lists of buffers (tabs)."
   :init-value nil
   :group 'w3m-fb
   :global t
-  (cond
-   ((and w3m-fb-mode
-        (if w3m-pop-up-frames
-          (prog1
-            (setq w3m-fb-mode nil)
-            (w3m--message t 'w3m-error
-              "W3M Frame Buffer mode not activated (Hint: `M-x w3m-display-mode').")
-            (sit-for 2))
-         t))
-     (progn
-       (add-hook 'w3m-mode-hook 'w3m-fb-add)
-       (add-hook 'kill-buffer-hook 'w3m-fb-remove)
-       (when w3m-fb-delete-frame-kill-buffers
-         (add-hook 'delete-frame-functions 'w3m-fb-delete-frame-buffers))
-       (w3m-fb-associate)))
-   (t
+  (if (and w3m-fb-mode
+	   (if w3m-pop-up-frames
+	       (prog1
+		   (setq w3m-fb-mode nil)
+		 (message "\
+W3M Frame Buffer mode not activated (Hint: `M-x w3m-display-mode').")
+		 (sit-for 2))
+	     t))
+      (progn
+	(add-hook 'w3m-mode-hook 'w3m-fb-add)
+	(add-hook 'kill-buffer-hook 'w3m-fb-remove)
+	(when w3m-fb-delete-frame-kill-buffers
+	  (add-hook 'delete-frame-functions 'w3m-fb-delete-frame-buffers))
+	(w3m-fb-associate))
     (remove-hook 'w3m-mode-hook 'w3m-fb-add)
     (remove-hook 'kill-buffer-hook 'w3m-fb-remove)
     (remove-hook 'delete-frame-functions 'w3m-fb-delete-frame-buffers)
-    (w3m-fb-dissociate))))
+    (w3m-fb-dissociate)))
 
 (provide 'w3m-fb)
 

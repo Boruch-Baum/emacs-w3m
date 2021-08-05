@@ -1,6 +1,6 @@
-;;; w3m-weather.el --- Look weather forecast -*- coding: utf-8; -*-
+;;; w3m-weather.el --- Look weather forecast -*- coding: utf-8; lexical-binding: t -*-
 
-;; Copyright (C) 2001, 2002, 2003, 2005, 2012
+;; Copyright (C) 2001, 2002, 2003, 2005, 2012, 2019
 ;; TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Authors: TSUCHIYA Masatoshi <tsuchiya@namazu.org>
@@ -43,9 +43,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
-;; `cl' employs `cl-lib'.
-;; (require 'cl-lib) ;; cl-labels
+(require 'cl-lib) ;; cl-labels
 
 (require 'w3m)
 
@@ -383,12 +381,13 @@
 		romaji-partial (concat romaji suffix))))
       (let ((collection)
 	    (regexp
-; UTF DEBUG NOTE: This string-match was originaly:
-;            (and (string-match "!&\\'" kanji)
+	     ;; UTF DEBUG NOTE: This string-match was originaly:
+	     ;;            (and (string-match "!&\\'" kanji)
 	     (and (string-match "・\\'" kanji)
 		  (string-match "[aiueo]n\\'" romaji)
 		  (concat "\\`" romaji "n[^aiueoy]"))))
-	(dolist (x (all-completions romaji-partial w3m-weather-completion-table))
+	(dolist (x (all-completions romaji-partial
+				    w3m-weather-completion-table))
 	  (unless (and regexp (string-match regexp x))
 	    (setq x (assoc x w3m-weather-completion-table))
 	    (unless (assoc (cadr x) collection)
@@ -397,8 +396,9 @@
 	 ((not flag)
 	  (let ((s (try-completion kanji collection predicate)))
 	    (if (and (stringp s) (string< s partial))
-		(when (setq s (try-completion romaji-partial
-					      (mapcar (lambda (x) (list (cdr x)))
+		(when (setq s (try-completion
+			       romaji-partial
+			       (mapcar (lambda (x) (list (cdr x)))
 						      collection)
 					      predicate))
 		  (concat kanji (substring s (if romaji (length romaji) 0))))
@@ -416,34 +416,28 @@
   (w3m-goto-url (format "about://weather/%s" area)))
 
 ;;;###autoload
-(defun w3m-about-weather (url no-decode no-cache post-data referer handler)
+(defun w3m-about-weather (url _no-decode no-cache _post-data _referer handler)
   (if (string-match "\\`about://weather/" url)
-      (lexical-let* ((url url)
-		     (no-cache no-cache)
-		     (area (substring url (match-end 0)))
-		     (furl (nth 2 (assoc area w3m-weather-completion-table))))
+      (let* ((area (substring url (match-end 0)))
+	     (furl (nth 2 (assoc area w3m-weather-completion-table))))
 	(w3m-process-do
 	    (type (w3m-retrieve furl nil no-cache nil nil handler))
 	  (when type
 	    (w3m-decode-buffer furl)
 	    (w3m-weather-run-filter-functions w3m-weather-filter-functions
 					      area furl no-cache handler))))
-    (w3m--message t 'w3m-error "Unknown URL: %s" url)
+    (w3m-message "Unknown URL: %s" url)
     nil))
 
 (defun w3m-weather-run-filter-functions (functions area url no-cache handler)
   (if functions
-      (lexical-let ((functions functions)
-		    (area area)
-		    (url url)
-		    (no-cache no-cache))
-	(w3m-process-do
-	    (nil (funcall (pop functions) area url no-cache handler))
-	  (w3m-weather-run-filter-functions functions area url
-					    no-cache handler)))
+      (w3m-process-do
+	  (nil (funcall (pop functions) area url no-cache handler))
+	(w3m-weather-run-filter-functions functions area url
+					  no-cache handler))
     "text/html"))
 
-(defun w3m-weather-extract-contents (&rest args)
+(defun w3m-weather-extract-contents (&rest _args)
   "Remove both header and footer in the weather forecast pages."
   (goto-char (point-min))
   (when (search-forward "<!---MAIN_CONTENTS_table--->" nil t)
@@ -452,7 +446,7 @@
   (when (search-backward "<!---Local_Link--->" nil t)
     (delete-region (match-beginning 0) (point-max))))
 
-(defun w3m-weather-adjust-contents (&rest args)
+(defun w3m-weather-adjust-contents (&rest _args)
   ;; Remove spacers.
   (goto-char (point-min))
   (while (search-forward "<tr><td>\
@@ -480,7 +474,7 @@
     (delete-char -1)
     (insert "0")))
 
-(defun w3m-weather-insert-title (area url &rest args)
+(defun w3m-weather-insert-title (area url &rest _args)
   "Insert title."
   (goto-char (point-min))
   (insert "<head><title>Weather forecast of "
@@ -492,7 +486,7 @@
   (goto-char (point-max))
   (insert "</body>"))
 
-(defun w3m-weather-expand-anchors (area url &rest args)
+(defun w3m-weather-expand-anchors (_area url &rest _args)
   ;; FIXME: 天気予報ページに含まれている相対リンクを絶対リンクに書き換
   ;; えるための関数．これらの相対リンクを安全に取り扱うためには，base
   ;; URL を返せるように，about:// の構造を書き直す必要があると考えられ

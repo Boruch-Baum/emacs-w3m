@@ -44,7 +44,7 @@
   :group 'w3m
   :type '(choice
 	  (const :tag "No limit" nil)
-	  (integer :format "%t: %v\n" :tag "depth" 10)))
+	  (integer :format "%t: %v" :tag "depth" 10)))
 
 (defcustom w3m-dtree-indent-strings ["|-" "+-" "|  " "   "]
   "Vector of strings to be used for indentation with w3m-dtree.
@@ -61,23 +61,24 @@ If you care for another style, set manually and try it :-).
 "
   :group 'w3m
   :type '(radio
-	  (const :format "ASCII: " ["|-" "+-" "|  " "   "])
+	  (const :format "ASCII: [\"|-\" \"+-\" \"|  \" \"   \"]\n"
+		 ["|-" "+-" "|  " "   "])
 	  (vector
 	   :convert-widget w3m-widget-type-convert-widget
 	   (let ((defaults (if (equal w3m-language "Japanese")
 			       (vconcat '("├" "└" "│" "　"))
 			     ["|-" "+-" "|  " "   "])))
 	     `(:format "Others:\n%v" :indent 4
-		       (string :format "%{|-%}          %v\n"
+		       (string :format "%{\"|-\"%}        %v\n"
 			       :sample-face widget-field-face
 			       :value ,(aref defaults 0))
-		       (string :format "%{+-%}          %v\n"
+		       (string :format "%{\"+-\"%}        %v\n"
 			       :sample-face widget-field-face
 			       :value ,(aref defaults 1))
-		       (string :format "%{|  %}         %v\n"
+		       (string :format "%{\"|  \"%}       %v\n"
 			       :sample-face widget-field-face
 			       :value ,(aref defaults 2))
-		       (string :format "%{   %}         %v"
+		       (string :format "%{\"   \"%}        %v"
 			       :sample-face widget-field-face
 			       :value ,(aref defaults 3)))))))
 
@@ -86,23 +87,24 @@ If you care for another style, set manually and try it :-).
 over the 'w3m-dtree-directory-depth'."
   :group 'w3m
   :type '(radio
-	  (const :format "ASCII: " ["|=" "+="])
-	  (const :format "ASCII Bold: " ["<b>|-</b>" "<b>+-</b>"])
+	  (const :format "ASCII: [\"|=\" \"+=\"]\n" ["|=" "+="])
+	  (const :format "ASCII Bold: [\"<b>|-</b>\" \"<b>+-</b>\"]\n"
+		 ["<b>|-</b>" "<b>+-</b>"])
 	  (vector
 	   :convert-widget w3m-widget-type-convert-widget
 	   (let ((defaults (if (equal w3m-language "Japanese")
 			       (vconcat '("┝" "┗"))
 			     ["|=" "+="])))
 	     `(:format "Others:\n%v" :indent 4
-		       (string :format "|=          %{|=%}              %v\n"
+		       (string :format "\"|=\"        \"%{|=%}\"        %v\n"
 			       :sample-face bold
 			       :value ,(aref defaults 0))
-		       (string :format "+=          %{+=%}              %v\n"
+		       (string :format "\"+=\"        \"%{+=%}\"        %v"
 			       :sample-face bold
 			       :value ,(aref defaults 1)))))))
 
 (defun w3m-dtree-expand-file-name (path)
-  (if (string-match "^\\(.\\):\\(.*\\)" path)
+  (if (string-match "\\`\\(.\\):\\(.*\\)" path)
       (if w3m-use-cygdrive
 	  (concat "/cygdrive/"
 		  (match-string 1 path) (match-string 2 path))
@@ -112,7 +114,7 @@ over the 'w3m-dtree-directory-depth'."
 (defun w3m-dtree-directory-name (path)
   (when (and w3m-treat-drive-letter
 	     (string-match
-	      "^/\\(?:\\([A-Za-z]\\)[|:]?\\|cygdrive/\\([A-Za-z]\\)\\)/"
+	      "\\`/\\(?:\\([A-Za-z]\\)[|:]?\\|cygdrive/\\([A-Za-z]\\)\\)/"
 	      path))
     (setq path (concat
 		(or (match-string 1 path)
@@ -128,7 +130,7 @@ over the 'w3m-dtree-directory-depth'."
 
 (defun w3m-dtree-create-sub (path allfiles dirprefix fileprefix indent depth)
   (let* ((files (condition-case err
-                  (directory-files path t)
+                    (directory-files path t)
                   (error (list "----"))))
 	 (limit (and (integerp w3m-dtree-directory-depth)
 		     (>= depth w3m-dtree-directory-depth)))
@@ -200,7 +202,7 @@ over the 'w3m-dtree-directory-depth'."
 	(dirprefix "about://dtree")
 	(fileprefix "file://")
 	path)
-    (if (string-match "\\?allfiles=\\(?:\\(true\\)\\|false\\)$" url)
+    (if (string-match "\\?allfiles=\\(?:\\(true\\)\\|false\\)\\'" url)
 	(progn
 	  (setq path (substring url prelen (match-beginning 0)))
 	  (if (match-beginning 1) (setq allfiles t)))
@@ -210,9 +212,9 @@ over the 'w3m-dtree-directory-depth'."
     ;; counter drive letter
     (setq path (file-name-as-directory (w3m-dtree-directory-name path)))
     (setq default-directory path)
-    (w3m--message nil nil "Dtree (%s)..." path)
+    (w3m-message "Dtree (%s)..." path)
     (w3m-dtree-create path allfiles dirprefix fileprefix)
-    (w3m--message t nil "Dtree...done")
+    (w3m-message "Dtree...done")
     "text/html"))
 
 ;;;###autoload

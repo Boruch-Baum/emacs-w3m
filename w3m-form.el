@@ -37,11 +37,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; defsetf
-;; The `defsetf' macro uses this function at compile-time.
-(declare-function gv--defsetter "gv" (name setter do args &optional vars))
-;; `cl' employs `cl-lib'.
-;; (require 'cl-lib) ;; cl-incf
+(require 'cl-lib) ;; cl-incf
 
 (require 'w3m-util)
 (require 'w3m)
@@ -93,10 +89,14 @@ Files to save text are stored in the directory specified by the
   "Major mode to edit textarea."
   :group 'w3m
   :type '(choice
+	  :format "%{%t%}:\n%[Value Menu%] %v"
 	  (function :tag "Major mode")
 	  (repeat
 	   :tag "Rules to select major modes for the current page"
-	   (cons (choice (regexp :tag "Regexp matches the current page")
+	   :indent 2
+	   (cons :format "%v" :indent 4
+		 (choice :format "%[Value Menu%]\n    %v"
+			 (regexp :tag "Regexp matches the current page")
 			 (function :tag "Predicate checks the current page")
 			 (sexp :tag "Expression checks the current page"))
 		 (function :tag "Major mode")))))
@@ -216,7 +216,7 @@ It is useful to bind this variable with `let', but do not set it globally.")
   (aset form 1 (if (stringp method)
 		   (intern method)
 		 method)))
-(defsetf w3m-form-method w3m-form-set-method)
+(gv-define-simple-setter w3m-form-method w3m-form-set-method)
 
 (defmacro w3m-form-method (form)
   `(aref ,form 1))
@@ -384,7 +384,7 @@ If no field in forward, return nil without moving."
 	  (let ((fid (get-text-property (point) 'w3m-form-field-id)))
 	    (when (and fid
 		       (string-match "\
-fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)$"
+fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)\\'"
 				     fid))
 	      (let ((form (nth (string-to-number (match-string 1 fid))
 			       forms))
@@ -543,12 +543,9 @@ fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)$"
 	(while (w3m-form-goto-next-field)
 	  (setq fid (get-text-property (point) 'w3m-form-field-id))
 	  (setq filename (get-text-property (point) 'w3m-form-file-name))
-	  (when
-	      (and
-	       fid
-	       (string-match
-		"fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)$"
-		fid))
+	  (when (and fid
+		     (string-match "\
+fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)\\'" fid))
 	    (setq form (nth (string-to-number (match-string 1 fid))
 			    w3m-current-forms)
 		  type (match-string 2 fid)
@@ -602,7 +599,7 @@ If optional REUSE-FORMS is non-nil, reuse it as `w3m-current-form'."
   (let ((case-fold-search t)
 	(id 0)
 	tag start end internal-start textareas selects forms maps mapval
-	form filename)
+	form filename prev-button)
     (setq w3m-form-textarea-files nil)
     (setq w3m-form-use-textarea-backup-p nil)
     (goto-char (point-min))
@@ -700,7 +697,6 @@ If optional REUSE-FORMS is non-nil, reuse it as `w3m-current-form'."
 			       (readonly :bool)
 			       no_effect       ; map
 			       name value)
-	  (cl-incf id)
 	  (when value
 	    (setq value (w3m-decode-entities-string value)))
 	  (save-excursion
@@ -708,8 +704,9 @@ If optional REUSE-FORMS is non-nil, reuse it as `w3m-current-form'."
 	    (setq end (match-beginning 0)))
 	  (let ((abs-hseq (or (and (null hseq) 0) (abs hseq)))
 		(face (if readonly 'w3m-form-inactive 'w3m-form)))
-	    (setq w3m-max-anchor-sequence
-		  (max abs-hseq w3m-max-anchor-sequence))
+	    (unless (equal prev-button (cons fid abs-hseq))
+	      (cl-incf id)
+	      (setq prev-button (cons fid abs-hseq)))
 	    (if (eq w3m-type 'w3mmee)
 		(setq form (nth fid forms))
 	      (setq form (cdr (assq fid forms))))
@@ -1007,7 +1004,7 @@ If optional REUSE-FORMS is non-nil, reuse it as `w3m-current-form'."
 (defun w3m-form-field-parse (fid)
   (when (and fid
 	     (string-match
-	      "fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)$"
+	      "fid=\\([^/]+\\)/type=\\([^/]+\\)/name=\\([^/]*\\)/id=\\(.*\\)\\'"
 	      fid))
     (list (match-string 1 fid)
 	  (match-string 2 fid)
@@ -1436,9 +1433,9 @@ textarea")))))
 
 (defun w3m-form-textarea-same-check (str1 str2)
   "Compare STR1 and STR2 without tailed whitespace."
-  (when (string-match "[ \t\n\r]+$" str1)
+  (when (string-match "[ \t\n\r]+\\'" str1)
     (setq str1 (substring str1 0 (match-beginning 0))))
-  (when (string-match "[ \t\n\r]+$" str2)
+  (when (string-match "[ \t\n\r]+\\'" str2)
     (setq str2 (substring str2 0 (match-beginning 0))))
   (string= str1 str2))
 
@@ -1896,8 +1893,8 @@ textarea")))))
       (setq w3m-form-textarea-post-files
 	    (w3m-form-submit-get-textarea-files form))
       (cond ((and (not (string= url orig-url))
-		  (string-match "^https://" orig-url)
-		  (string-match "^http://" url)
+		  (string-match "\\`https://" orig-url)
+		  (string-match "\\`http://" url)
 		  (not (y-or-n-p (format "Send POST data to '%s'?" url))))
 	     (ding))
 	    ((or (eq 'post (w3m-form-method form))
