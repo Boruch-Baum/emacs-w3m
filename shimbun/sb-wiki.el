@@ -63,7 +63,8 @@ Optional CONTENT-END is a regexp string that represents content
 start of each article."
   :group 'shimbun
   :type '(repeat
-	  (group (string :tag "Group name")
+	  (group :format "%v" :indent 4
+		 (string :tag "Group name")
 		 (string :tag "URL")
 		 (string :tag "Site owner's mail address")
 		 (choice (string :tag "X-Face")
@@ -106,7 +107,7 @@ start of each article."
 			   (match-string-no-properties 3 date)
 			   (match-string-no-properties 4 date)
 			   (match-string-no-properties 5 date)))
-  (format "<%s%%%s@%s>" datedesc page host)))
+    (format "<%s%%%s@%s>" datedesc page host)))
 
 (luna-define-method shimbun-index-url ((shimbun shimbun-wiki))
   (cadr (assoc (shimbun-current-group-internal shimbun)

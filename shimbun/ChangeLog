@@ -1,3 +1,104 @@
+2021-07-26  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-sankei.el (shimbun-sankei-clear-contents): Show restrictions.
+
+2021-07-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Delete nonsense distinction of writer and byliner
+
+	* sb-sankei.el (shimbun-sankei-clear-contents):
+	Fix the way to extract the author name.
+
+2021-07-08  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Add links to embedded movies
+
+	* sb-sankei.el (shimbun-sankei-clear-contents): Add links to movies.
+
+2021-07-07  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Support multiple article pages
+
+	* sb-sankei.el (shimbun-sankei-multi-next-url)
+	(shimbun-sankei-multi-clear-contents): New functions.
+	(shimbun-sankei-clear-contents): Show author name if it is expressed
+	clearly in the original.
+
+2021-07-02  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-sankei.el (shimbun-sankei-get-headers)
+	(shimbun-sankei-clear-contents):
+	Minor improvements on `read' and `scan-sexps' usage.
+
+2021-06-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* sb-yoshirin.el: Spelling fix: thumnail -> thumbnail
+
+2021-06-16  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Display most detailed headline
+
+	* sb-sankei.el (shimbun-sankei-clear-contents):
+	Fetch most detailed headline; support interstitial link.
+	(shimbun-sankei-get-headers, shimbun-sankei-clear-contents):
+	Replace `forward-sexp' with `scan-sexps'.
+
+2021-06-15  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Display headline that might be the only place to show the author
+
+	* sb-sankei.el (shimbun-sankei-clear-contents): Show headline.
+
+2021-06-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make Sankei support raw html embedded in java script
+
+	* sb-sankei.el (shimbun-sankei-clear-contents): Support raw html.
+	Don't infloop.
+
+2021-06-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make Sankei work on Emacs 26 and 27
+
+	* sb-sankei.el (shimbun-sankei-get-headers): Use timezone-parse-date
+	instead of parse-time-string on Emacs 26 and 27; fix incompatible args
+	issue on encode-time.
+
+2021-06-09  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Fetch more images
+
+	* sb-sankei.el (shimbun-sankei-get-headers): Bugfix: memq -> member.
+	(shimbun-sankei-clear-contents): Fetch more images.
+	(shimbun-sankei-extract-images): New subroutine.
+
+2021-06-06  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make Sankei work
+
+	* sb-sankei.el (sb-multi): Don't use it.
+	(shimbun-sankei-group-table): Update.
+	(shimbun-sankei-category-name-alist)
+	(shimbun-sankei-get-headers-special)
+	(shimbun-sankei-multi-next-url): Abolish.
+	(shimbun-sankei-get-headers, shimbun-sankei-clear-contents): Rewrite.
+	(shimbun-sankei-login): No need to run.
+
+2021-05-28  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make Mainichi work
+
+	* sb-mainichi.el (shimbun-mainichi-clear-contents):
+	Update regexps and filters.
+
+2021-05-26  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	Make Asahi work (as for at least the rss group)
+
+	* sb-asahi.el (shimbun-asahi-content-start)
+	(shimbun-asahi-content-end): Update.
+	(shimbun-asahi-clear-contents): Rewrite.
+
 2021-03-29  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* sb-sankei.el (shimbun-sankei-login): Update regexp used to check if

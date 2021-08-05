@@ -1,6 +1,6 @@
 ;;; sb-infoshop.el --- infoshop shimbun backend
 
-;; Copyright (C) 2005, 2006, 2007 David Hansen
+;; Copyright (C) 2005-2007, 2019 David Hansen
 
 ;; Author: David Hansen <david.hansen@physik.fu-berlin.de>
 ;; Keywords: news
@@ -44,8 +44,8 @@
   shimbun-infoshop-url)
 
 (luna-define-method shimbun-rss-build-message-id :around
-    ((shimbun shimbun-infoshop) url &optional date)
-  (if (string-match "\\?story=\\(.*+\\)$" url)
+  ((shimbun shimbun-infoshop) url &optional date)
+  (if (string-match "\\?story=\\(.*+\\)\\'" url)
       (concat "<" (match-string 1 url) "@news.infoshop.org>")
     (luna-call-next-method)))
 

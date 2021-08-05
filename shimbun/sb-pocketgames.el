@@ -1,4 +1,4 @@
-;;; sb-pocketgames.el --- shimbun backend class for www.pocketgames.jp. -*- coding: utf-8; -*-
+;;; sb-pocketgames.el --- shimbun backend class for www.pocketgames.jp.
 
 ;; Copyright (C) 2003-2005, 2008, 2019 NAKAJIMA Mikio <minakaji@namazu.org>
 

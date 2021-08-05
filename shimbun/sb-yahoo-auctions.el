@@ -1,4 +1,4 @@
-;;; sb-yahoo-auctions.el --- shimbun backend for Yahoo! AUCTIONS -*- coding: utf-8; -*-
+;;; sb-yahoo-auctions.el --- shimbun backend for Yahoo! AUCTIONS
 
 ;; Copyright (C) 2005, 2006, 2008, 2011, 2013, 2019
 ;; ARISAWA Akihiro <ari@mbf.sphere.ne.jp>
@@ -62,7 +62,7 @@ URL is the URL for category or search result."
 
 (luna-define-method shimbun-rss-build-message-id
   ((shimbun shimbun-yahoo-auctions) url date)
-  (unless (string-match "\\([^/]+\\)$" url)
+  (unless (string-match "\\([^/]+\\)\\'" url)
     (error "Cannot find message-id base"))
   (format "<%s@auctions.yahoo.co.jp>" (match-string 1 url)))
 

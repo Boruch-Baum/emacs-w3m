@@ -1,4 +1,4 @@
-;;; sb-kantei.el --- shimbun backend for kantei blog backnumber -*- coding: utf-8; -*-
+;;; sb-kantei.el --- shimbun backend for kantei blog backnumber
 
 ;; Copyright (C) 2001-2012, 2019 Yuuichi Teranishi <teranisi@gohome.org>
 

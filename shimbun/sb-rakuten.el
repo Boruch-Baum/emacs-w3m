@@ -1,4 +1,4 @@
-;;; sb-rakuten.el --- shimbun backend for rakuten diary -*- coding: utf-8; -*-
+;;; sb-rakuten.el --- shimbun backend for rakuten diary
 
 ;; Copyright (C) 2003, 2004, 2006, 2019 NAKAJIMA Mikio <minakaji@namazu.org>
 
@@ -83,7 +83,7 @@
 	    (shimbun-current-group-internal shimbun))))
       (subst-char-in-region (point-min) (point-max) ?\t ?  t)
       (while (re-search-forward ">感想を書く<\\/a>│" nil t nil)
-	  (replace-match string)))))
+	(replace-match string)))))
 
 (provide 'sb-rakuten)
 

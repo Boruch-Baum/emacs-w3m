@@ -1,4 +1,4 @@
-;;; sb-nikkei.el --- shimbun backend for nikkei.co.jp -*- coding: utf-8; -*-
+;;; sb-nikkei.el --- shimbun backend for nikkei.co.jp
 
 ;; Copyright (C) 2001-2007, 2009-2011, 2017, 2019
 ;; Kazuyoshi KOREEDA <Koreeda.Kazuyoshi@jp.panasonic.com>
@@ -1474,7 +1474,7 @@ http://markets.nikkei.co.jp/kokunai/bunkatsu3.aspx" (match-string 1)) folder))
 	     0
 	     (subst-char-in-string
 	      ?） ?\)
-	      (subst-char-in-string ?（ ?\( (match-string 4)))
+	     (subst-char-in-string ?（ ?\( (match-string 4)))
 	     shimbun-nikkei-from-address
 	     (shimbun-nikkei-make-date-string
 	      (string-to-number (match-string 3))

@@ -1,4 +1,4 @@
-;;; sb-sankei.el --- shimbun backend for the Sankei News -*- coding: utf-8; -*-
+;;; sb-sankei.el --- shimbun backend for the Sankei News
 
 ;; Copyright (C) 2003-2011, 2013-2019, 2021 Katsumi Yamaoka
 
@@ -24,14 +24,11 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
-;; Note: the `w3m-process-do-with-temp-buffer' macro uses `lexical-let'.
-
+(require 'shimbun)
 (require 'sb-multi)
 
-(luna-define-class shimbun-sankei
-		   (shimbun-japanese-newspaper shimbun-multi shimbun)
-		   ())
+(luna-define-class shimbun-sankei (shimbun-japanese-newspaper shimbun-multi
+							      shimbun) ())
 
 (defvar shimbun-sankei-url "https://www.sankei.com/")
 
@@ -43,60 +40,35 @@
   '(("top" "ニュース"
      "https://www.sankei.com/")
     ("flash" "速報"
-     "https://www.sankei.com/flash/newslist/flash-n1.html")
-    ("affairs" "事件"
-     "https://www.sankei.com/affairs/newslist/affairs-n1.html")
+     "https://www.sankei.com/flash/")
+    ("affairs" "社会"
+     "https://www.sankei.com/affairs/")
     ("politics" "政治"
-     "https://www.sankei.com/politics/newslist/politics-n1.html")
+     "https://www.sankei.com/politics/")
     ("world" "国際"
-     "https://www.sankei.com/world/newslist/world-n1.html")
+     "https://www.sankei.com/world/")
     ("economy" "経済"
-     "https://www.sankei.com/economy/newslist/economy-n1.html")
-    ("column" "コラム"
-     "https://www.sankei.com/column/newslist/column-n1.html")
-    ("column.sankeisyo" "産経抄"
-     "https://special.sankei.com/sankeisyo/")
-    ("column.editorial" "主張"
-     "https://www.sankei.com/column/newslist/editorial-n1.html")
-    ("column.seiron" "正論"
-     "https://special.sankei.com/seiron/")
+     "https://www.sankei.com/economy/")
     ("sports" "スポーツ"
-     "https://www.sankei.com/sports/newslist/sports-n1.html")
+     "https://www.sankei.com/sports/")
     ("entertainments" "エンタメ"
-     "https://www.sankei.com/entertainments/newslist/entertainments-n1.html")
+     "https://www.sankei.com/entertainments/")
     ("life" "ライフ"
-     "https://www.sankei.com/life/newslist/life-n1.html")
-    ("region.hokkaido-tohoku" "北海道東北"
-     "https://www.sankei.com/region/newslist/tohoku-n1.html")
-    ("region.kanto" "関東"
-     "https://www.sankei.com/region/newslist/kanto-n1.html")
-    ("region.chubu" "中部"
-     "https://www.sankei.com/region/newslist/chubu-n1.html")
-    ("region.kinki" "近畿"
-     "https://www.sankei.com/region/newslist/kinki-n1.html")
-    ("region.chugoku-shikoku" "中国四国"
-     "https://www.sankei.com/region/newslist/chushikoku-n1.html")
-    ("region.kyushu-okinawa" "九州沖縄"
-     "https://www.sankei.com/region/newslist/kyushu-n1.html")
-    ("west.flash" "関西速報"
-     "https://www.sankei.com/west/newslist/west-n1.html")
-    ("west.affairs" "関西できごと"
-     "https://www.sankei.com/west/newslist/west_affairs-n1.html")
-    ("west.sports" "関西スポーツ"
-     "https://www.sankei.com/west/newslist/west_sports-n1.html")
-    ("west.life" "関西ライフ"
-     "https://www.sankei.com/west/newslist/west_life-n1.html")
-    ("west.economy" "関西経済"
-     "https://www.sankei.com/west/newslist/west_economy-n1.html")
+     "https://www.sankei.com/life/")
+    ("column" "コラム"
+     "https://www.sankei.com/column/")
+    ("column.editorial" "主張"
+     "https://www.sankei.com/column/editorial/")
+    ("column.seiron" "正論"
+     "https://www.sankei.com/column/seiron/")
+    ("column.sankeisyo" "産経抄"
+     "https://www.sankei.com/column/sankeisyo/")
+    ("column.naniwa" "浪速風"
+     "https://www.sankei.com/column/naniwa/")
+    ("west" "産経WEST"
+     "https://www.sankei.com/west/")
     ("west.essay" "朝晴れエッセー"
-     "https://www.sankei.com/column/topics/column-36217-t1.html")))
-
-(defvar shimbun-sankei-category-name-alist
-  '(("afr" . "事件") ("clm" . "コラム") ("ecn" . "経済") ("ent" . "エンタメ")
-    ("etc" . "その他") ("gqj" . "GQ JAPAN") ("lif" . "ライフ") ("plt" . "政治")
-    ("prm" . "プレミアム") ("spo" . "スポーツ") ("wor" . "国際")
-    ("wst" . "関西"))
-  "Alist used to convert author's name in the top and the flash groups.")
+     "https://www.sankei.com/tag/series/etc_21/")))
 
 (defvar shimbun-sankei-x-face-alist
   ;; Faces used for the light background display.
@@ -150,251 +122,413 @@ To use this, set both `w3m-use-cookies' and `w3m-use-form' to t."
 
 (luna-define-method shimbun-get-headers :around ((shimbun shimbun-sankei)
 						 &optional range)
-  (let ((group (shimbun-current-group-internal shimbun)))
-    (cond ((string-match "\\`https://special\\.sankei\\.com/"
-			 (shimbun-index-url shimbun))
-	   (shimbun-sankei-get-headers-special shimbun range group))
-	  (t
-	   (shimbun-sankei-get-headers shimbun range group)))))
+  (shimbun-sankei-get-headers shimbun range))
 
-(defun shimbun-sankei-get-headers (shimbun range group)
-  "Get headers for a categorized group."
-  (let ((regexp
-	 (eval-when-compile
-	   (concat
-	    "<article[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*class=\"entry[^>]+>"
-	    "\\(?:[\t\n ]*<[^>]+>\\)*[\t\n ]*"
-	    "\\(?:<div[\t\n ]+class=\"entry_content\">[\t\n ]*\\)?"
-	    "\\(?:<[^\t\n >a][^>]+>[\t\n ]*\\)*<a[\t\n ]+href=\""
-	    ;; 1. url
-	    "\\([^\">]+/"
-	    ;; 2. year (lower 2 digits)
-	    "\\([1-9][0-9]\\)"
-	    ;; 3. month
-	    "\\([01][0-9]\\)"
-	    ;; 4. day
-	    "\\([0-3][0-9]\\)"
-	    "/\\(?:[^\"/]+/\\)*"
-	    ;; 5. category
-	    "\\([a-z]+\\)"
-	    ;; 6. serial number
-	    "\\([^\"/]+\\)"
-	    "-n[0-9]+\\.html\\)" ;; 1. url
-	    "\">[\t\n ]*"
-	    ;; 7. subject
-	    "\\(\\(?:[^\t\n <]+[\t\n ]\\)*[^\t\n <]+\\)")))
-	(maxyear (1+ (nth 5 (decode-time))))
-	(rgrp (mapconcat 'identity (nreverse (split-string group "\\.")) "."))
-	(index (shimbun-index-url shimbun))
-	st nd url year month day category id subj old time from headers)
-    (shimbun-strip-cr)
+(autoload 'timezone-parse-date "timezone")
+
+(defun shimbun-sankei-get-headers (shimbun range)
+  "Get headers for the group that SHIMBUN specifies in RANGE."
+  (let ((group (shimbun-current-group-internal shimbun))
+	nd url id st ids date tem subject names headers)
     (goto-char (point-min))
-    (while (re-search-forward regexp nil t)
-      (setq st (match-beginning 0)
-	    nd (match-end 0)
+    (while (re-search-forward
+	    "\"website_url\":\"\\([^\"]+-\\([0-9A-Z]\\{26\\}\\)[^\"]*\\)"
+	    nil t)
+      (setq nd (match-end 0)
 	    url (match-string 1)
-	    year (match-string 2)
-	    month (match-string 3)
-	    day (match-string 4)
-	    category (match-string 5)
-	    id (concat "<" category (match-string 6) "." rgrp "%"
-		       shimbun-sankei-top-level-domain ">")
-	    subj (match-string 7))
-      (if (shimbun-search-id shimbun id)
-	  (setq old t)
-	(goto-char st)
-	(setq time nil)
-	(if (shimbun-end-of-tag "article")
-	    (progn
-	      (goto-char nd)
-	      (if (re-search-forward "<time[\t\n ]+\
-\\(?:[^\t\n >]+[\t\n ]+\\)*\\(?:datetime=\"20[1-9][0-9]-[01][0-9]-[0-3][0-9]T\
-\\([0-2][0-9]:[0-5][0-9]\\)\
-\\|class=\"time\"[^>]*>[\t\n ]*\\([0-2][0-9]:[0-5][0-9]\\)\\)" (match-end 2) t)
-		  (setq time (or (match-string 1) (match-string 2)))
-		(goto-char (match-end 0)))
-	      (goto-char nd)))
-	(setq from
-	      (concat
-	       (shimbun-server-name shimbun)
-	       " ("
-	       (or (and (member group '("top" "flash"))
-			(cdr (assoc category
-				    shimbun-sankei-category-name-alist)))
-		   (shimbun-current-group-name shimbun))
-	       ")"))
-	(push (shimbun-create-header
-	       0 subj from
-	       (shimbun-make-date-string
-		(min (+ 2000 (string-to-number year)) maxyear)
-		(string-to-number month)
-		(string-to-number day)
-		time)
-	       id "" 0 0
-	       (shimbun-expand-url url index))
-	      headers)))
-    headers))
+	    id (match-string 2))
+      (when (and (search-backward (concat "{\"_id\":\"" id "\"") nil t)
+		 (progn
+		   (setq st (match-beginning 0))
+		   (or (ignore-errors (setq nd (scan-sexps st 1)))
+		       (progn (goto-char nd) nil))))
+	(setq id (concat "<" id "."
+			 (mapconcat #'identity
+				    (nreverse (split-string group "\\."))
+				    ".")
+			 "%" shimbun-sankei-top-level-domain ">"))
+	(if (or (member id ids)
+		(progn (push id ids)
+		       (shimbun-search-id shimbun id)))
+	    (goto-char nd)
+	  (save-restriction
+	    (narrow-to-region (goto-char st) nd)
 
-(defun shimbun-sankei-get-headers-special (shimbun range group)
-  "Get headers for the groups in special.sankei.com."
-  (let ((regexp
-	 (eval-when-compile
-	   (concat
-	    "<div\\(?:[\t\n ]+[^\t\n >]+\\)*[\t\n ]+class=\"block_list_head\">"
-	    "\\(?:[\t\n ]*<[^a>][^>]+>\\)*[\t\n ]*<a[\t\n ]+href=\""
-	    ;; 1. url
-	    "\\(\\(?:[^/>]+/\\)+"
-	    ;; 2. seriai
-	    "\\([0-9]+\\)" "\\.html\\)"
-	    "\">[\t\n ]*"
-	    ;; 3. subject
-	    "\\([^<]+\\)"
-	    "[\t\n ]*\\(?:[^<]*<\\(?:[^/>]\\|/[^a>]\\)[^>]*>\\)+[\t\n ]*</a>"
-	    "\\(?:[^<]*<\\(?:/\\|[^t>]\\|t[^i>]\\|ti[^m>]\\)[^>]*>\\)"
-	    "[^<]*<time[\t\n ]+datetime=\""
-	    ;; 4. year
-	    "\\(20[1-9][0-9]\\)" "-"
-	    ;; 5. month
-	    "\\([01][0-9]\\)" "-"
-	    ;; 6. day
-	    "\\([0-3][0-9]\\)" "T"
-	    ;; 7. hh:mm
-	    "\\([012][0-8]:[0-5][0-9]\\)" "\"")))
-	(rgrp (mapconcat 'identity (nreverse (split-string group "\\.")) "."))
-	(index (shimbun-index-url shimbun))
-	url subj year month day hour-min id old from headers)
-    (shimbun-strip-cr)
-    (goto-char (point-min))
-    (while (re-search-forward regexp nil t)
-      (setq url (match-string 1)
-	    subj (match-string 3)
-	    year (match-string 4)
-	    month (match-string 5)
-	    day (match-string 6)
-	    hour-min (match-string 7)
-	    id (concat "<" year month day "." (match-string 2) "." rgrp
-		       "%special.sankei.com>"))
-      (unless (shimbun-search-id shimbun id)
-	(setq from
-	      (concat
-	       (shimbun-server-name shimbun)
-	       " (" (shimbun-current-group-name shimbun) ")"))
-	(push (shimbun-create-header
-	       0 subj from
-	       (shimbun-make-date-string
-		(string-to-number year)
-		(string-to-number month)
-		(string-to-number day)
-		hour-min)
-	       id "" 0 0
-	       (shimbun-expand-url url index))
-	      headers)))
-    headers))
+	    ;; The version that works on Emacs 28 and elders.
+	    ;;(setq date (decode-time ;; Default to the current time.
+	    ;;            (and (re-search-forward "\"display_date\":\"\
+;;\\(20[2-9][0-9]-[01][0-9]-[0-3][0-9]T[0-5][0-9]:[0-5][0-9]:[^\"]+\\)" nil t)
+	    ;;                 (ignore-errors
+	    ;;                   (encode-time
+	    ;;                    (parse-time-string (match-string 1)))))))
 
-(luna-define-method shimbun-multi-next-url ((shimbun shimbun-sankei)
-					    header url)
-  (shimbun-sankei-multi-next-url shimbun header url))
+	    ;; On Emacs 27 and earliers `parse-time-string' doesn't support
+	    ;; ISO8601 date.
+	    ;; On Emacs 26 and earliers `encode-time' doesn't accept the 1st
+	    ;; argument that is a list style.
 
-(defun shimbun-sankei-multi-next-url (shimbun header url)
-  (let (next)
-    (when (and (re-search-forward "<div[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-class=\"pagination\"" nil t)
-	       (shimbun-end-of-tag "div" t))
-      (save-restriction
-	(narrow-to-region (goto-char (match-beginning 0)) (match-end 0))
-	(when (re-search-forward "<a[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-href=\"\\([^\"]+\\)[^>]+>[\t\n ]*Next[\t\n ]*</a>" nil t)
-	  (if (> (length (setq next (match-string 1))) 1)
-	      (setq next (shimbun-expand-url (match-string 1) url))
-	    (setq next nil)))
-	(delete-region (point-min) (point-max))
-	(insert "\n")))
-    (goto-char (point-min))
-    next))
+	    ;; The version that supports Emacs 27 and 26.
+	    (setq date
+		  (decode-time ;; Default to the current time.
+		   (and (re-search-forward "\"display_date\":\"\
+\\(20[2-9][0-9]-[01][0-9]-[0-3][0-9]T[0-5][0-9]:[0-5][0-9]:[^\"]+\\)" nil t)
+			(ignore-errors
+			  (setq tem (match-string 1)
+				date (parse-time-string tem))
+			  (if (car date) ;; true on Emacs 28
+			      (encode-time date)
+			    (setq date (timezone-parse-date tem)
+				  tem (split-string (aref date 3) ":")
+				  date (list
+					(string-to-number (caddr tem))
+					(string-to-number (cadr tem))
+					(string-to-number (car tem))
+					(string-to-number (aref date 2))
+					(string-to-number (aref date 1))
+					(string-to-number (aref date 0))
+					nil nil nil))
+			    (condition-case nil
+				(encode-time date) ;; works on Emacs 27
+			      (error ;; Emacs 26
+			       (apply #'encode-time date))))))))
+	    (goto-char st)
+	    (when (re-search-forward "\"headlines\":{\"basic\":\\(\"\\)" nil t)
+	      (setq subject (condition-case nil
+				(replace-regexp-in-string
+				 "\\`[\t 　]+\\|[\t 　]+\\'" ""
+				 (read (nth 2 (match-data))))
+			      (error "(failed to fetch subject)")))
+	      (goto-char st)
+	      (setq names nil)
+	      (when (and (re-search-forward "\"taxonomy\":\\({\\)" nil t)
+			 (setq tem (ignore-errors
+				     (scan-sexps (match-beginning 1) 1))))
+		(save-restriction
+		  (narrow-to-region (match-beginning 1) tem)
+		  (while (re-search-forward "\"name\":\"\\([^\"]+\\)\"" nil t)
+		    (push (match-string 1) names))))
+	      (when (or (not names)
+			(not (setq
+			      tem
+			      (cdr (assoc
+				    group
+				    '(("column.editorial" . "主張")
+				      ("column.seiron" . "正論")
+				      ("column.sankeisyo" . "産経抄")
+				      ("column.naniwa" . "浪速風")
+				      ("west.essay" . "朝晴れエッセー"))))))
+			(member tem names))
+		(push (shimbun-create-header
+		       0 subject
+		       (concat shimbun-sankei-server-name
+			       (if names
+				   (concat " (" (mapconcat #'identity
+							   (last names 2)
+							   " ")
+					   ")")
+				 ""))
+		       (shimbun-make-date-string
+			(nth 5 date) (nth 4 date) (nth 3 date)
+			(format "%02d:%02d:%02d"
+				(nth 2 date) (nth 1 date) (nth 0 date)))
+		       id "" 0 0
+		       (shimbun-expand-url url shimbun-sankei-url))
+		      headers)))
+	    (goto-char nd)))))
+    (shimbun-sort-headers headers)))
 
 (luna-define-method shimbun-clear-contents :around ((shimbun shimbun-sankei)
 						    header)
   (shimbun-sankei-clear-contents shimbun header))
 
 (defun shimbun-sankei-clear-contents (shimbun header)
-  ;; Delete things other than the article.
-  (when (and (re-search-forward "<article[\t\n >]" nil t)
-	     (shimbun-end-of-tag "article"))
-    (delete-region (match-end 2) (point-max))
-    (delete-region (goto-char (point-min)) (match-beginning 2)))
-  ;; Update Date header.
-  (when (re-search-forward "<time[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-datetime=\"\\(20[1-9][0-9]\\)-\\([01][0-9]\\)-\\([0-3][0-9]\\)T\
-\\([0-5][0-9]:[0-5][0-9]\\)" nil t)
-    (shimbun-header-set-date header
-			     (shimbun-make-date-string
-			      (string-to-number (match-string 1))
-			      (string-to-number (match-string 2))
-			      (string-to-number (match-string 3))
-			      (match-string 4))))
-  ;; Delete `PR's
-  (let (case-fold-search)
-    (goto-char (point-min))
-    (while (re-search-forward "<\\([a-z]+\\)[^>]*>[\t\n ]*<[^>]+>PR<" nil t)
-      (goto-char (match-beginning 0))
-      (if (shimbun-end-of-tag (match-string 1) t)
-	  (replace-match "\n")
-	(goto-char (match-end 0)))))
-  ;; Collect images.
-  (let (img images)
-    (goto-char (point-min))
-    (while (and (search-forward "<figure>" nil t)
-		(shimbun-end-of-tag "figure" t))
-      (save-restriction
-	(narrow-to-region (goto-char (match-beginning 0)) (match-end 0))
-	(when (re-search-forward "<img[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-src=\"\\([^\"]+\\)" nil t)
-	  (setq img (match-string 1))
-	  (unless (assoc img images)
-	    (push (cons img (buffer-string)) images)))
-	(delete-region (point-min) (goto-char (point-max)))
-	(insert "\n")))
-    (goto-char (point-min))
-    (while (re-search-forward "\
-[\t\n ]*\\(<img[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-src=\"\\([^\"]+\\)[^>]+>\\)[\t\n ]*" nil t)
-      (setq img (match-string 2))
-      (unless (assoc img images)
-	(push (cons img (match-string 1)) images))
-      (delete-region (match-beginning 0) (goto-char (match-end 0)))
-      (insert "\n"))
-    ;; Delete garbage.
-    (dolist (class '("post_header" "sns" "post_footer"))
+  "Collect contents and create an html page in the current buffer."
+  (if (zerop (buffer-size))
+      (insert "お探しのページは見つかりませんでした。<br>\n"
+	      "ページが削除されたか移動した可能性があります。\n")
+    (let (author restrictions st nd tem headline ids simgs id caption img
+		 contents eimgs maxwidth fn)
       (goto-char (point-min))
-      (when (and (re-search-forward
-		  (concat "<div[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*class=\""
-			  class "\"")
-		  nil t)
-		 (shimbun-end-of-tag "div" t))
-	(replace-match "")
-	(unless (bolp) (insert "\n"))))
-    (goto-char (point-min))
-    (when (and (re-search-forward "<p[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
-class=\"pageNextsubhead\"" nil t)
-	       (shimbun-end-of-tag "p" t))
-      (replace-match "\n"))
-    ;; Restore images.
-    (when images
+      (when (or (and (re-search-forward "<a[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
+\\(?:class=\"gtm-click author-name\"\\|href=\"/author/\
+\\|data-gtm-action=\"move to author page\"\
+\\|data-gtm-label=\"article header author link\\)" nil t)
+		     (shimbun-end-of-tag "a")
+		     (setq author (match-string 2)))
+		(and (progn
+		       (goto-char (point-min))
+		       (re-search-forward "\
+{[^{}]*\"original\":{[^{}]*\"byline\":\"\\([^\"}]+\\)\"" nil t))
+		     (setq author (match-string 1))))
+	(setq author
+	      (replace-regexp-in-string
+	       "\\`[\t 　]+\\|\\(\\cj\\)[\t 　]+\\(\\cj\\)\\|[\t 　]+\\'"
+	       "\\1\\2" author)))
       (goto-char (point-min))
-      (narrow-to-region (point) (point))
-      (mapc (lambda (img)
-	      (insert (replace-regexp-in-string
-		       "[\t\n ]*<figcaption>" "<br>\n<figcaption>"
-		       (replace-regexp-in-string
-			"[\t\n ]*alt=\"[^\"]+[\t\n ]*" ""
-			(cdr img)))
-		      "<br>\n"))
-	    (nreverse images))
-      (widen)))
+      (when (and (re-search-forward "<span[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
+class=\"restrictions\"" nil t)
+		 (shimbun-end-of-tag "span")
+		 (progn
+		   (goto-char (match-beginning 1))
+		   (re-search-forward "<span[\t\n >]" (match-end 1) t)
+		   (shimbun-end-of-tag "span")))
+	(setq restrictions (match-string 2)))
+      (goto-char (point-min))
+      (when (and (re-search-forward ";Fusion.globalContent=\\({\\)" nil t)
+		 (setq st (match-beginning 1)
+		       nd (ignore-errors (copy-marker (scan-sexps st 1)))))
+	(when (re-search-forward ",\"promo_items\":\\({\\)" nd t)
+	  (ignore-errors ;; The other headlines are there.
+	    (delete-region (match-beginning 0)
+			   (scan-sexps (match-beginning 1) 1))))
+	(setq nd (prog1 (marker-position nd) (set-marker nd nil)))
+	(goto-char nd)
+	(when (and (re-search-backward ",\"headlines\":{\"basic\":\\(\"\\)"
+				       st t)
+		   (progn
+		     (setq tem (ignore-errors
+				 (replace-regexp-in-string
+				  "\\`[\t 　]+\\|[\t 　]+\\'" ""
+				  (read (nth 2 (match-data))))))
+		     (not (zerop (length tem)))))
+	  (setq headline tem))
+	(goto-char st)
+	(when (re-search-forward ",\"content_elements\":\\(\\[\\)" nd t)
+	  (ignore-errors
+	    (setq st (match-end 0))
+	    (setq nd (1- (scan-sexps (match-beginning 1) 1)))))
+	(goto-char (point-min))
+	(setq ids (shimbun-sankei-extract-images st nil)
+	      simgs (car ids)
+	      ids (cadr ids))
+	(save-restriction
+	  (narrow-to-region (goto-char st) nd)
+	  (while (re-search-forward "{\"_id\":\"\\([^\"]\\{26\\}\\)\"" nil t)
+	    (setq st (goto-char (match-beginning 0))
+		  nd (match-end 0)
+		  id (match-string 1))
+	    (if (ignore-errors (setq nd (scan-sexps st 1)))
+		(cond
+		 ((search-forward "\"type\":\"image\"" nd t)
+		  (goto-char st)
+		  (setq caption
+			(and (re-search-forward "\"caption\":\\(\"\\)" nd t)
+			     (setq tem (ignore-errors
+					 (replace-regexp-in-string
+					  "\\`[\t 　]+\\|[\t 　]+\\'" ""
+					  (read (nth 2 (match-data))))))
+			     (not (zerop (length tem)))
+			     tem))
+		  (if (member id ids)
+		      (goto-char nd)
+		    (goto-char st)
+		    (setq img (and (re-search-forward
+				    "\"type\":\"image\",\"url\":\\(\"\\)"
+				    nd t)
+				   (ignore-errors
+				     (read (nth 2 (match-data))))))
+		    (goto-char st)
+		    (and (or (re-search-forward "\"articleLarge\":\\(\"\\)"
+						nd t)
+			     (re-search-forward "\"articleSmall\":\\(\"\\)"
+						nd t)
+			     ;; very large
+			     (and (not img)
+				  (re-search-forward
+				   "\"type\":\"image\",\"url\":\\(\"\\)" nd t))
+			     ;; portrait is trimmed?
+			     (re-search-forward
+			      "\"articleSnsShareImage\":\\(\"\\)" nd t))
+			 (setq tem (ignore-errors
+				     (read (nth 2 (match-data)))))
+			 (progn
+			   (push id ids)
+			   (push (concat (if img
+					     (concat "<a href=\"" img "\">")
+					   "")
+					 "<img src=\"" tem
+					 "\" alt=\"[写真]\">"
+					 (if img "</a>" "")
+					 (if caption
+					     (concat "<br>\n" caption)
+					   ""))
+				 contents)))))
+		 ((search-forward "\"type\":\"raw_html\"" nd t)
+		  (goto-char st)
+		  (if (and (re-search-forward "\"content\":\\(\"\\)" nd t)
+			   (setq tem (ignore-errors
+				       (read (nth 2 (match-data))))))
+		      (with-temp-buffer
+			(insert tem)
+			(shimbun-strip-cr)
+			(goto-char (point-min))
+			(while (and (re-search-forward "\
+<div[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*class=\"sankei_netshop\"" nil t)
+				    (shimbun-end-of-tag "div" t))
+			  (delete-region (match-beginning 0) (match-end 0))
+			  (insert "\n"))
+			(goto-char (point-min))
+			(while (re-search-forward "\
+[\t\n 　]*\\(?:<\\(?:br\\|/?p\\)>[\t\n 　]*\\)+" nil t)
+			  (replace-match "\n\n"))
+			(goto-char (point-min))
+			(while (re-search-forward "^[\t 　]+\\|[\t 　]+$"
+						  nil t)
+			  (delete-region (match-beginning 0) (match-end 0)))
+			(goto-char (point-min))
+			(while (and (re-search-forward "<img[\t ]" nil t)
+				    (shimbun-end-of-tag))
+			  (goto-char (match-beginning 0))
+			  (unless (save-match-data
+				    (re-search-forward "[\t ]alt=\""
+						       (match-end 0) 'move))
+			    (forward-char -1)
+			    (insert " alt=\"[写真]\"")))
+			(goto-char (point-min))
+			(while (re-search-forward ">$" nil t)
+			  (or (looking-at "\n\n")
+			      (looking-back "<br>" nil)
+			      (insert "<br>")))
+			(when (setq tem (split-string (buffer-string) "\n\n+"
+						      t))
+			  (setq contents (nconc (nreverse tem) contents)))))
+		  (goto-char nd))
+		 ((search-forward "\"type\":\"interstitial_link\"" nd t)
+		  (goto-char st)
+		  (and (setq caption (and (re-search-forward
+					   "\"content\":\\(\"\\)" nd t)
+					  (ignore-errors
+					    (replace-regexp-in-string
+					     "\\`[\t 　]+\\|[\t 　]+\\'" ""
+					     (read (nth 2 (match-data)))))))
+		       (not (zerop (length caption)))
+		       (progn
+			 (goto-char st)
+			 (setq tem (and (re-search-forward "\"url\":\\(\"\\)"
+							   nd t)
+					(ignore-errors
+					  (read (nth 2 (match-data)))))))
+		       (push (concat "<a href=\"" tem "\">" caption "</a>")
+			     contents)))
+		 ((re-search-forward
+		   "\"raw_oembed\":{\"html\":\\(\"<iframe[\t\n ]+\\)" nd t)
+		  (when (setq tem (ignore-errors (read (nth 2 (match-data)))))
+		    (setq tem (replace-regexp-in-string
+			       ">[^<]*</iframe" ">[動画]</iframe" tem))
+		    (push (if (string-match "[\t\n ]src=\"\\([^ \">?]+\\)" tem)
+			      (concat "<a href=\"" (match-string 1 tem) "\">"
+				      tem "</a>")
+			    tem)
+			  contents)))
+		 (t
+		  (if (and (re-search-forward "\"content\":\\(\"\\)" nd t)
+			   (setq tem (ignore-errors
+				       (read (nth 2 (match-data))))))
+		      (progn
+			(setq tem (replace-regexp-in-string
+				   "\\`[\t 　]+\\|[\t 　]+\\'" "" tem))
+			(unless (or (zerop (length tem))
+				    ;; <br/> only case
+				    (string-match "\\`<[^>]*>\\'" tem))
+			  (push tem contents)))
+		    (goto-char nd))))
+	      (goto-char nd))))
+	(goto-char nd)
+	(setq eimgs (car (shimbun-sankei-extract-images nil ids)))
+	(erase-buffer)
+	(when (and author headline
+		   (string-match (regexp-quote author) headline))
+	  (setq author nil))
+	(if headline
+	    (insert "<p>" headline
+		    (if restrictions
+			(concat "<br>\n--- " restrictions " ---"
+				(if author
+				    (concat " (" author ")") ""))
+		      (if author
+			  (concat "<br>\n(" author ")") ""))
+		    "</p>\n")
+	  (if restrictions
+	      (insert "<p>--- " restrictions " ---"
+		      (if author
+			  (concat " (" author ")") "")
+		      "</p>\n")
+	    (when author
+	      (insert "<p>(" author ")</p>\n"))))
+	(when simgs
+	  (insert "<p>" (mapconcat #'identity (nreverse simgs) "</p>\n<p>")
+		  "</p>\n"))
+	(when contents
+	  (setq maxwidth (max (- (window-width) 10) 10))
+	  (if (string-match "産経抄\\|浪速風"
+			    (shimbun-header-from-internal header))
+	      (setq fn (lambda (str &optional last)
+			 (when (eq (aref str 0) ?▼)
+			   (setq str (substring str 1)))
+			 (if (or (not (eq (char-syntax (aref str 0)) ?w))
+				 (eq (aref str (1- (length str))) ?>))
+			     (concat str "<br>" (if last "" "<br>"))
+			   (concat (if last "" "<p>")
+				   (if (and (string-match "[,.、。]" str)
+					    (>= (string-width str) maxwidth))
+				       "　" "")
+				   str (if last "" "</p>")))))
+	    (setq fn (lambda (str &optional last)
+		       (if (or (not (eq (char-syntax (aref str 0)) ?w))
+			       (eq (aref str (1- (length str))) ?>))
+			   (concat str "<br>" (if last "" "<br>"))
+			 (concat (if last "" "<p>")
+				 (if (and (string-match "[,.、。]" str)
+					  (>= (string-width str) maxwidth))
+				     "　" "")
+				 str (if last "" "</p>"))))))
+	  (if eimgs
+	      (insert (mapconcat fn (nreverse contents) "\n") "\n")
+	    (when (cdr contents)
+	      (insert (mapconcat fn (reverse (cdr contents)) "\n") "\n"))
+	    (insert (funcall fn (car contents) t) "\n")))
+	(when eimgs
+	  (when (cdr eimgs)
+	    (insert "<p>" (mapconcat #'identity (reverse (cdr eimgs))
+				     "</p>\n<p>")
+		    "</p>\n"))
+	  (insert (car eimgs) "\n"))
+	(unless (memq (shimbun-japanese-hankaku shimbun) '(header subject nil))
+	  (shimbun-japanese-hankaku-buffer t))
+	t))))
 
-  (unless (memq (shimbun-japanese-hankaku shimbun) '(header subject nil))
-    (shimbun-japanese-hankaku-buffer t))
-  t)
+(defun shimbun-sankei-extract-images (end ids)
+  "Extract images existing in the area from the current position to END.
+END defaults to (point-max).  Image of which ID is in IDS is ignored.
+Return a list of images and IDS."
+  (let (img nd id to images)
+    (while (and (re-search-forward
+		 "<figure[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
+class=\"\\(?:[^\t\n \"]+[\t\n ]+\\)*article-image[\t\n >]+" end t)
+		(shimbun-end-of-tag "figure"))
+      (setq img (match-string 0)
+	    nd (match-end 0))
+      (goto-char (match-beginning 0))
+      (when (or (re-search-forward "<a[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
+href=\"[^\"]+/photo/\\([0-9A-Z]\\{26\\}\\)/" nd t)
+		(re-search-forward "<img[\t\n ]+\\(?:[^\t\n >]+[\t\n ]+\\)*\
+src=\"[^\"]+/\\([0-9A-Z]\\{26\\}\\)\\.[^\"]+\"" nd t))
+	(unless (member (setq id (match-string 1)) ids)
+	  (push id ids)
+	  (with-temp-buffer
+	    (insert img)
+	    (goto-char (point-min))
+	    (when (and (re-search-forward "<img[\t\n ]+" nil t)
+		       (shimbun-end-of-tag))
+	      (setq to (match-end 0))
+	      (goto-char (match-beginning 0))
+	      (if (re-search-forward "alt=\"\\([^\">]*\\)\"" to t)
+		  (replace-match "[写真]" nil nil nil 1)
+		(goto-char (1- to))
+		(insert " alt=\"[写真]\""))
+	      (push (buffer-string) images)))))
+      (goto-char nd))
+    (list images ids)))
 
 (luna-define-method shimbun-footer :around ((shimbun shimbun-sankei)
 					    header &optional html)
@@ -404,11 +538,43 @@ class=\"pageNextsubhead\"" nil t)
 	  (shimbun-article-base-url shimbun header) "\">&lt;"
 	  (shimbun-article-base-url shimbun header) "&gt;</a>\n</div>\n"))
 
+(luna-define-method shimbun-multi-next-url ((shimbun shimbun-sankei)
+					    header url)
+  (shimbun-sankei-multi-next-url shimbun header url))
+
+(defun shimbun-sankei-multi-next-url (shimbun header url)
+  (goto-char (point-min))
+  (when (and (re-search-forward "<a\\(?:[\t\n ]+[^\t\n >]+\\)*\
+\\(?:[\t\n ]+data-gtm-action=\"move to next article page\"\
+\\|>[\t\n ]*続きを見る[\t\n ]*<\\)" nil t)
+	     (progn
+	       (goto-char (match-beginning 0))
+	       (re-search-forward "href=\"\\([^\"]+\\)" nil t)))
+    (shimbun-expand-url (match-string 1) url)))
+
+(luna-define-method shimbun-multi-clear-contents :around ((shimbun
+							   shimbun-sankei)
+							  header
+							  has-previous-page
+							  has-next-page)
+  (shimbun-sankei-multi-clear-contents shimbun header
+				       has-previous-page has-next-page))
+
+(defun shimbun-sankei-multi-clear-contents (shimbun header
+						    has-previous-page
+						    has-next-page)
+  (when (luna-call-next-method)
+    (when has-previous-page
+      (goto-char (point-min))
+      (insert "&#012;\n"))
+    t))
+
 (eval-when-compile
   (require 'w3m-cookie)
   (require 'w3m-form))
 
 (declare-function w3m-cookie-save "w3m-cookie" (&optional domain))
+(declare-function w3m-cookie-setup "w3m-cookie")
 
 (autoload 'password-cache-add "password-cache")
 (autoload 'password-read-from-cache "password-cache")
@@ -469,131 +635,106 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
       (when interactive-p (message "Quit"))
     (when interactive-p (message "Logging in to special.sankei.com..."))
     (require 'w3m-cookie)
+    ;; Delete old login cookies.
+    (w3m-cookie-setup)
+    (dolist (cookie w3m-cookies)
+      (when (string-match "\\.sankei\\..+login" (w3m-cookie-url cookie))
+	(setq w3m-cookies (delq cookie w3m-cookies))))
     (require 'w3m-form)
+    (w3m-arrived-setup)
     (let ((cache (buffer-live-p w3m-cache-buffer))
-	  (num 0)
 	  (w3m-message-silent t)
-	  temp form action handler)
+	  w3m-clear-display-while-reading next form action handler)
       (condition-case err
-	  (w3m-process-do-with-temp-buffer
-	      (type (progn
-		      (setq temp (current-buffer))
-		      (w3m-retrieve shimbun-sankei-login-url nil t)))
-	    (if (not type)
-		(when interactive-p (message "Failed to login"))
+	  (with-temp-buffer
+	    (w3m-process-with-wait-handler
+	      (w3m-retrieve-and-render shimbun-sankei-login-url
+				       t nil nil nil handler))
+	    (goto-char (point-min))
+	    (when (re-search-forward "^Location:[\t\n\r ]+\\(http[^\n]+\\)"
+				     nil t)
+	      (setq next (match-string-no-properties 1))
+	      (w3m-process-with-wait-handler
+		(w3m-retrieve-and-render next t nil nil nil handler))
 	      (goto-char (point-min))
-	      (if (not (re-search-forward "\
-<input[\t\n ]+\\(?:[^\t\n ]+[\t\n ]+\\)*name=\"LOGIN_ID\"" nil t))
-		  (if (re-search-forward "\
-<form\\(?:[\t\n ]+[^\t\n >]+\\)+[\t\n ]+action=\"\\([^\"]+/login\\)\"" nil t)
-		      (progn
-			(setq action (match-string 1))
-			(w3m-buffer)
-			(setq form (car w3m-current-forms))
-			(erase-buffer)
-			(w3m-process-with-wait-handler
-			  (w3m-retrieve-and-render
-			   action t nil (w3m-form-make-form-data form)
-			   w3m-current-url handler))
-			(if (not (equal "https://special.sankei.com/"
-					w3m-current-url))
-			    (when interactive-p (message "Failed to login"))
-			  (when interactive-p (message "Logged in"))
-			  (password-cache-add name password)
-			  (when w3m-cookie-save-cookies (w3m-cookie-save))))
-		    (when interactive-p (message "Already logged in")))
-		(w3m-buffer)
-		(setq form (car w3m-current-forms))
-		(if (not (string-match "login\\.php\\'"
-				       (setq action (w3m-form-action form))))
-		    (when interactive-p (message "Already logged in"))
-		  (setq form (w3m-form-make-form-data form))
-		  (while (string-match "\
-&\\(?:LOGIN\\|LOGIN_ID\\|LOGIN_PASSWORD\\|STAY_LOGGED_IN\\)=[^&]*" form)
-		    (setq form (replace-match "" nil nil form)))
-		  (setq form (concat form
-				     "&LOGIN=&LOGIN_ID="
-				     (shimbun-url-encode-string name)
-				     "&LOGIN_PASSWORD="
-				     (shimbun-url-encode-string password)
-				     "&STAY_LOGGED_IN=1"))
-		  (erase-buffer)
-		  (set-buffer-multibyte t)
-		  (w3m-process-with-wait-handler
-		    (w3m-retrieve-and-render
-		     action t nil form
-		     (w3m-real-url shimbun-sankei-login-url)
-		     handler))
-		  (if (not (and (setq form (car w3m-current-forms))
-				(eq (w3m-form-method form) 'post)
-				(setq action (w3m-form-action form))
-				(string-match "/login\\'" action)))
-		      (when interactive-p (message "Failed to login"))
-		    (erase-buffer)
-		    (w3m-process-with-wait-handler
-		      (w3m-retrieve-and-render
-		       action t nil (w3m-form-make-form-data form)
-		       w3m-current-url handler))
-                    (if (not (and w3m-current-url
-                                  (string-match
-                                    "\\`https://www.sankei.com/\\?[0-9]+\\'"
-                                    w3m-current-url)))
-			(when interactive-p (message "Failed to login"))
-		      (when interactive-p (message "Logged in"))
-		      (password-cache-add name password)
-		      (when w3m-cookie-save-cookies (w3m-cookie-save)))))))
+	      (when (re-search-forward
+		     "^You were redirected to:[\t\n\r ]+\\(http[^\n]+\\)"
+		     nil t)
+		(setq next (match-string-no-properties 1))
+		(w3m-process-with-wait-handler
+		  (w3m-retrieve-and-render next t nil nil nil handler))))
+	    (setq form (car w3m-current-forms))
+	    (if (not (string-match "login\\.php\\'"
+				   (setq action (w3m-form-action form))))
+		(when interactive-p (message "Failed to login"))
+	      (setq form (w3m-form-make-form-data form))
+	      (while (string-match "\
+&\\(?:LOGIN_ID\\|LOGIN_PASSWORD\\|STAY_LOGGED_IN\\)=[^&]*" form)
+		(setq form (replace-match "" nil nil form)))
+	      (setq form (concat form
+				 "&LOGIN=&LOGIN_ID="
+				 (shimbun-url-encode-string name)
+				 "&LOGIN_PASSWORD="
+				 (shimbun-url-encode-string password)
+				 "&STAY_LOGGED_IN=1"))
+	      (w3m-process-with-wait-handler
+		(w3m-retrieve-and-render action t nil form nil handler))
+	      (setq form (car w3m-current-forms))
+	      (if (not (string-match "login\\'"
+				     (setq action (w3m-form-action form))))
+		  (when interactive-p (message "Failed to login"))
+		(setq form (w3m-form-make-form-data form))
+		(w3m-process-with-wait-handler
+		  (w3m-retrieve-and-render action t nil form nil handler)))
+	      (if (not (and w3m-current-url
+			    (string-match
+			     "\\`https://www.sankei.com/\\?[0-9]+\\'"
+			     w3m-current-url)))
+		  (when interactive-p (message "Failed to login"))
+		(when interactive-p (message "Logged in"))
+		(password-cache-add name password)
+		(when w3m-cookie-save-cookies (w3m-cookie-save))))
 	    (when (get-buffer " *w3m-cookie-parse-temp*")
 	      (kill-buffer (get-buffer " *w3m-cookie-parse-temp*")))
 	    (unless cache (w3m-cache-shutdown)))
 	(error (if (or interactive-p debug-on-error)
 		   (signal (car err) (cdr err))
 		 (message "Error while logging in to special.sankei.com:\n %s"
-			  (error-message-string err))
-		 (when (buffer-live-p temp) (kill-buffer temp))))))))
+			  (error-message-string err))))))))
 
 (defun shimbun-sankei-logout (&optional interactive-p)
   "Logout from special.sankei.com."
   (interactive (list t))
   (require 'w3m-cookie)
   (require 'w3m-form)
+  (w3m-arrived-setup)
   (let ((cache (buffer-live-p w3m-cache-buffer))
 	(w3m-message-silent t)
-	temp handler)
+	(next shimbun-sankei-logout-url)
+	w3m-clear-display-while-reading done handler)
     (when interactive-p (message "Logging out from special.sankei.com..."))
     (condition-case err
-	(w3m-process-do-with-temp-buffer
-	    (type (progn
-		    (setq temp (current-buffer))
-		    (w3m-retrieve shimbun-sankei-login-url nil t)))
-	  (if (not type)
-	      (when interactive-p (message "Failed to logout"))
+	(with-temp-buffer
+	  (while (not done)
+	    (w3m-process-with-wait-handler
+	      (w3m-retrieve-and-render next t nil nil nil handler))
 	    (goto-char (point-min))
 	    (if (re-search-forward "\
-<input[\t\n ]+\\(?:[^\t\n ]+[\t\n ]+\\)*name=\"LOGIN_ID\"" nil t)
-		(when interactive-p (message "Already logged out"))
-	      (erase-buffer)
-	      (set-buffer-multibyte t)
+^\\(?:Location\\|You were redirected to\\):[\t\n\r ]+\\(http[^\n]+\\)" nil t)
+		(setq next (match-string-no-properties 1))
 	      (w3m-process-with-wait-handler
-		(w3m-retrieve-and-render shimbun-sankei-logout-url
-					 t nil nil nil handler))
-	      (erase-buffer)
-	      (if (and (w3m-retrieve shimbun-sankei-login-url nil t)
-		       (progn
-			 (goto-char (point-min))
-			 (re-search-forward "\
-<input[\t\n ]+\\(?:[^\t\n ]+[\t\n ]+\\)*name=\"LOGIN_ID\"" nil t)))
-		  (when interactive-p (message "Logged out"))
-		(when interactive-p (message "Already logged out")))))
+		(w3m-retrieve-and-render next t nil nil nil handler))
+	      (when interactive-p (message "Logged out"))
+	      (setq done t)))
 	  (when (get-buffer " *w3m-cookie-parse-temp*")
 	    (kill-buffer (get-buffer " *w3m-cookie-parse-temp*")))
 	  (unless cache (w3m-cache-shutdown)))
       (error (if (or interactive-p debug-on-error)
 		 (signal (car err) (cdr err))
 	       (message "Error while logging out from special.sankei.com:\n %s"
-			(error-message-string err))
-	       (when (buffer-live-p temp) (kill-buffer temp)))))))
+			(error-message-string err)))))))
 
-(shimbun-sankei-login)
+;;(shimbun-sankei-login)
 
 (provide 'sb-sankei)
 

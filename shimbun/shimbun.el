@@ -1,4 +1,4 @@
-;;; shimbun.el --- interfacing with web newspapers -*- coding: utf-8; -*-
+;;; shimbun.el --- interfacing with web newspapers
 
 ;; Copyright (C) 2001-2014, 2017-2019, 2021
 ;; Yuuichi Teranishi <teranisi@gohome.org>
@@ -71,10 +71,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; defsetf
-;; The `defsetf' macro uses this function at compile-time.
-(declare-function gv--defsetter "gv" (name setter do args &optional vars))
-
 (require 'mcharset)
 (require 'eword-encode)
 (require 'luna)
@@ -118,7 +114,7 @@ dJrT4Cd<Ls?U!G4}0S%FA~KegR;YZWieoc%`|$4M\\\"i*2avWm?"
 (defcustom shimbun-server-additional-path nil
   "List of additional directories to search for shimbun servers."
   :group 'shimbun
-  :type '(repeat (directory :format "%t: %v\n")))
+  :type '(repeat (directory :format "%t: %v")))
 
 (defcustom shimbun-checking-new-news-format "Checking new news on #S for #g"
   "Format string used to show a progress message while chacking new news.
@@ -273,22 +269,8 @@ Return content-type of URL as string when retrieval succeeded."
 	      (delete-region (point-min) pos))))
       ;; retrieve URL
       (when url
-	(if (string-match "\\`https://www\\.sankei\\.com" url)
-	    ;; FIXME: Why is this necessary?  --- ky
-	    ;; To make Sankei work, it is necessary to display some
-	    ;; extra buffer while retrieving headers.
-	    (let ((buf (get-buffer-create "*Messages*"))
-		  (cur (current-buffer)))
-	      (save-window-excursion
-		(split-window-vertically)
-		(switch-to-buffer-other-window buf)
-		(shrink-window (max (- (window-height) 3) 0))
-		(set-window-start nil (point-max))
-		(set-buffer cur)
-		(setq type (w3m-retrieve (w3m-url-transfer-encode-string url)
-					 nil no-cache nil referer))))
-	  (setq type (w3m-retrieve (w3m-url-transfer-encode-string url)
-				   nil no-cache nil referer)))))
+	(setq type (w3m-retrieve (w3m-url-transfer-encode-string url)
+				 nil no-cache nil referer))))
     (if type
 	(progn
 	  (unless no-decode
@@ -517,7 +499,7 @@ Generated article have a multipart/related content-type."
 
 (defun shimbun-entity-set-cid (entity cid)
   (shimbun-entity-set-cid-internal entity cid))
-(defsetf shimbun-entity-cid shimbun-entity-set-cid)
+(gv-define-simple-setter shimbun-entity-cid shimbun-entity-set-cid)
 
 (luna-define-generic shimbun-entity-insert (entity)
   "Insert ENTITY as a MIME part.")
@@ -775,7 +757,7 @@ you want to use no database."
 	  (const :tag "Use no database" never)
 	  (const :tag "Use BBDB" shimbun-bbdb-get-x-face)
 	  (const :tag "Use LSDB" shimbun-lsdb-get-x-face)
-	  (function :format "User defined function: %v\n")))
+	  (function :format "User defined function: %v")))
 
 (defun shimbun-header-insert (shimbun header)
   (let ((from (shimbun-header-from header))

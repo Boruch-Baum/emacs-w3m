@@ -1,6 +1,6 @@
-;;; sb-palmfan.el --- shimbun backend class for palmfan web site. -*- coding: utf-8; -*-
+;;; sb-palmfan.el --- shimbun backend class for palmfan web site.
 
-;; Copyright (C) 2002, 2003, 2005 NAKAJIMA Mikio <minakaji@namazu.org>
+;; Copyright (C) 2002, 2003, 2005, 2019 NAKAJIMA Mikio <minakaji@namazu.org>
 
 ;; Author: NAKAJIMA Mikio <minakaji@namazu.org>
 ;; Keywords: news
@@ -97,7 +97,7 @@ i$PdWyuHC8!1=KH'r,R=fV])N6uQS")))
   (let* ((case-fold-search t)
 	 (url (shimbun-index-url shimbun))
 	 (idbase (concat "palmwarefan."
-			 (if (string-match "^http://\\([^/]+\\)/" url)
+			 (if (string-match "\\`http://\\([^/]+\\)/" url)
 			     (match-string 1 url)
 			   url)))
 	 headers)
@@ -192,7 +192,7 @@ i$PdWyuHC8!1=KH'r,R=fV])N6uQS")))
 					   (shimbun-from-address shimbun)
 					   date id "" 0 0 url)
 		      headers))))))
-    (nreverse headers))))
+      (nreverse headers))))
 
 (defun shimbun-palmfan-bbs-headers (shimbun &optional range)
   ;; not yet
@@ -201,7 +201,7 @@ i$PdWyuHC8!1=KH'r,R=fV])N6uQS")))
 (defun shimbun-palmfan-news-headers (shimbun &optional range)
   (let* ((case-fold-search t)
 	 (url (shimbun-index-url shimbun))
-	 (idbase (if (string-match "^http://\\([^/]+\\)/" url)
+	 (idbase (if (string-match "\\`http://\\([^/]+\\)/" url)
 		     (match-string 1 url)
 		   url))
 	 (from "hirose@palmfan.com")
@@ -273,7 +273,8 @@ i$PdWyuHC8!1=KH'r,R=fV])N6uQS")))
 				     day idbase))
 		    (if (shimbun-search-id shimbun id)
 			(throw 'stop nil))
-		    (when (string-match "^[\n\t ]*\\(.*\\)[\n\t ]*$" subject)
+		    (when (string-match "\\`[\n\t ]*\\(.*\\)[\n\t ]*\\'"
+					subject)
 		      (setq subject (match-string 1 subject)))
 		    (let ((case-fold-search t))
 		      (when (string-match "<A href=.*</A>" subject)
@@ -302,11 +303,11 @@ i$PdWyuHC8!1=KH'r,R=fV])N6uQS")))
     (goto-char first-article)
     (beginning-of-line)
     (forward-char -1)
-  (if (and first-date first-article
-	   (> first-date first-article))
-      ;; XXX it cannot understand non-exsistent day...
-      (setcar (cdr (cdr date)) (1+ (car (cdr (cdr date))))))
-  date))
+    (if (and first-date first-article
+	     (> first-date first-article))
+	;; XXX it cannot understand non-exsistent day...
+	(setcar (cdr (cdr date)) (1+ (car (cdr (cdr date))))))
+    date))
 
 (defun shimbun-palmfan-pickup-date ()
   (let ((start (point))
