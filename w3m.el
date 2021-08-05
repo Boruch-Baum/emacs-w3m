@@ -1,4 +1,4 @@
-;; w3m.el --- an Emacs interface to w3m -*- coding: utf-8; -*-
+;;; w3m.el --- an Emacs interface to w3m -*- coding: utf-8; -*-
 
 ;; Copyright (C) 2000-2019 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
