@@ -102,15 +102,15 @@
 ;;       (cons 'progn (cdr (car clauses)))))
 ;; (def-edebug-spec w3m-static-cond (&rest (&rest def-form)))
 
-;; (put 'w3m-condition-case 'lisp-indent-function 2)
-;; (defmacro w3m-condition-case (var bodyform &rest handlers)
-;;   "Like `condition-case', except that signal an error if `debug-on-error'
-;; or `debug-on-quit' is non-nil."
-;;   `(if (or debug-on-error debug-on-quit)
-;;        ,bodyform
-;;      (condition-case ,var
-;; 	 ,bodyform
-;;        ,@handlers)))
+(put 'w3m-condition-case 'lisp-indent-function 2)
+(defmacro w3m-condition-case (var bodyform &rest handlers)
+  "Like `condition-case', except that signal an error if `debug-on-error'
+or `debug-on-quit' is non-nil."
+  `(if (or debug-on-error debug-on-quit)
+       ,bodyform
+     (condition-case ,var
+	 ,bodyform
+       ,@handlers)))
 
 ;;; Functions used in common:
 
@@ -1241,6 +1241,11 @@ websites or referers embed. See `w3m-strip-queries-alist'."
 			   (not (file-directory-p bin))))
 	      (throw 'found-command bin))))))))
 
+(defun w3m-cancel-timer (timer)
+  "Run `cancel-timer' for TIMER iff it is really active.
+Return t if canceled."
+  (when (timerp timer) (inline (cancel-timer timer)) t))
+
 (defun w3m-cancel-refresh-timer (&optional buffer)
   "Cancel the timer for REFRESH attribute in META tag."
   (when w3m-use-refresh
@@ -1319,7 +1324,7 @@ multibyteness of the buffer."
     string))
 
 (defun w3m-force-window-update-later (&optional buffer seconds)
-  "Update the header-line appearance in BUFFER after SECONDS.
+  "Update the tab-line appearance in BUFFER after SECONDS.
 BUFFER defaults to the current buffer.  SECONDS defaults to 0.5."
   (run-with-timer (or seconds 0.5) nil
 		  (lambda (buffer)
@@ -1328,7 +1333,6 @@ BUFFER defaults to the current buffer.  SECONDS defaults to 0.5."
 				   (selected-window)))
 		      (w3m-force-window-update)))
 		  (or buffer (current-buffer))))
-
 
 (defun w3m-make-menu-item (japan english)
   "Make menu item."
@@ -1371,6 +1375,12 @@ BUFFER defaults to the current buffer.  SECONDS defaults to 0.5."
 (defmacro w3m-interactive-p ()
   '(called-interactively-p 'any))
 
+(defun w3m-ensure-slash (url)
+  "Ensure that a URL ends in a /.  Useful for concatenation purposes."
+  (if (or (equal url "") (eq ?/ (aref url (1- (length url)))))
+      url
+    (concat url "/")))
+
 ;; `flet' got obsolete since Emacs 24.3.
 (defmacro w3m-flet (bindings &rest body)
   "Make temporary overriding function definitions.
@@ -1393,6 +1403,11 @@ the function cell of FUNCs rather than their value cell.
   (w3m-flet ((widget-sexp-value-to-internal (widget value) value))
     (apply 'widget-convert (widget-type widget)
 	   (eval (car (widget-get widget :args))))))
+
+(defmacro w3m-easy-menu-add (menu &optional map)
+  "Run `easy-menu-add' (obsolete since 28.1) on Emacs 27 and earlier."
+  (if (<= emacs-major-version 27)
+      `(easy-menu-add ,menu ,map)))
 
 ;;; Punycode RFC 3492:
 

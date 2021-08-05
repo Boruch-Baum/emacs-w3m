@@ -195,8 +195,8 @@ starts."
   :group 'w3m
   :type
   '(radio
-    (const :format "Re-load the last session automatically." t)
-    (const :format "Ask whether to re-load the last session." ask)
+    (const :format "Re-load the last session automatically.\n" t)
+    (const :format "Ask whether to re-load the last session.\n" ask)
     (const :format "Never re-load the last session automatically." nil)))
 
 (defcustom w3m-session-load-crashed-sessions 'ask
@@ -205,8 +205,8 @@ This is used when emacs-w3m determines that the most recent session crashed."
   :group 'w3m
   :type
   '(radio
-    (const :format "RelLoad the crashed session automatically." t)
-    (const :format "Ask whether to re-load the crashed session." ask)
+    (const :format "Re-load the crashed session automatically.\n" t)
+    (const :format "Ask whether to re-load the crashed session.\n" ask)
     (const :format "Never re-load the crashed session automatically." nil)))
 
 (defface w3m-session-select
@@ -333,9 +333,9 @@ buffer's url history."
      (let ((sessions (w3m-load-list w3m-session-file))
 	   (bufs (w3m-list-buffers))
 	   (title (concat w3m-session-automatic-title "-1"))
-	   (titleregex (concat "^"
+	   (titleregex (concat "\\`"
 			       (regexp-quote w3m-session-automatic-title)
-			       "-[0-9]+$"))
+			       "-[0-9]+\\'"))
 	   (cnum 0)
 	   (i 0)
 	   urls buf cbuf session
@@ -380,9 +380,9 @@ buffer's url history."
     (w3m-session-ignore-errors
      (let ((sessions (w3m-load-list w3m-session-file))
 	   (title (concat w3m-session-deleted-title "-1"))
-	   (titleregex (concat "^"
+	   (titleregex (concat "\\`"
 			       (regexp-quote w3m-session-deleted-title)
-			       "-[0-9]+$"))
+			       "-[0-9]+\\'"))
 	   (bufs (copy-sequence buffers))
 	   (i 2)
 	   urls buf session

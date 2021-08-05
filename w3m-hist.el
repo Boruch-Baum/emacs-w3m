@@ -775,7 +775,7 @@ a crashed emacs session."
      (erase-buffer)
      (w3m-mode)
      (let* ((w3m-fb-mode nil)
-            (w3m-message-silent t)
+            (w3m--message-silent t)
             (cookie-buf (get-buffer " *w3m-cookie-parse-temp*"))
             (bufs (w3m-list-buffers t))
             (cmds w3m-scrub-command-list)

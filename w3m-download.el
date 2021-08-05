@@ -1000,13 +1000,13 @@ prepared! This function is meant to be called by
                           "\\.[0-9]+$" "" (match-string-no-properties 1))))
                     (not (zerop (setq cols (/ (* percent win-width) 100))))))
         (setq pos-1 pos-2)
-       (goto-char pos-1)
+       (goto-char pos-1))
        (while (< pos-1 pos-2)
          (add-face-text-property
            pos-1 (min (point-max) (+ pos-1 cols))
            'w3m-download-progress)
          (forward-line)
-         (setq pos-1 (point)))))))
+        (setq pos-1 (point))))))
 
 (defun w3m--download-display-queue-list ()
   "Display the download queue.
