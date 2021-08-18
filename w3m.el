@@ -9843,19 +9843,18 @@ It makes the ends of upper and lower three lines visible.  If
 (defun w3m--goto-torrent-url (url)
   "Process `.torrent' links and `magnet:' protocol URLs.
 
-This handler is currently hard-coded to require the external
-command-line programs `transmission-daemon' and
-`transmission-remote', and to recommend the external NCURSES
-program `transmission-remote-cli'.
+This handler is currently hard-coded to require the external command-
+line programs `transmission-daemon' and `transmission-remote', and to
+recommend the external NCURSES program `transmission-remote-cli'.
 
- The `transmission-daemon' program initates a web interface on
+The `transmission-daemon' program initiates a web interface on
 `http://localhost:9091' from which one may view and manipulate
 torrents; however, that interface requires javascript, so is
 unavailable directly via `emacs-w3m'. An alternative NCURSES
-interface is available using `transmission-remote-cli', so if
-that external program is available, this function concludes by
-starting that external program in a dedicated `ansi-term' buffer,
-if one does not already exist."
+interface is available using `transmission-remote-cli', so if that
+external program is available, this function concludes by starting
+that external program in a dedicated `ansi-term' buffer, if one does
+not already exist."
   ;; TODO: * don't hard-code for `transmission'
   ;;       * investigate options for using `deluge', `ktorrent', or others.
   (if (not (and (executable-find "transmission-daemon")
@@ -10055,9 +10054,9 @@ function is designed as the hook function which is registered to
                                    (copy-marker (point-at-eol)))))
 
 (defun w3m-check-current-position ()
-  "Run `w3m-after-cursor-move-hook' if the point gets away from the window.
-This function is designed as the hook function which is registered to
-`post-command-hook' by `w3m-buffer-setup'."
+  "Run `w3m-after-cursor-move-hook' if POINT is not visible in window.
+This function is meant to be added to variable `post-command-hook' by
+function `w3m-buffer-setup'."
   (when (/= (point) (car w3m-current-position))
     ;; To bind `deactivate-mark' to nil protects the mark from being
     ;; deactivated.  `deactivate-mark' is set when any function modifies
@@ -10409,7 +10408,7 @@ invoked in other than a w3m-mode buffer."
           engine-info)
       (when (and uri-replace query
                  (eq (nth 1 uri-replace) 'w3m-search-uri-replace))
-        ; based upon `w3m-search-uri-replace' and `w3m-search-do-search'
+        ;; based upon `w3m-search-uri-replace' and `w3m-search-do-search'
         (setq engine-info (assoc (nth 2 uri-replace) w3m-search-engine-alist))
         (when (and engine-info (< 3 (length engine-info)))
           (setq post-data
@@ -10573,11 +10572,17 @@ See `w3m-default-directory'."
                                      referer no-popup)
   "Visit World Wide Web pages in a new buffer.
 
+A browser tab for the buffer will be created on the tab bar if
+you are using that feature (see variable `w3m-display-mode').
+
 If called interactively from an existing `emacs-w3m' buffer, the
 new buffer will inherit the current one's history.
 
 When called interactively with a prefix-argument, over-ride your
-default setting for `w3m-new-session-in-background'."
+default setting for `w3m-new-session-in-background'.
+Non-interactively, set NO-POPUP to non-nil to avoid the new buffer
+being forced to be displayed in a visible window."
+
   ;; FIXME: Note the inconsistency in the name given to arg NO-POPUP.
   ;; Elsewhere it seems to be referred to as BACKGROUND.
   (interactive
@@ -10690,14 +10695,14 @@ When called interactively, variables `w3m-user-agent' and
   (when (string-equal ua-string "")
     (setq ua-string nil))
   (when (called-interactively-p 'interactive)
-;   Does not work because we use temporary work buffers when
-;   constructing the GET header (eg. `w3m-header-arguments')
-;   (if (y-or-n-p "For this buffer only? ")
-;     (progn
-;       (make-local-variable 'w3m-add-user-agent)
-;       (make-local-variable 'w3m-user-agent))
-;    (kill-local-variable 'w3m-add-user-agent)
-;    (kill-local-variable 'w3m-user-agent))
+    ;; Does not work because we use temporary work buffers when
+    ;; constructing the GET header (eg. `w3m-header-arguments')
+    ;; (if (y-or-n-p "For this buffer only? ")
+    ;;     (progn
+    ;;       (make-local-variable 'w3m-add-user-agent)
+    ;;       (make-local-variable 'w3m-user-agent))
+    ;;   (kill-local-variable 'w3m-add-user-agent)
+    ;;   (kill-local-variable 'w3m-user-agent))
     (if (not ua-string)
         (setq w3m-add-user-agent nil)
       (setq w3m-add-user-agent t)
@@ -10721,9 +10726,9 @@ If the prefix arg is given three times, do both, ie. clear forms
 and post data, AND prompt the user to change the user-agent
 string to be sent for the reload."
   (interactive "P")
+  (w3m-restore-tab-line)
   (if w3m-current-url
-    (let*
-      (;; Don't move the history position.
+      (let* (;; Don't move the history position.
        (w3m-history-reuse-history-elements 'reload)
        (w3m-user-agent
         (if (or (equal arg '(16)) (equal arg '(64)))
@@ -10768,6 +10773,7 @@ If the prefix arg ARG is given, it also clears forms and post data."
   "Redisplay the current page.
 If the prefix arg ARG is given, it toggles the visibility of images."
   (interactive "P")
+  (w3m-restore-tab-line)
   (if (null w3m-current-url)
       (w3m--message t 'w3m-error "Can't redisplay this page")
     (when arg
