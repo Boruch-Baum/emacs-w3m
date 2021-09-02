@@ -1078,7 +1078,7 @@ of visible URLs and prompts the user to select one."
       (if link
 	  (let ((url (w3m-url-encode-string-2 (car link))))
 	    (kill-new url)
-            (w3m--send-to-gui-clipboard url)
+	    (w3m--send-to-gui-clipboard url)
 	    (w3m--message t t "%s%s" (let ((im-alt (nth 3 link)))
 				  (if (zerop (length im-alt)) ""
 				    (concat im-alt ": ")))

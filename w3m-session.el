@@ -293,12 +293,12 @@ buffer's url history."
      (while (not title)
        ;; A devious way to emulate INITIAL-INPUT that is deprecated.
        (let ((minibuffer-setup-hook (lambda nil (insert otitle))))
-         (setq title (completing-read prompt titles nil nil nil nil otitle)))
+	 (setq title (completing-read prompt titles nil nil nil nil otitle)))
        (if (or (string= title "")
-               (and (assoc title sessions)
-                    (not (y-or-n-p (format "\"%s\" exists.  Overwrite? "
-                                           title)))))
-           (setq title nil)))
+	       (and (assoc title sessions)
+		    (not (y-or-n-p (format "\"%s\" exists.  Overwrite? "
+					   title)))))
+	   (setq title nil)))
      (setq cbuf (current-buffer))
      (save-current-buffer
        (while (setq buf (car bufs))
@@ -510,7 +510,7 @@ buffer's url history."
 	   buffer-read-only nil
 	   major-mode 'w3m-session-select-mode
 	   w3m-session-select-sessions sessions
-           buffer-quit-function 'w3m-session-select-quit
+	   buffer-quit-function 'w3m-session-select-quit
 	   buffer-read-only t)
      (setq w3m-session-group-open nil)
      (use-local-map w3m-session-select-mode-map)
@@ -525,10 +525,10 @@ Meant for use  with  `pre-command-hook' and `post-command-hook'."
 	(inhibit-read-only t))
     (when (get-text-property beg 'w3m-session-number)
       (put-text-property beg (next-single-property-change beg 'w3m-session-number)
-        'face
-        (if (equal (get-text-property beg 'face) 'w3m-session-selected)
-          'w3m-session-select
-         'w3m-session-selected)))))
+	'face
+	(if (equal (get-text-property beg 'face) 'w3m-session-selected)
+	  'w3m-session-select
+	 'w3m-session-selected)))))
 
 (defun w3m-session-select-list-all-sessions ()
   "List all saved sessions."
@@ -630,7 +630,7 @@ buffer in the current session."
       (let ((num w3m-session-group-open))
 	(setq w3m-session-group-open nil)
 	(w3m-session-select-list-all-sessions)
-        (forward-line num))
+	(forward-line num))
     (let ((buffer (current-buffer)))
       (or (one-window-p) (delete-window))
       (kill-buffer buffer))))
@@ -703,8 +703,8 @@ buffer in the current session."
       ;;(forward-line (min num (- (line-number-at-pos (point-max)) 4))))))
       (if (not w3m-session-group-open)
 	  (w3m-session-select (min
-                                (if (integerp num) num (car num))
-                                (1- (length sessions))))
+				(if (integerp num) num (car num))
+				(1- (length sessions))))
 	(w3m-session-select-open-session-group w3m-session-group-open)
 	(forward-line (min (1+ (cdr num))))))))
 
@@ -713,9 +713,9 @@ buffer in the current session."
   (interactive)
   (beginning-of-line)
   (let ((sessions w3m-session-select-sessions)
-        (default-prompt "Name for new session: ")
-        (source-number (get-text-property (point) 'w3m-session-number))
-        prompt source-session target-session otitle title)
+	(default-prompt "Name for new session: ")
+	(source-number (get-text-property (point) 'w3m-session-number))
+	prompt source-session target-session otitle title)
     (setq prompt default-prompt)
     (if (not (integerp source-number))
       (error "Only for sessions, not their elements.")
@@ -726,30 +726,30 @@ buffer in the current session."
     (while (not title)
       ;; A devious way to emulate INITIAL-INPUT that is deprecated.
       (let ((minibuffer-setup-hook (lambda nil (insert otitle))))
-        (setq title (read-from-minibuffer prompt nil nil nil nil otitle)))
+	(setq title (read-from-minibuffer prompt nil nil nil nil otitle)))
       (cond
        ((string= title "")
-        (setq title nil
-              prompt default-prompt))
+	(setq title nil
+	      prompt default-prompt))
        ((string= title otitle)
-        (setq prompt (concat title
-                             " is same as original title (C-g to abort): ")
-              title nil))
+	(setq prompt (concat title
+			     " is same as original title (C-g to abort): ")
+	      title nil))
        ((assoc title sessions)
-        (if (not (y-or-n-p (format "\"%s\" exists.  Overwrite? " title)))
-            (setq prompt default-prompt
-                  title nil)
-          (setq sessions (delq (assoc title sessions) sessions))))))
+	(if (not (y-or-n-p (format "\"%s\" exists.  Overwrite? " title)))
+	    (setq prompt default-prompt
+		  title nil)
+	  (setq sessions (delq (assoc title sessions) sessions))))))
     ;; END: Code duplicated in function `w3m-session-rename'
     (setq sessions (cons (list title
-                               (current-time)
-                               (nth 2 source-session)
-                               (nth 3 source-session))
-                         sessions))
+			       (current-time)
+			       (nth 2 source-session)
+			       (nth 3 source-session))
+			 sessions))
     (w3m-save-list w3m-session-file sessions)
     (w3m--message t t "Session %s copied to %s." otitle title)
     (when (and (setq buf (get-buffer " *w3m-session select*"))
-               (get-buffer-window buf 'visible))
+	       (get-buffer-window buf 'visible))
       (save-selected-window (w3m-session-select)))))
 
 (defun w3m-session-select-merge ()
@@ -940,7 +940,7 @@ entry."
   (if (integerp num)
     (setq sessions (delq (nth num sessions) sessions))
    (let* ((item (nth 2 (nth (car num) sessions)))
-          (tmp (delq (nth (cdr num) item) item)))
+	  (tmp (delq (nth (cdr num) item) item)))
      (if (not (zerop (length tmp)))
        (setf (nth 2 (nth (car num) sessions)) tmp)
       (setq sessions (delq (nth (car num) sessions) sessions))

@@ -170,16 +170,16 @@ into it."
       (setq prop (get-text-property pos 'face object))
       (setq next (next-single-property-change pos 'face object end))
       (setq new-prop (cond
-                      ((listp prop)
-                        (setq new-prop (remove name prop))
-                        (if (>= 1 (length new-prop))
-                          (car new-prop)
-                         new-prop))
-                      ((equal name prop) nil)
-                      (t                 prop)))
+		      ((listp prop)
+			(setq new-prop (remove name prop))
+			(if (>= 1 (length new-prop))
+			  (car new-prop)
+			 new-prop))
+		      ((equal name prop) nil)
+		      (t                 prop)))
       (remove-text-properties pos next 'face object)
       (when new-prop
-        (add-text-properties pos next (list 'face new-prop) object))
+	(add-text-properties pos next (list 'face new-prop) object))
       (setq pos next))))
 
 (defmacro w3m-get-text-property-around (prop)
@@ -429,14 +429,14 @@ An argument of nil means kill the current buffer."
   "Create and return a buffer with a name based on NAME.
 Make the new buffer the next of the current buffer if NEXT is non-nil."
   (when (or (not (stringp name))
-            (string-match-p "\\`[ \t\n\r]*\\'" name)
-            (string-match "\\*w3m\\*\\(<\\([0-9]+\\)>\\)?\\'" name))
+	    (string-match-p "\\`[ \t\n\r]*\\'" name)
+	    (string-match "\\*w3m\\*\\(<\\([0-9]+\\)>\\)?\\'" name))
     (setq name "*w3m*"))
   (when next
     (let* ((tailbufs (let* ((w3m-fb-mode nil)
-		            (all-w3m-buffers (w3m-list-buffers)))
-		        (memq (current-buffer) all-w3m-buffers)))
-           (new-buffer-number (w3m-buffer-number (car tailbufs))))
+			    (all-w3m-buffers (w3m-list-buffers)))
+			(memq (current-buffer) all-w3m-buffers)))
+	   (new-buffer-number (w3m-buffer-number (car tailbufs))))
       (when (and tailbufs new-buffer-number)
 	(dolist (buf (reverse (cdr tailbufs)))
 	  (w3m-buffer-set-number buf (1+ (w3m-buffer-number buf))))
@@ -834,7 +834,7 @@ has to initially exist between the end position of the closing-tag and
 the previous tag as follows:
 
 <!-- foo <bar ...<baz ...>...> -->
-                              ^^^
+			      ^^^
 If INCLUDE-WHITESPACE is non-nil, include leading and trailing
 whitespace.  Return the end-point and set the match-data #0, #1, #2,
 and #3 as follows (\"___\" shows whitespace):
@@ -1155,18 +1155,18 @@ ie. For anything after the first '?', for each segment until the
 next '&' or end-of-string, a CONS whose CAR is what is to the
 left of '=' and whose CDR is to the right of it."
   (let ((parms (when (string-match "[^?]+\\?\\(.*\\)$" url)
-                       (match-string 1 url)))
-        (start 0)
-        query result)
+		       (match-string 1 url)))
+	(start 0)
+	query result)
     (when parms
       (while (string-match "&?\\([^=]+\\)=\\([^&]+\\)" parms start)
-        (push (cons (match-string 1 parms) (match-string 2 parms)) result)
-        (setq start (match-end 0)))
+	(push (cons (match-string 1 parms) (match-string 2 parms)) result)
+	(setq start (match-end 0)))
       (when (string-match "&[^=]+$" parms start)
-        ;; This is the weird case encountered with a '&' embedded in a query
-        ;; eg. occassionally by cloudflare query 'filename='
-        (setq query (pop result))
-        (push (cons (car query) (concat (cdr query) (match-string 0 parms))) result))
+	;; This is the weird case encountered with a '&' embedded in a query
+	;; eg. occassionally by cloudflare query 'filename='
+	(setq query (pop result))
+	(push (cons (car query) (concat (cdr query) (match-string 0 parms))) result))
       (nreverse result))))
 
 (defcustom w3m-strip-queries t
@@ -1201,17 +1201,17 @@ websites or referers embed."
 This is meant to remove unwanted trackers or other data that
 websites or referers embed. See `w3m-strip-queries-alist'."
   (if (or (not w3m-strip-queries)
-          (not (string-match "^.*\\?" url)))
+	  (not (string-match "^.*\\?" url)))
     url
    (let* ((base (match-string 0 url))
-          (queries (replace-match "" t t url 0)))
+	  (queries (replace-match "" t t url 0)))
      (when (and w3m-queries-log queries)
        (shell-command
-         (format "printf \"%s\n\" >> %s" queries w3m-queries-log-file)))
+	 (format "printf \"%s\n\" >> %s" queries w3m-queries-log-file)))
      (dolist (strip w3m-strip-queries-alist)
        (when (string-match (car strip) base)
-         (while (string-match (cadr strip) queries)
-           (setq queries (replace-match "" t t queries 0)))))
+	 (while (string-match (cadr strip) queries)
+	   (setq queries (replace-match "" t t queries 0)))))
      (if (string-match-p "\\`[ \t\n\r]*\\'" queries)
        (substring base 0 -1)
       (concat base queries)))))
@@ -1624,16 +1624,16 @@ When entering the command string, use \"%s\" to denote the actual
 data to be copied."
   :group 'w3m
   :type '(repeat
-           (cons :indent 4
-              (radio :indent 8
-	        (symbol :format "GNU/Linux\n"         gnu/linux)
-                (symbol :format "GNU Hurd\n"          gnu)
-	        (symbol :format "GNU/FreeBSD\n"       gnu/kfreebsd)
-	        (symbol :format "Darwin (MacOS)\n"    darwin)
-	        (symbol :format "MS-DOS\n"            ms-dos)
-	        (symbol :format "Windows NT 32-bit\n" windows-nt)
-	        (symbol :format "Cygwin\n"            cygwin))
-              (string :indent 8 :format "Command string: %v" ))))
+	   (cons :indent 4
+	      (radio :indent 8
+		(symbol :format "GNU/Linux\n"         gnu/linux)
+		(symbol :format "GNU Hurd\n"          gnu)
+		(symbol :format "GNU/FreeBSD\n"       gnu/kfreebsd)
+		(symbol :format "Darwin (MacOS)\n"    darwin)
+		(symbol :format "MS-DOS\n"            ms-dos)
+		(symbol :format "Windows NT 32-bit\n" windows-nt)
+		(symbol :format "Cygwin\n"            cygwin))
+	      (string :indent 8 :format "Command string: %v" ))))
 
 (defun w3m--send-to-gui-clipboard (content)
   (let ((cmd (cdr (assq system-type w3m-gui-clipboard-commands))))
@@ -1642,10 +1642,10 @@ data to be copied."
      (if (not (string-match "%s" cmd))
        (w3m--message t 'w3m-error "Malformed variable w3m-gui-clipboard-commands.")
       (shell-command
-        (replace-match
-          (substring-no-properties
-            (replace-regexp-in-string "%" "%%" content))
-          t t cmd))))))
+	(replace-match
+	  (substring-no-properties
+	    (replace-regexp-in-string "%" "%%" content))
+	  t t cmd))))))
 
 (defun w3m-ensure-slash (url)
 	"Ensure that a URL ends in a /. Useful for concatenation purposes."
