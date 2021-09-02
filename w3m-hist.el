@@ -70,15 +70,15 @@ This variable is effective when creating of the new session by copying
 This is a buffer-local variable.  For example, it will grow as follows:
 
 [Branch-1.0.0.0]:                 +--> U1.0.0.0.0 --> U1.0.0.0.1
-                                  |
+				  |
     [Branch-1.0]:         +--> U1.0.0 --> U1.0.1 --> U1.0.2
-                          |
-         [Trunk]: U0 --> U1 --> U2 --> U3 --> U4 --> U5 --> U6
-                                 |
+			  |
+	 [Trunk]: U0 --> U1 --> U2 --> U3 --> U4 --> U5 --> U6
+				 |
     [Branch-2.0]:                +--> U2.0.0 --> U2.0.1
-                                 |
+				 |
     [Branch-2.1]:                +--> U2.1.0 --> U2.1.1 --> U2.1.2
-                                                    |
+						    |
 [Branch-2.1.1.0]:                                   +--> U2.1.1.0.0
 
 In this case, the U1.0.0.0.0 history element represents the first link
@@ -761,9 +761,9 @@ a crashed emacs session."
   ;   timeframe, for elements that store timestamp information.
   (interactive)
   (let ((stdout-buf (generate-new-buffer "*w3m-scrub-history*"))
-        (warning-msg (propertize
-                       "Warning: This will irrevocably erase ALL your emacs-w3m browsing history.\nPlease confirm to proceed."
-                       'face 'w3m-warning)))
+	(warning-msg (propertize
+		       "Warning: This will irrevocably erase ALL your emacs-w3m browsing history.\nPlease confirm to proceed."
+		       'face 'w3m-warning)))
    (switch-to-buffer stdout-buf)
    (w3m--full-window-message warning-msg)
    (cond
@@ -775,58 +775,58 @@ a crashed emacs session."
      (erase-buffer)
      (w3m-mode)
      (let* ((w3m-fb-mode nil)
-            (w3m--message-silent t)
-            (cookie-buf (get-buffer " *w3m-cookie-parse-temp*"))
-            (bufs (w3m-list-buffers t))
-            (cmds w3m-scrub-command-list)
-            cmd (cmd (progn
-                   (while (and (setq cmd (pop cmds))
-                               (not (file-executable-p (car cmd)))))
-                   cmd))
-            (cmd-string (if cmd
-                          (format "%s %s" (car cmd) (cadr cmd))
-                         "emacs' delete-file"))
-            files target)
+	    (w3m--message-silent t)
+	    (cookie-buf (get-buffer " *w3m-cookie-parse-temp*"))
+	    (bufs (w3m-list-buffers t))
+	    (cmds w3m-scrub-command-list)
+	    cmd (cmd (progn
+		   (while (and (setq cmd (pop cmds))
+			       (not (file-executable-p (car cmd)))))
+		   cmd))
+	    (cmd-string (if cmd
+			  (format "%s %s" (car cmd) (cadr cmd))
+			 "emacs' delete-file"))
+	    files target)
       (switch-to-buffer stdout-buf)
       (redisplay)
       (insert "Beginning emacs-w3m history scrub "
-              (format-time-string "%Y-%m-%d %H:%M:%S.%N")
-              "\n\nDeleting files ...\n")
+	      (format-time-string "%Y-%m-%d %H:%M:%S.%N")
+	      "\n\nDeleting files ...\n")
       (condition-case err
-        (progn
-          (setq files
-            (append (list w3m-arrived-file w3m-cookie-file)
-                    w3m-form-textarea-post-files
-                    w3m-form-textarea-files
-                    (directory-files
-                      (file-chase-links (expand-file-name w3m-form-textarea-directory))
-                      'full "[^.]" 'nosort)
-                    (directory-files w3m-profile-directory 'full
-                      "^w3m\\(cache\\|cookie\\|el\\|src\\|tmp\\)" 'nosort)))
-          (if cmd
-            (dolist (file files)
-              (insert (format "  %s %s\n" cmd-string file))
-                (call-process (car cmd) nil t t (cadr cmd) file))
-           (dolist (file files)
-             (insert (format "  %s %s\n" cmd-string file))
-             (delete-file file))))
-        (error ; Handler for `condition-case'
-          (insert (format "    FAILURE! - %s\n    Aborting..." (error-message-string err)))
-          (error "w3m: history scrub unsuccessful. See buffer for details.")))
+	(progn
+	  (setq files
+	    (append (list w3m-arrived-file w3m-cookie-file)
+		    w3m-form-textarea-post-files
+		    w3m-form-textarea-files
+		    (directory-files
+		      (file-chase-links (expand-file-name w3m-form-textarea-directory))
+		      'full "[^.]" 'nosort)
+		    (directory-files w3m-profile-directory 'full
+		      "^w3m\\(cache\\|cookie\\|el\\|src\\|tmp\\)" 'nosort)))
+	  (if cmd
+	    (dolist (file files)
+	      (insert (format "  %s %s\n" cmd-string file))
+		(call-process (car cmd) nil t t (cadr cmd) file))
+	   (dolist (file files)
+	     (insert (format "  %s %s\n" cmd-string file))
+	     (delete-file file))))
+	(error ; Handler for `condition-case'
+	  (insert (format "    FAILURE! - %s\n    Aborting..." (error-message-string err)))
+	  (error "w3m: history scrub unsuccessful. See buffer for details.")))
       (insert "Deleting files ... Complete.\n\nInitializing memory cache ...")
       (with-current-buffer w3m-cache-buffer
-        (let ((inhibit-read-only t))
-        (erase-buffer)))
+	(let ((inhibit-read-only t))
+	(erase-buffer)))
       (kill-buffer w3m-cache-buffer)
       (setq w3m-cache-hashtb nil
-            w3m-cache-articles nil)
+	    w3m-cache-articles nil)
       (w3m-cache-setup)
       (insert " Complete.\nInitializing input URL history from memory ...")
       (setq w3m-input-url-history nil)
       (insert " Complete.\nInitializing cookies from memory ...")
       (setq w3m-cookies nil)
       (when cookie-buf
-        (kill-buffer cookie-buf))
+	(kill-buffer cookie-buf))
       (insert " Complete.\nInitializing bookmark edit history from memory ...")
       (setq w3m-bookmark-section-history nil)
       (setq w3m-bookmark-title-history nil)
@@ -835,117 +835,117 @@ a crashed emacs session."
       (w3m-arrived-setup) ; For 'awesome-bar' feature.
       (insert " Complete.\nInitializing individual buffer histories and forms ...")
       (dolist (buf bufs)
-        (with-current-buffer buf
-          (setq w3m-history nil)
-          (setq w3m-history-flat nil)
-          (when w3m-current-url
-            (w3m-history-push w3m-current-url))
-          (cond
-           ((or (string-match "^about://\\(cookie\\|history\\|db-history\\)/"
-                              (or w3m-current-url ""))
-                w3m-form-input-textarea-mode
-                (eq major-mode 'w3m-form-input-select-mode)
-                (eq major-mode 'w3m-form-input-map-mode))
-            (w3m-reload-this-page nil t))
-           ((string-match "*w3m-session select*" (buffer-name))
-            (kill-buffer buf))
-           (t nil))))
+	(with-current-buffer buf
+	  (setq w3m-history nil)
+	  (setq w3m-history-flat nil)
+	  (when w3m-current-url
+	    (w3m-history-push w3m-current-url))
+	  (cond
+	   ((or (string-match "^about://\\(cookie\\|history\\|db-history\\)/"
+			      (or w3m-current-url ""))
+		w3m-form-input-textarea-mode
+		(eq major-mode 'w3m-form-input-select-mode)
+		(eq major-mode 'w3m-form-input-map-mode))
+	    (w3m-reload-this-page nil t))
+	   ((string-match "*w3m-session select*" (buffer-name))
+	    (kill-buffer buf))
+	   (t nil))))
       (insert " Complete.\nInitializing download queues from memory  ...")
       (with-mutex w3m--download-mutex
-        (setq w3m--download-queued nil)
-        (setq w3m--download-paused nil)
-        (setq w3m--download-failed nil)
-        (setq w3m--download-completed nil))
+	(setq w3m--download-queued nil)
+	(setq w3m--download-paused nil)
+	(setq w3m--download-failed nil)
+	(setq w3m--download-completed nil))
       (insert " Complete.\nScrubbing download queue save-file ...\n")
       (condition-case err
-        ;; policy for condition-case err is to abort, let the use fix
-        ;; the problem, and then re-try. TODO: So maybe then put
-        ;; everything under a single condition-case instead of having
-        ;; duplicate ones throughout this function...
-        (let ((file (expand-file-name w3m-download-save-file)))
-          (cond
-           (cmd
-             (insert (format "  %s %s\n" cmd-string file))
-             (call-process (car cmd) nil t t (cadr cmd) file))
-           (t
-             (insert (format "  %s %s\n" cmd-string file))
-             (delete-file file))))
-          (error ; Handler for `condition-case'
-            (insert (format "    FAILURE! - %s\n    Aborting..." (error-message-string err)))
-            (error "w3m: history scrub unsuccessful. See buffer for details.")))
+	;; policy for condition-case err is to abort, let the use fix
+	;; the problem, and then re-try. TODO: So maybe then put
+	;; everything under a single condition-case instead of having
+	;; duplicate ones throughout this function...
+	(let ((file (expand-file-name w3m-download-save-file)))
+	  (cond
+	   (cmd
+	     (insert (format "  %s %s\n" cmd-string file))
+	     (call-process (car cmd) nil t t (cadr cmd) file))
+	   (t
+	     (insert (format "  %s %s\n" cmd-string file))
+	     (delete-file file))))
+	  (error ; Handler for `condition-case'
+	    (insert (format "    FAILURE! - %s\n    Aborting..." (error-message-string err)))
+	    (error "w3m: history scrub unsuccessful. See buffer for details.")))
       (w3m--download-save-lists)
       (insert " Complete.\nScrubbing selected sessions from session database ...")
       (let ((sessions (w3m-load-list w3m-session-file)))
-        (dolist (session sessions sessions)
-          (cond
-           ((string-match
-              "^\\(Removed\\|Automatic saved\\|Crash recovery\\) sessions"
-              (nth 0 session))
-            (insert "\n  Deleting session named: " (nth 0 session))
-            (setq sessions (delq session sessions)))
-           (t
-            (insert "\n  Examining session named: " (nth 0 session))
-            (dolist (tab (nth 2 session))
-              (when (nth 2 tab)
-                (insert "\n    Removing history from tab: " (nth 3 tab))
-                (setf (nth 2 tab) nil))))))
-        (insert "\nScrubbing selected sessions from session database ... Complete\n")
-        ; NOTE: Each saved session may have form or post data. These wil
-        ; be represented as properties `:forms' and `:post-data', but so
-        ; far I've only seen them in history elements, which are already
-        ; being deleted.
-        (insert "Updating session database on disk ...")
-        (if (not (w3m-save-list w3m-session-file sessions))
-          (insert (format "\n  FAILURE! - Unable to write to %s\n  Aborting..."
-                    w3m-session-file))
-         (insert " Complete.\n")))
+	(dolist (session sessions sessions)
+	  (cond
+	   ((string-match
+	      "^\\(Removed\\|Automatic saved\\|Crash recovery\\) sessions"
+	      (nth 0 session))
+	    (insert "\n  Deleting session named: " (nth 0 session))
+	    (setq sessions (delq session sessions)))
+	   (t
+	    (insert "\n  Examining session named: " (nth 0 session))
+	    (dolist (tab (nth 2 session))
+	      (when (nth 2 tab)
+		(insert "\n    Removing history from tab: " (nth 3 tab))
+		(setf (nth 2 tab) nil))))))
+	(insert "\nScrubbing selected sessions from session database ... Complete\n")
+	; NOTE: Each saved session may have form or post data. These wil
+	; be represented as properties `:forms' and `:post-data', but so
+	; far I've only seen them in history elements, which are already
+	; being deleted.
+	(insert "Updating session database on disk ...")
+	(if (not (w3m-save-list w3m-session-file sessions))
+	  (insert (format "\n  FAILURE! - Unable to write to %s\n  Aborting..."
+		    w3m-session-file))
+	 (insert " Complete.\n")))
       (insert "Scrubbing optional elements (C-h v `w3m-history-scrub-optional-elements') ...\n")
       (condition-case err
-        ;; policy for condition-case err is to abort, let the use fix
-        ;; the problem, and then re-try. TODO: So maybe then put
-        ;; everything under a single condition-case instead of having
-        ;; duplicate ones throughout this function...
-        (dolist (elem w3m-history-scrub-optional-elements)
-          (cond
-            ;; TODO: Think about whether it makes sense to support
-            ;; scrubbing other data that exists outside of emacs. What
-            ;; candidates cold there be? System environment variables?
-            ((symbol-value (setq target (car elem))) ; legitimate emacs variable
-              (insert (format " Initializing `%s' from memory ..." target))
-              (eval (cadr elem))
-              (insert " Complete.\n"))
-            ((stringp target)
-              (cond
-               ((file-directory-p target)
-                (when (yes-or-no-p
-                        (format "About to delete everything under %s
+	;; policy for condition-case err is to abort, let the use fix
+	;; the problem, and then re-try. TODO: So maybe then put
+	;; everything under a single condition-case instead of having
+	;; duplicate ones throughout this function...
+	(dolist (elem w3m-history-scrub-optional-elements)
+	  (cond
+	    ;; TODO: Think about whether it makes sense to support
+	    ;; scrubbing other data that exists outside of emacs. What
+	    ;; candidates cold there be? System environment variables?
+	    ((symbol-value (setq target (car elem))) ; legitimate emacs variable
+	      (insert (format " Initializing `%s' from memory ..." target))
+	      (eval (cadr elem))
+	      (insert " Complete.\n"))
+	    ((stringp target)
+	      (cond
+	       ((file-directory-p target)
+		(when (yes-or-no-p
+			(format "About to delete everything under %s
 A re you absolutely sure? " target))
-                  (insert (format "WARNING: %s not processed (you crazy man)!!\n" target)))
-                  ;; NOTE: For using `/bin/rm' this could be perfomed simply by
-                  ;; using "rm -rf", but for `/usr/bin/shred' the file-tree would
-                  ;; need to be manually traversed and files would need to be
-                  ;; individually shredded. Also, I haven't tested whether `shred'
-                  ;; would take a burdensomely long time. In the end, it is the
-                  ;; user's decision...
-                )
-               ((file-exists-p target)
-                (insert (format "Performing: %s %s\n" cmd-string target))
-                (if cmd
-                  (call-process (car cmd) nil t t (cadr cmd) target)
-                 (delete-target target)))
-               (t (insert (format "WARNING: %s not processed !!\n" target)))))
-          (t (insert (format "WARNING: %s not processed !!\n" target)))))
-        (error ; Handler for `condition-case'
-          (insert (format "WARNING: %s scrub FAILURE! - %s\n    Aborting..."
-                    target (error-message-string err)))
-          (error "w3m: history scrub unsuccessful. See buffer for details.")))
+		  (insert (format "WARNING: %s not processed (you crazy man)!!\n" target)))
+		  ;; NOTE: For using `/bin/rm' this could be perfomed simply by
+		  ;; using "rm -rf", but for `/usr/bin/shred' the file-tree would
+		  ;; need to be manually traversed and files would need to be
+		  ;; individually shredded. Also, I haven't tested whether `shred'
+		  ;; would take a burdensomely long time. In the end, it is the
+		  ;; user's decision...
+		)
+	       ((file-exists-p target)
+		(insert (format "Performing: %s %s\n" cmd-string target))
+		(if cmd
+		  (call-process (car cmd) nil t t (cadr cmd) target)
+		 (delete-target target)))
+	       (t (insert (format "WARNING: %s not processed !!\n" target)))))
+	  (t (insert (format "WARNING: %s not processed !!\n" target)))))
+	(error ; Handler for `condition-case'
+	  (insert (format "WARNING: %s scrub FAILURE! - %s\n    Aborting..."
+		    target (error-message-string err)))
+	  (error "w3m: history scrub unsuccessful. See buffer for details.")))
       (insert "Scrubbing optional elements ... Complete.\n")
       (insert "\nemacs-w3m history scrub completed: "
-        (format-time-string "%Y-%m-%d %H:%M:%S.%N\n")))))))
+	(format-time-string "%Y-%m-%d %H:%M:%S.%N\n")))))))
 
 (defvar w3m-arrived-db)
 (declare-function w3m-goto-url "w3m"
-                  (url &optional reload charset post-data referer handler))
+		  (url &optional reload charset post-data referer handler))
 
 (defun w3m-history-add-arrived-db ()
   "Add the arrived database to the history structure unreasonably.

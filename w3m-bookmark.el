@@ -319,8 +319,8 @@ Optional argument TITLE is title of link."
 With prefix, ask for a new url instead of the present one."
   (interactive "P")
   (w3m-bookmark-add (if arg
-                      (w3m-canonicalize-url (w3m-input-url))
-                      w3m-current-url)
+		      (w3m-canonicalize-url (w3m-input-url))
+		      w3m-current-url)
 		     w3m-current-title)
   (w3m--message t t "Added"))
 
@@ -338,7 +338,7 @@ With prefix, ask for a new url instead of the present one."
     (cond
      ((zerop len)
       (w3m--message t 'w3m-error
-        "No w3m buffers found to bookmark"))
+	"No w3m buffers found to bookmark"))
      ((= len 1)
       (w3m-bookmark-add-current-url))
      ((> len 1)
@@ -354,8 +354,8 @@ With prefix, ask for a new url instead of the present one."
       (when (or (not section) (not (stringp section)) (string= section ""))
 	(setq section default-section))
       (if (string-match "\\`[\t ]*\\'" section)
-        (w3m--message t 'w3m-error
-          "You must specify a bookmark section name")
+	(w3m--message t 'w3m-error
+	  "You must specify a bookmark section name")
        (while buffers
 	  (set-buffer (pop buffers))
 	  (if (string= w3m-current-url  "about://bookmark/")

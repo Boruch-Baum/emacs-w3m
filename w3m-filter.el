@@ -334,9 +334,9 @@ toggled last will first appear) with completion."
       (progn
 	(setq w3m-use-filter (not w3m-use-filter))
 	(w3m--message t t
-          (concat
-            "web page filtering now "
-            (if w3m-use-filter "enabled" "disabled"))))
+	  (concat
+	    "web page filtering now "
+	    (if w3m-use-filter "enabled" "disabled"))))
     ;; the remainder of this function if for the case of toggling
     ;; an individual filter
     (let* ((selection-list (delq nil (mapcar
@@ -360,10 +360,10 @@ toggled last will first appear) with completion."
 	    (setcar elem (not (car elem)))
 	    (when (car elem)
 	      (setq w3m-use-filter t))
-            (w3m--message t t
-              "filter `%s' now %s"
-              choice
-              (if (car elem) "enabled" "disabled"))))))))
+	    (w3m--message t t
+	      "filter `%s' now %s"
+	      choice
+	      (if (car elem) "enabled" "disabled"))))))))
 
 (defmacro w3m-filter-delete-regions (url start end
 					 &optional without-start without-end
@@ -1239,14 +1239,14 @@ READ MORE:\\([^<]+\\)\\(</a>\\)?</strong>\\(</p>\\)?"
     (let ((p1 (match-end 0))
 	  p2)
       (dolist (strs '(("^\t</a>"  "")
-                      ("</a>"     "</a><br>")
-                      ("</div>"   " ")))
-        (goto-char p1)
-        (when (setq p2 (when (search-forward "<h4" nil t)
-                         (match-beginning 0)))
-          (goto-char p1)
-          (while (re-search-forward (car strs) p2 t)
-            (replace-match (cadr strs))))))
+		      ("</a>"     "</a><br>")
+		      ("</div>"   " ")))
+	(goto-char p1)
+	(when (setq p2 (when (search-forward "<h4" nil t)
+			 (match-beginning 0)))
+	  (goto-char p1)
+	  (while (re-search-forward (car strs) p2 t)
+	    (replace-match (cadr strs))))))
       (w3m-filter-delete-regions
        url
        "<div class=\"spacer\">"
