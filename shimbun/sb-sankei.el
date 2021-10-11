@@ -124,8 +124,6 @@ To use this, set both `w3m-use-cookies' and `w3m-use-form' to t."
 						 &optional range)
   (shimbun-sankei-get-headers shimbun range))
 
-(autoload 'timezone-parse-date "timezone")
-
 (defun shimbun-sankei-get-headers (shimbun range)
   "Get headers for the group that SHIMBUN specifies in RANGE."
   (shimbun-sankei-keep-login)
@@ -154,44 +152,11 @@ To use this, set both `w3m-use-cookies' and `w3m-use-form' to t."
 	    (goto-char nd)
 	  (save-restriction
 	    (narrow-to-region (goto-char st) nd)
-
-	    ;; The version that works on Emacs 28 and elders.
-	    ;;(setq date (decode-time ;; Default to the current time.
-	    ;;            (and (re-search-forward "\"display_date\":\"\
-;;\\(20[2-9][0-9]-[01][0-9]-[0-3][0-9]T[0-5][0-9]:[0-5][0-9]:[^\"]+\\)" nil t)
-	    ;;                 (ignore-errors
-	    ;;                   (encode-time
-	    ;;                    (parse-time-string (match-string 1)))))))
-
-	    ;; On Emacs 27 and earliers `parse-time-string' doesn't support
-	    ;; ISO8601 date.
-	    ;; On Emacs 26 and earliers `encode-time' doesn't accept the 1st
-	    ;; argument that is a list style.
-
-	    ;; The version that supports Emacs 27 and 26.
-	    (setq date
-		  (decode-time ;; Default to the current time.
-		   (and (re-search-forward "\"display_date\":\"\
+	    (setq date (decode-time ;; Default to the current time.
+			(and (re-search-forward "\"display_date\":\"\
 \\(20[2-9][0-9]-[01][0-9]-[0-3][0-9]T[0-5][0-9]:[0-5][0-9]:[^\"]+\\)" nil t)
-			(ignore-errors
-			  (setq tem (match-string 1)
-				date (parse-time-string tem))
-			  (if (car date) ;; true on Emacs 28
-			      (encode-time date)
-			    (setq date (timezone-parse-date tem)
-				  tem (split-string (aref date 3) ":")
-				  date (list
-					(string-to-number (caddr tem))
-					(string-to-number (cadr tem))
-					(string-to-number (car tem))
-					(string-to-number (aref date 2))
-					(string-to-number (aref date 1))
-					(string-to-number (aref date 0))
-					nil nil nil))
-			    (condition-case nil
-				(encode-time date) ;; works on Emacs 27
-			      (error ;; Emacs 26
-			       (apply #'encode-time date))))))))
+			     (ignore-errors
+			       (date-to-time (match-string 1))))))
 	    (goto-char st)
 	    (when (re-search-forward "\"headlines\":{\"basic\":\\(\"\\)" nil t)
 	      (setq subject (condition-case nil
@@ -636,11 +601,15 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
       (when interactive-p (message "Quit"))
     (when interactive-p (message "Logging in to special.sankei.com..."))
     (require 'w3m-cookie)
-    ;; Delete old login cookies.
+    ;; Delete old login/out cookies.
     (w3m-cookie-setup)
-    (dolist (cookie w3m-cookies)
-      (when (string-match "\\.sankei\\..+login" (w3m-cookie-url cookie))
-	(setq w3m-cookies (delq cookie w3m-cookies))))
+    (let ((case-fold-search t))
+      (dolist (cookie w3m-cookies)
+	(when (or (string-match "\\.sankei\\..+log\\(?:in\\|out\\)"
+				(w3m-cookie-url cookie))
+		  (and (equal "AKA_A2" (w3m-cookie-name cookie))
+		       (equal "sankei.com" (w3m-cookie-domain cookie))))
+	  (setq w3m-cookies (delq cookie w3m-cookies)))))
     (require 'w3m-form)
     (w3m-arrived-setup)
     (let ((cache (buffer-live-p w3m-cache-buffer))
@@ -707,6 +676,15 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
   "Logout from special.sankei.com."
   (interactive (list t))
   (require 'w3m-cookie)
+  ;; Delete old login/out cookies.
+  (w3m-cookie-setup)
+  (let ((case-fold-search t))
+    (dolist (cookie w3m-cookies)
+      (when (or (string-match "\\.sankei\\..+log\\(?:in\\|out\\)"
+			      (w3m-cookie-url cookie))
+		(and (equal "AKA_A2" (w3m-cookie-name cookie))
+		     (equal "sankei.com" (w3m-cookie-domain cookie))))
+	(setq w3m-cookies (delq cookie w3m-cookies)))))
   (require 'w3m-form)
   (w3m-arrived-setup)
   (let ((cache (buffer-live-p w3m-cache-buffer))
@@ -725,6 +703,7 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 		(setq next (match-string-no-properties 1))
 	      (w3m-process-with-wait-handler
 		(w3m-retrieve-and-render next t nil nil nil handler))
+	      (when w3m-cookie-save-cookies (w3m-cookie-save))
 	      (when interactive-p (message "Logged out"))
 	      (setq done t)))
 	  (when (get-buffer " *w3m-cookie-parse-temp*")
@@ -740,13 +719,28 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 
 (defun shimbun-sankei-keep-login (&optional force interactive-p)
   "Keep logging in in Sankei."
-  (interactive (list t t))
-  (when (and shimbun-sankei-login-name shimbun-sankei-login-password
-	     (or force (not shimbun-sankei-last-login)
-		 (> (time-to-seconds (time-since shimbun-sankei-last-login))
-		    1800)))
-    (shimbun-sankei-login nil nil interactive-p)
-    (setq shimbun-sankei-last-login (current-time))))
+  (interactive (list t))
+  (when (and w3m-use-cookies (progn (w3m-cookie-setup) t)
+	     w3m-use-form
+	     shimbun-sankei-login-name shimbun-sankei-login-password
+	     (or force
+		 (let ((cookies w3m-cookies) cookie expiry)
+		   (while cookies
+		     (setq cookie (pop cookies))
+		     (and (equal "AKA_A2" (w3m-cookie-name cookie))
+			  (equal "sankei.com" (w3m-cookie-domain cookie))
+			  (setq cookies nil
+				expiry (w3m-cookie-expires cookie))))
+		   (or (not expiry)
+		       (not (setq expiry (ignore-errors (date-to-time expiry))))
+		       (> (time-to-seconds (time-since expiry)) -60)))))
+    (shimbun-sankei-login shimbun-sankei-login-name
+			  shimbun-sankei-login-password
+			  t)))
+
+(luna-define-method shimbun-headers :before ((shimbun shimbun-sankei)
+					     &optional range)
+  (shimbun-sankei-keep-login))
 
 (luna-define-method shimbun-article :before ((shimbun shimbun-sankei)
 					     header &optional outbuf)
