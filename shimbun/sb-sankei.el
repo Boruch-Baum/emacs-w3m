@@ -544,9 +544,6 @@ src=\"[^\"]+/\\([0-9A-Z]\\{26\\}\\)\\.[^\"]+\"" nd t))
 (autoload 'password-cache-add "password-cache")
 (autoload 'password-read-from-cache "password-cache")
 
-(defvar shimbun-sankei-last-login nil
-  "Timestamp when `shimbun-sankei-login' did run last.")
-
 (defun shimbun-sankei-login (&optional name password interactive-p)
   "Login to special.sankei.com with NAME and PASSWORD.
 NAME and PASSWORD default to `shimbun-sankei-login-name' and
@@ -656,7 +653,6 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 			     "\\`https://www.sankei.com/\\?[0-9]+\\'"
 			     w3m-current-url)))
 		  (when interactive-p (message "Failed to login"))
-		(setq shimbun-sankei-last-login (current-time))
 		(when interactive-p (message "Logged in"))
 		;; Use a copy of the password so not to be expired by C-@s.
 		(password-cache-add name (copy-sequence password))
@@ -700,7 +696,7 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 		(setq next (match-string-no-properties 1))
 	      (w3m-process-with-wait-handler
 		(w3m-retrieve-and-render next t nil nil nil handler))
-	      (setq shimbun-sankei-last-login nil)
+	      (when w3m-cookie-save-cookies (w3m-cookie-save))
 	      (when interactive-p (message "Logged out"))
 	      (setq done t)))
 	  (when (get-buffer " *w3m-cookie-parse-temp*")
@@ -714,11 +710,20 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 (defun shimbun-sankei-keep-login (&optional force)
   "Keep logging in in Sankei."
   (interactive (list t))
-  (when (and w3m-use-cookies w3m-use-form
+  (when (and w3m-use-cookies (progn (w3m-cookie-setup) t)
+	     w3m-use-form
 	     shimbun-sankei-login-name shimbun-sankei-login-password
-	     (or force (not shimbun-sankei-last-login)
-		 (> (time-to-seconds (time-since shimbun-sankei-last-login))
-		    1800)))
+	     (or force
+		 (let ((cookies w3m-cookies) cookie expiry)
+		   (while cookies
+		     (setq cookie (pop cookies))
+		     (and (equal "AKA_A2" (w3m-cookie-name cookie))
+			  (equal "sankei.com" (w3m-cookie-domain cookie))
+			  (setq cookies nil
+				expiry (w3m-cookie-expires cookie))))
+		   (or (not expiry)
+		       (not (setq expiry (ignore-errors (date-to-time expiry))))
+		       (> (time-to-seconds (time-since expiry)) -60)))))
     (shimbun-sankei-login shimbun-sankei-login-name
 			  shimbun-sankei-login-password
 			  t)))
