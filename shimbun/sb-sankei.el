@@ -717,30 +717,18 @@ You should set `w3m-use-cookies' and `w3m-use-form' to non-nil"))
 (defvar shimbun-sankei-last-login nil
   "Timestamp when `shimbun-sankei-login' did run last.")
 
-(defun shimbun-sankei-keep-login (&optional force interactive-p)
+(defun shimbun-sankei-keep-login (&optional force)
   "Keep logging in in Sankei."
   (interactive (list t))
-  (when (and w3m-use-cookies (progn (w3m-cookie-setup) t)
-	     w3m-use-form
+  (when (and w3m-use-cookies w3m-use-form
 	     shimbun-sankei-login-name shimbun-sankei-login-password
-	     (or force
-		 (let ((cookies w3m-cookies) cookie expiry)
-		   (while cookies
-		     (setq cookie (pop cookies))
-		     (and (equal "AKA_A2" (w3m-cookie-name cookie))
-			  (equal "sankei.com" (w3m-cookie-domain cookie))
-			  (setq cookies nil
-				expiry (w3m-cookie-expires cookie))))
-		   (or (not expiry)
-		       (not (setq expiry (ignore-errors (date-to-time expiry))))
-		       (> (time-to-seconds (time-since expiry)) -60)))))
+	     (or force (not shimbun-sankei-last-login)
+		 (> (time-to-seconds (time-since shimbun-sankei-last-login))
+		    1800)))
     (shimbun-sankei-login shimbun-sankei-login-name
 			  shimbun-sankei-login-password
-			  t)))
-
-(luna-define-method shimbun-headers :before ((shimbun shimbun-sankei)
-					     &optional range)
-  (shimbun-sankei-keep-login))
+			  t)
+    (setq shimbun-sankei-last-login (current-time))))
 
 (luna-define-method shimbun-article :before ((shimbun shimbun-sankei)
 					     header &optional outbuf)
