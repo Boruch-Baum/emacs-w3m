@@ -3651,6 +3651,7 @@ external `convert' program respectively."
 	prenames start end bhhref first)
     (goto-char (point-min))
     (setq w3m-max-anchor-sequence 0)    ;; reset max-hseq
+(w3m--message nil nil "BB Fontifying:  anchors 1")
     (while (re-search-forward "<_id[ \t\r\f\n]+" nil t)
       (setq start (match-beginning 0))
       (setq prenames (get-text-property start 'w3m-name-anchor))
@@ -3660,6 +3661,7 @@ external `convert' program respectively."
 				 (list 'w3m-name-anchor
 				       (cons (w3m-decode-entities-string id)
 					     prenames)))))
+(w3m--message nil nil "BB Fontifying:  anchors 2")
     (goto-char (point-min))
     (while (re-search-forward "<a[ \t\r\f\n]+" nil t)
       (setq start (match-beginning 0))
@@ -3736,6 +3738,7 @@ external `convert' program respectively."
 	   (list 'w3m-name-anchor2
 		 (cons (w3m-decode-entities-string name)
 		       prenames)))))))
+(w3m--message nil nil "BB Fontifying:  anchors 3")
     (when w3m-icon-data
       (setq w3m-icon-data (cons (and (car w3m-icon-data)
 				     (w3m-expand-url (car w3m-icon-data)))
@@ -4433,12 +4436,15 @@ If optional KEEP-PROPERTIES is non-nil, text property is reserved."
   (let ((case-fold-search t)
 	(inhibit-read-only t))
     (w3m--message t t "Fontifying...")
+(w3m--message nil nil "BB Fontifying: before-hooks:")
     (run-hooks 'w3m-fontify-before-hook)
     ;; Remove hidden anchors like "<a href=url> </a>".
+(w3m--message nil nil "BB Fontifying: hidden anchors")
     (goto-char (point-min))
     (while (re-search-forward "<a[\t\n ]+[^>]+>[\t\n ]*</a>" nil t)
       (delete-region (match-beginning 0) (match-end 0)))
     ;; Delete <?xml ... ?> tag
+(w3m--message nil nil "BB Fontifying: xml")
     (goto-char (point-min))
     (if (search-forward "<?xml" nil t)
 	(let ((start (match-beginning 0)))
@@ -4446,23 +4452,34 @@ If optional KEEP-PROPERTIES is non-nil, text property is reserved."
 	  (delete-region start (match-end 0))
 	  (goto-char (point-min))))
     ;; Delete extra title tag.
+(w3m--message nil nil "BB Fontifying: extra titles")
     (let (start)
       (and (search-forward "<title>" nil t)
 	   (setq start (match-beginning 0))
 	   (search-forward "</title>" nil t)
 	   (delete-region start (match-end 0))))
+(w3m--message nil nil "BB Fontifying: bold")
     (w3m-fontify-bold)
+(w3m--message nil nil "BB Fontifying: itallic")
     (w3m-fontify-italic)
+(w3m--message nil nil "BB Fontifying: strike-through")
     (w3m-fontify-strike-through)
+(w3m--message nil nil "BB Fontifying: insert")
     (w3m-fontify-insert)
+(w3m--message nil nil "BB Fontifying: underline")
     (w3m-fontify-underline)
+(w3m--message nil nil "BB Fontifying: symbols")
     (when w3m-use-symbol
       (w3m-replace-symbol))
+(w3m--message nil nil "BB Fontifying: anchors")
     (w3m-fontify-anchors)
+(w3m--message nil nil "BB Fontifying: forms")
     (when w3m-use-form
       (w3m-fontify-forms))
+(w3m--message nil nil "BB Fontifying: images")
     (w3m-fontify-images)
     ;; Remove other markups.
+(w3m--message nil nil "BB Fontifying: other")
     (goto-char (point-min))
     (while (re-search-forward "</?[A-Za-z_][^>]*>" nil t)
       (let* ((start (match-beginning 0))
@@ -4471,9 +4488,12 @@ If optional KEEP-PROPERTIES is non-nil, text property is reserved."
 	    (goto-char (1+ start))
 	  (delete-region start (match-end 0)))))
     ;; Decode escaped characters (entities).
+(w3m--message nil nil "BB Fontifying: entities")
     (w3m-decode-entities 'reserve-prop)
+(w3m--message nil nil "BB Fontifying: text areas")
     (when w3m-use-form
       (w3m-fontify-textareas))
+(w3m--message nil nil "BB Fontifying: empty lines")
     (goto-char (point-min))
     (when w3m-delete-duplicated-empty-lines
       (while (re-search-forward "^[ \t]*\n\\(?:[ \t]*\n\\)+" nil t)
