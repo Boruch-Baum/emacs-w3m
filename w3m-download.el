@@ -1111,27 +1111,26 @@ Invoked by `w3m-download-queue-mode' using `run-with-timer'. It
 can be manually invoked via the `w3m-download-refresh-buffer'.
 This function also saves the download lists to
 `w3m-download-save-file'."
-  (let ((buf (get-buffer "*w3m-download-queue*"))
-	(inhibit-read-only t)
-	(buf-mark-active mark-active)
-	mark pos)
-   (if (not buf)
-     (w3m--download-queue-buffer-kill)
-    (save-match-data
-      (with-current-buffer buf
-	(setq pos (point))
-	(setq mark (mark))
-	(w3m--download-update-progress)
-	(w3m--download-save-lists)
-	(w3m--download-update-display-queue-list
-	  (get-text-property (point) 'url)
-	  (current-column)
-	  (1- (string-to-number (format-mode-line "%l"))))
-	(w3m--download-update-faces-post-command)
-	(set-mark mark)
-	(if (not buf-mark-active)
-	  (deactivate-mark))
-	(goto-char pos))))))
+  (let ((buf (get-buffer "*w3m-download-queue*")))
+    (if (not buf)
+      (w3m--download-queue-buffer-kill)
+     (save-match-data
+       (with-current-buffer buf
+	 (let ((pos (point))
+	       (mark (mark 'force))
+	       (buf-mark-active mark-active)
+	       (inhibit-read-only t))
+	   (w3m--download-update-progress)
+	   (w3m--download-save-lists)
+	   (w3m--download-update-display-queue-list
+	     (get-text-property (point) 'url)
+	     (current-column)
+	     (1- (string-to-number (format-mode-line "%l"))))
+	   (w3m--download-update-faces-post-command)
+	   (if buf-mark-active
+	     (set-mark mark)
+	    (deactivate-mark))
+	   (goto-char pos)))))))
 
 (defun w3m--download-apply-metadata-tags ()
   "Run a shell command to apply metadata tags to a saved file.
